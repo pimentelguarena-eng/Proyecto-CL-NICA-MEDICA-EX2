@@ -1,0 +1,6 @@
+{
+  "name": "Clínica Medical - Portal y Sistema de Citas Médicas",
+  "description": "Portal web oficial y sistema integral de gestión de citas médicas, especialidades ambulatorias y panel administrativo para Clínica Medical.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

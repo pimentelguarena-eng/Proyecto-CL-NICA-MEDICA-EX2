@@ -1,0 +1,17 @@
+{
+  "name": "clinica-medical-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev:backend": "cd backend && tsx server.ts",
+    "dev:frontend": "cd frontend && vite",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "test": "npm run test:backend && npm run test:frontend"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}

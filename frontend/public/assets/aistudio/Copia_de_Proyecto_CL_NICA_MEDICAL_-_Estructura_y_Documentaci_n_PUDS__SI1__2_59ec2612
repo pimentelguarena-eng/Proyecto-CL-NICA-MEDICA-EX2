@@ -1,0 +1,2022 @@
+﻿UNIVERSIDAD AUTÓNOMA GABRIEL RENÉ MORENO
+FACULTAD DE INGENIERÍA EN CIENCIAS DE LA COMPUTACIÓN Y TELECOMUNICACIONES (FICCT)  
+"SISTEMA DE INFORMACIÓN WEB PARA LA GESTIÓN DE CITAS MÉDICAS, ATENCIÓN AMBULATORIA E HISTORIAL CLÍNICO DE LA CLÍNICA MEDICAL"
+
+
+Integrantes:
+Carlos Andres Pimentel Guarena 
+Materia: Sistemas de Información I (INF 342-SA)
+Docente: MSc. Ing. Angélica Garzón Cuéllar
+Semestre: II/2026
+
+
+Santa Cruz de la Sierra-Bolivia
+ÍNDICE 
+1. CAPÍTULO 1. PERFIL DEL PROYECTO
+1.1. Introducción
+1.2. Identidad y Enfoque Asistencial de CLÍNICA MEDICAL
+1.3. Objetivos
+    1.3.1. Objetivo General
+    1.3.2. Objetivos Específicos
+1.4. Descripción del Problema
+1.5. Alcance del Sistema
+    1.5.1. Catálogo Institucional de 22 Especialidades Médicas
+    1.5.2. Catálogo de 9 Servicios Clínicos y Diagnósticos (Ambulatorios)
+    1.5.3. Alcance Funcional por Módulos del Sistema
+2. CAPÍTULO 2. MARCO TEÓRICO Y MÉTODO DE ISHIKAWA
+2.1. Sistemas de Información en Salud y Gestión Ambulatoria
+2.2. Gestión de Agendas Médicas y Cálculo Dinámico de Bloques Horarios
+2.3. Expediente Clínico Electrónico Ambulatorio y Trazabilidad
+2.4. Arquitectura Cliente-Servidor en Tres Capas y Stack Tecnológico
+2.5. Proceso Unificado de Desarrollo de Software (PUDS) y Modelado UML
+2.6. Seguridad en Aplicaciones Web
+2.7. Método de Ishikawa Aplicado a CLÍNICA MEDICAL
+    1) IDENTIFICAR EL PROBLEMA
+        1.1) Lista Inicial y Depuración de Problemas
+        1.2) Análisis Causal de Problemas (Grafo Dirigido)
+        1.3) Estimación, Cuantificación y Alternativas de Cambio
+    2) IDENTIFICAR LAS PRINCIPALES CATEGORÍAS (6M) Y 3) CAUSAS RAÍZ
+    4) ANALIZAR Y DISCUTIR EL DIAGRAMA DE ISHIKAWA
+3. CAPÍTULO 3. MODELO DE NEGOCIO
+3.1. Diagramas de Actividades de los Procesos Principales
+    Proceso 1: Reserva de Cita Médica Web con Búsqueda por CI y Pasarela de Pago
+    Proceso 2: Control de Asistencia en Sala y Atención Médica con Historial Clínico
+4. CAPÍTULO 4. FLUJO DE TRABAJO: CAPTURA DE REQUISITOS
+4.1. Encontrar e Identificar Actores y Casos de Uso
+    4.1.1. Identificación y Descripción de los Actores
+    4.1.2. Listado Estructurado de los 23 Casos de Uso por Módulo
+4.2. Tabla de Priorización de Casos de Uso y Matriz General de Relaciones UML
+4.3. Detalles y Especificación Completa de los 23 Casos de Uso
+    MÓDULO I: SEGURIDAD, ACCESO Y AUDITORÍA (CU01 - CU05)
+    MÓDULO II: PACIENTES Y DATOS GENERALES (CU06 - CU08)
+    MÓDULO III: MÉDICOS, ESPECIALIDADES Y HORARIOS (CU09 - CU12)
+    MÓDULO IV: GESTIÓN DE CITAS Y TURNOS MÉDICOS (CU13 - CU19)
+    MÓDULO V: HISTORIAL CLÍNICO Y EXPEDIENTE MÉDICO (CU20 - CU22)
+    MÓDULO VI: REPORTERÍA Y ANÁLISIS DE GESTIÓN (CU23)
+4.4. Requerimientos Funcionales (RF) y Reglas de Negocio (RN)
+4.5. Requerimientos No Funcionales (RNF)
+4.6. Prototipo de Interfaz de Usuario
+4.7. Estructurar el Modelo de Caso de Uso
+5. CAPÍTULO 5. FLUJO DE TRABAJO: ANÁLISIS
+5.1. Análisis de la Arquitectura
+    5.1.1. Identificar Paquetes del Sistema
+    5.1.2. Relacionar Paquetes y Casos de Uso (Trazabilidad <<trace>>)
+    5.1.3. Vista de Paquetes y Encapsulamiento de Casos de Uso
+5.2. Analizar un Caso de Uso (Diagramas de Comunicación) y 5.3. Analizar una Clase (Modelo BCE)
+    CICLO #1 (Avance 50% — Casos de Uso Fundacionales y Reserva Base)
+    CICLO #2 (Final 100% — Pagos, Operaciones de Agenda, Expediente Clínico y Reportes)
+5.4. Analizar un Paquete (Arquitectura Integrada por Paquetes)
+6. CAPÍTULO 6. FLUJO DE TRABAJO: DISEÑO
+6.1. Diseño de Arquitectura (Lógico y Físico)
+    6.1.1. Diseño Físico (Diagrama de Despliegue UML)
+    6.1.2. Diseño Lógico (Arquitectura en Tres Capas)
+6.2. Diseño de Datos (Lógico y Físico)
+    6.2.1. Diseño de Datos Lógico y Mapeo Relacional
+    6.2.2. Diseño de Datos Físico
+        6.2.2.1. Tabla de Volumen y Diccionario de Datos
+        6.2.2.2. Script Completo de Base de Datos en PostgreSQL (DDL)
+        6.2.2.3. Inserción de Tuplas (Población Inicial)
+        6.2.2.4. Consultas SQL
+        6.2.2.5. Procedimientos Almacenados y Triggers
+6.3. Diseñar un Caso de Uso (Diagramas de Secuencia de los 23 Casos de Uso)
+    CICLO #1
+    CICLO #2
+7. CAPÍTULO 7. FLUJO DE TRABAJO: IMPLEMENTACIÓN
+7.1. Herramientas de Desarrollo y Stack Tecnológico Principal
+7.2. Implementación de la Arquitectura por Capas
+7.3. Comunicación Frontend-Backend (Endpoints API REST Principales)
+8. CAPÍTULO 8. CONCLUSIONES
+CAPÍTULO 9. RECOMENDACIONES
+CAPÍTULO 10. BIBLIOGRAFÍA
+CAPÍTULO 11. ANEXOS
+________________
+
+
+CAPÍTULO 1. PERFIL DEL PROYECTO
+1.1. Introducción
+En la actualidad, la gestión de centros de salud de atención ambulatoria exige procesos digitales precisos, rápidos y auditables que articulen la oferta de especialidades médicas, los servicios diagnósticos, la programación de agendas de los profesionales de salud y el seguimiento del expediente clínico de cada paciente. La administración manual o fragmentada de turnos médicos genera colisiones de horarios, demoras en la admisión de pacientes en ventanilla, falta de visibilidad de los cupos reales de 30 minutos y dificultades para consolidar antecedentes médicos e indicadores de gestión.
+
+
+Con el propósito de transformar y optimizar integralmente estos procesos operativos y asistenciales, se desarrolla el sistema de información web CLÍNICA MEDICAL (cuyo nombre de proyecto es homónimo al de la institución: CLÍNICA MEDICAL). La plataforma automatiza el catálogo institucional de 22 Especialidades Médicas y 9 Servicios Clínicos y Diagnósticos Ambulatorios, el cálculo dinámico de disponibilidad en bloques fijos de 15 minutos según el horario semanal de cada médico, la búsqueda e identificación instantánea de pacientes por Cédula de Identidad (CI) con validación de no duplicidad, la confirmación de citas mediante pasarela de pago electrónico con emisión de comprobante oficial secuencial (ej. CM-0001, CM-0009), el control de asistencia en sala de espera, la gestión del historial clínico y antecedentes médicos, y la auditoría mediante bitácora inmutable en PostgreSQL.
+1.2. Identidad y Enfoque Asistencial de CLÍNICA MEDICAL
+   * Nombre de la Institución y del Proyecto: CLÍNICA MEDICAL
+   * Política Asistencial Ambulatoria: En cumplimiento estricto de la normativa institucional, el sistema integra de manera visible en banners principales, fichas de especialidades, comprobantes de cita y pie de página el aviso reglamentario oficial:«Atención médica especializada y procedimientos ambulatorios de corta estancia. No contamos con camas ni servicio de internación hospitalaria».
+1.3. Objetivos
+1.3.1. Objetivo General
+Desarrollar e implementar el Sistema de Información Web CLÍNICA MEDICAL para la gestión integral de citas médicas, horarios de atención en 22 especialidades y 9 servicios ambulatorios, control de expedientes clínicos, pagos electrónicos y reportería gerencial de la institución CLÍNICA MEDICAL, bajo la metodología PUDS y arquitectura cliente-servidor con PHP/Laravel y PostgreSQL.
+1.3.2. Objetivos Específicos
+   * Diseñar e implementar un módulo de Seguridad, Acceso y Auditoría (CU01 a CU05) que gestione el inicio y cierre de sesión con encriptación segura (password_verify / bcrypt), recuperación de contraseña por correo mediante tokens temporales vía SMTP, administración de usuarios/permisos por rol (Administrador, Recepcionista, Médico, Paciente) y bitácora inmutable de operaciones críticas.
+   * Desarrollar el módulo de Pacientes y Datos Generales (CU06 a CU08) con búsqueda automática por Cédula de Identidad (CI), autocompletado de nombres, apellidos, teléfono y antecedentes, validación estricta de no duplicación de CI (RN01) y consulta cronológica del historial de citas.
+   * Implementar el módulo de Médicos, Especialidades y Horarios (CU09 a CU12) para administrar el plantel médico colegiado, el catálogo de las 22 especialidades médicas y 9 servicios ambulatorios, la vinculación médico-especialidad y la configuración de horarios semanales sin solapamientos en bloques fijos de 15 minutos (RF05).
+   * Construir el módulo de Gestión de Citas y Turnos Médicos (CU13 a CU19) con acceso directo desde el botón «Pedir Cita», cálculo dinámico de disponibilidad, reserva transaccional en PostgreSQL, confirmación con pasarela de pago digital, emisión de comprobante oficial secuencial (CM-0001), reprogramación, cancelación con motivo, control de asistencia en sala y agenda médica diaria.
+   * Desarrollar el módulo de Historial Clínico y Expediente Médico (CU20 a CU22) para documentar evoluciones médicas, signos vitales, diagnósticos, recetas y antecedentes permanentes (alergias, grupo sanguíneo, patologías crónicas).
+   * Integrar el módulo de Reportería y Análisis de Gestión (CU23) que consolide estadísticas de citas programadas, atenciones efectivas, tasas de inasistencia/cancelación e ingresos por pasarela de pago, exportables en formatos PDF y CSV/Excel.
+1.4. Descripción del Problema
+   * Gestión Manual y Duplicidad en el Registro de Pacientes: La ausencia de validación automática por Cédula de Identidad (CI) ocasiona registros duplicados, demoras en ventanilla al tomar datos de pacientes recurrentes y errores tipográficos en teléfonos o correos electrónicos.
+   * Cálculo Inexacto de Disponibilidad y Cruces de Horarios Médicos: La programación manual en agendas físicas o planillas impide calcular en tiempo real los bloques libres de 15 minutos por cada médico y especialidad, provocando sobrecupos, cruces de turnos y largos tiempos de espera.
+   * Falta de Confirmación Automatizada de Pagos y Comprobantes: Los pacientes que desean reservar turnos a distancia carecen de una pasarela integrada que valide el pago electrónico y emita al instante un comprobante oficial numerado (CM-0001) con el detalle del consultorio.
+   * Dispersión del Expediente Clínico y Antecedentes Médicos: Las notas de evolución, recetas y factores de riesgo (alergias, patologías de base) almacenados en fichas de papel dificultan la consulta inmediata por parte del médico tratante y del propio paciente.
+   * Ausencia de Auditoría y Reportería Oportuna: La dirección administrativa no cuenta con una bitácora digital para auditar modificaciones críticas ni con reportes inmediatos sobre el rendimiento de las 22 especialidades, tasas de inasistencia o ingresos recaudados.
+1.5. Alcance del Sistema
+1.5.1. Catálogo Institucional de 22 Especialidades Médicas
+Cada una de las 22 especialidades cuenta en el sistema con su ficha detallada, descripción orientativa para pacientes, lista de servicios específicos, médicos asignados, aviso de política ambulatoria y botón directo «Pedir Cita»:
+
+
+N°
+	Especialidad Médica
+	Servicios Específicos y Alcance Asistencial Ambulatorio
+	1
+	CARDIOLOGÍA
+	Electrocardiograma digital de reposo, Monitoreo MAPA 24h, Holter de ritmo cardíaco, riesgo quirúrgico.
+	2
+	DERMATOLOGÍA
+	Dermatoscopía digital, acné y rosácea, crioterapia de lesiones, extirpación menor ambulatoria.
+	3
+	ENDOCRINOLOGÍA
+	Control de diabetes mellitus, patología tiroidea, nódulos y metabolismo hormonal.
+	4
+	FISIOTERAPIA
+	Rehabilitación motora traumatológica, dolor cervical/lumbar, lesiones deportivas, electroestimulación.
+	5
+	FONOAUDIOLOGÍA
+	Terapia de deglución (disfagia), articulación del lenguaje infantil y rehabilitación de la voz.
+	6
+	GASTROENTEROLOGÍA
+	Reflujo gastroesofágico, gastritis, Helicobacter pylori, colon irritable e hígado graso.
+	7
+	GINECOLOGÍA
+	Control anual, citología cervical, Papanicolaou, colposcopía HD y planificación familiar.
+	8
+	MASTOLOGÍA
+	Examen clínico mamario, detección precoz, correlación ecográfica y punción PAAF ambulatoria.
+	9
+	MEDICINA GENERAL
+	Chequeos preventivos, patologías agudas, certificados de salud y triaje asistencial.
+	10
+	MEDICINA VASCULAR
+	Insuficiencia venosa, várices, escleroterapia ambulatoria y prevención de trombosis.
+	11
+	NEUMOLOGÍA
+	Espirometría simple y con broncodilatador, control de asma, EPOC y apnea del sueño.
+	12
+	NEUROLOGÍA
+	Cefaleas complejas, migrañas, epilepsia, temblores, neuropatías periféricas y memoria.
+	13
+	NUTRIOLOGÍA
+	Bioimpedanciometría corporal, planes para diabetes e hipertensión, nutrición clínica.
+	14
+	OFTALMOLOGÍA
+	Agudeza visual computarizada, tonometría de aplanación (glaucoma), biomicroscopía y fondo de ojo.
+	15
+	OTORRINOLARINGOLOGÍA
+	Videootoscopía, nasofaringoscopía, lavado y aspiración ótica, rinitis y sinusitis.
+	16
+	PEDIATRÍA
+	Control de niño sano, curvas de crecimiento, esquemas de vacunación e infecciones pediátricas.
+	17
+	PROCTOLOGÍA
+	Anoscopía diagnóstica de consultorio, ligadura elástica de hemorroides y fisuras anales.
+	18
+	PSICOLOGÍA
+	Psicoterapia cognitivo-conductual, manejo de ansiedad, estrés, duelo y regulación emocional.
+	19
+	PSIQUIATRÍA
+	Evaluación diagnóstica médica, psicofarmacología, depresión mayor, insomnio y TDAH.
+	20
+	REUMATOLOGÍA
+	Artritis reumatoide, lupus eritematoso, infiltraciones articulares analgésicas y gota.
+	21
+	TRAUMATOLOGÍA
+	Inmovilizaciones ortopédicas (fibra de vidrio), esguinces, infiltración de ácido hialurónico y controles.
+	22
+	UROLOGÍA
+	Chequeo prostático preventivo (PSA + tacto rectal), litiasis renal e infecciones urinarias.
+	1.5.2. Catálogo de 9 Servicios Clínicos y Diagnósticos (Ambulatorios)
+N°
+	Servicio Clínico / Diagnóstico
+	Descripción Operativa Ambulatoria
+	1
+	AUDIOMETRÍA
+	Cabina insonorizada certificada y audiometría tonal/vocal (reposo auditivo de 14h previas).
+	2
+	BIOPSIAS
+	Toma ambulatoria de muestras tisulares cutáneas y de partes blandas con anestesia local.
+	3
+	CIRUGÍAS OFTALMOLÓGICAS
+	Procedimientos de corta estancia (pterigión, chalazión, blefaroplastia menor) con alta el mismo día y sin internación.
+	4
+	DERMATOLOGÍA (Procedimientos)
+	Crioterapia con nitrógeno líquido, electrofulguración y legrados indoloros.
+	5
+	ELECTROMEDICINA
+	Electrocardiogramas continuos, Holter 24h, espirometría digital y electrodiagnóstico.
+	6
+	ENFERMERÍA
+	Inyectables intramusculares y endovenosos, curaciones avanzadas de heridas y toma de signos vitales.
+	7
+	FONOAUDIOLOGÍA (Servicio)
+	Sesiones programadas de entrenamiento foniátrico y deglutorio.
+	8
+	IMAGENOLOGÍA
+	Radiografías digitales de alta definición (Rayos X) y ecografía doppler general y vascular.
+	9
+	PAPANICOLAOU-COLPOSCOPIA Y LABORATORIO CLÍNICO
+	Citología cervical convencional y en base líquida, colposcopía videodirigida, más toma de muestras de sangre y orina.
+	1.5.3. Alcance Funcional por Módulos del Sistema
+   * Módulo I: Seguridad, Acceso y Auditoría: Inicio y cierre de sesión, recuperación de contraseña por correo con token temporal vía SMTP, gestión de usuarios/roles y consulta de bitácora del sistema (CU01 a CU05).
+   * Módulo II: Pacientes y Datos Generales: Registro de pacientes con validación de CI único (RN01), búsqueda y autocompletado instantáneo por CI, actualización/baja lógica y consulta del historial de citas (CU06 a CU08).
+   * Módulo III: Médicos, Especialidades y Horarios: Gestión de médicos con matrícula profesional única, gestión de las 22 especialidades y 9 servicios ambulatorios, asignación médico-especialidad y configuración de bloques horarios de 30 minutos sin solapamiento (CU09 a CU12).
+   * Módulo IV: Gestión de Citas y Turnos Médicos: Acceso directo desde «Pedir Cita», cálculo dinámico de disponibilidad en bloques de 15 minutos (RF05), programación transaccional de cita, confirmación con pasarela de pago electrónico, generación de comprobante oficial secuencial (CM-0001), reprogramación, cancelación con motivo, registro de asistencia en sala y consulta de agenda médica (CU13 a CU19).
+   * Módulo V: Historial Clínico y Expediente Médico: Registro inmutable de consulta médica (signos vitales, anamnesis, diagnóstico, tratamiento), consulta cronológica del expediente clínico y actualización de antecedentes médicos permanentes (CU20 a CU22).
+   * Módulo VI: Reportería y Análisis de Gestión: Generación de reportes y estadísticas operativas y financieras filtrables por fecha, especialidad, médico y estado, con exportación a PDF y CSV (CU23).
+CAPÍTULO 2. MARCO TEÓRICO Y MÉTODO DE ISHIKAWA
+2.1. Sistemas de Información en Salud y Gestión Ambulatoria
+Un Sistema de Información en Salud (HIS) es un conjunto integrado de personas, datos, procedimientos y tecnología que recolecta, procesa, almacena y distribuye información clínica y administrativa para respaldar la atención al paciente y la toma de decisiones institucionales (Laudon & Laudon, 2020). En CLÍNICA MEDICAL, el sistema opera bajo tres niveles complementarios:
+
+
+   * Sistema de Procesamiento de Transacciones (TPS): Automatiza las operaciones diarias de alta frecuencia: registro de pacientes por CI, cálculo de bloques de 15 minutos, reserva de citas médicas, cobro por pasarela de pago y registro de consultas clínicas.
+   * Sistema de Información Gerencial (MIS): Consolida métricas de citas programadas, atenciones efectivas, inasistencias, cancelaciones y recaudación financiera para la administración (CU23).
+   * Sistema de Apoyo a las Decisiones (DSS): Asiste en la optimización de la oferta de horarios médicos según la demanda real de las 22 especialidades y 9 servicios clínicos.
+2.2. Gestión de Agendas Médicas y Cálculo Dinámico de Bloques Horarios
+La planificación de turnos en clínicas ambulatorias requiere dividir la jornada semanal de cada profesional (lunes a viernes, y sábados únicamente hasta el mediodía) en intervalos discretos y uniformes (bloques fijos de 15 minutos). El motor de disponibilidad de CLÍNICA MEDICAL procesa la matriz de horarios del médico seleccionado para el día de la semana consultado, genera los intervalos [hora_inicio, hora_inicio + 15 min] y descuenta en tiempo real aquellos bloques que ya posean citas en estado Programada, Pendiente o Confirmada, evitando colisiones mediante transacciones ACID en PostgreSQL.
+2.3. Expediente Clínico Electrónico Ambulatorio y Trazabilidad
+El Expediente Clínico Electrónico (ECE) ambulatorio recopila de manera longitudinal las evoluciones diagnósticas, prescripciones farmacológicas y antecedentes permanentes del paciente (grupo sanguíneo, alergias, patologías crónicas e intervenciones previas). Su carácter inmutable tras el cierre de cada atención (CU20), sumado al registro en la bitácora de auditoría (CU05), garantiza el cumplimiento ético, legal y asistencial bajo la política de corta estancia sin internación hospitalaria.
+2.4. Arquitectura Cliente-Servidor en Tres Capas y Stack Tecnológico
+Capa Arquitectónica
+	Tecnología Principal
+	Función en el Sistema CLÍNICA MEDICAL
+	Capa de Presentación (Frontend)
+	HTML5, CSS3, JavaScript, React / Vue.js, TailwindCSS / Bootstrap
+	Interfaz web responsiva, catálogo interactivo de 22 especialidades y 9 servicios, buscador reactivo por CI, paneles por rol y generación de comprobantes CM-XXXX.
+	Capa de Lógica de Negocio (Backend)
+	PHP 8.2+ / Framework Laravel (MVC)
+	Controladores, Servicios, validación de reglas de negocio (RN01, RF05), autenticación con password_verify/bcrypt, integración con Pasarela de Pago y Servidor SMTP.
+	Capa de Datos (Persistencia)
+	PostgreSQL 16+
+	Almacenamiento relacional ACID, claves foráneas, restricciones UNIQUE y CHECK, vistas, funciones almacenadas y triggers de auditoría y validación de cruces.
+	Infraestructura y Despliegue
+	Render / Railway / Netlify + GitHub
+	Despliegue cloud con HTTPS, base de datos PostgreSQL administrada y control de versiones con Git.
+	2.5. Proceso Unificado de Desarrollo de Software (PUDS) y Modelado UML
+El desarrollo de CLÍNICA MEDICAL se rige por el Proceso Unificado de Desarrollo de Software (PUDS / RUP), caracterizado por ser dirigido por casos de uso, centrado en la arquitectura e iterativo e incremental (Jacobson, Booch & Rumbaugh, 1999). El proyecto se organiza en dos iteraciones troncales:
+
+
+   * Ciclo #1 (Avance 50% - Núcleo Fundacional y Transaccional Base): Comprende los casos de uso CU01, CU02, CU04, CU06, CU07, CU09, CU10, CU11, CU12, CU13 y CU14, estableciendo la seguridad base, el padrón de pacientes y médicos, las 22 especialidades, la matriz de horarios y la reserva de citas.
+   * Ciclo #2 (Final 100% - Pagos, Control Operativo, Expediente Clínico, Auditoría y Reportes): Comprende los casos de uso CU03, CU05, CU08, CU15, CU16, CU17, CU18, CU19, CU20, CU21, CU22 y CU23, completando la pasarela de pagos, recuperación SMTP, asistencia en sala, historial clínico y reportería gerencial.
+2.6. Seguridad en Aplicaciones Web
+Se implementa Control de Acceso Basado en Roles (RBAC) para los 4 actores humanos, hash criptográfico de contraseñas (password_verify / bcrypt), tokens temporales de un solo uso con expiración de 30 minutos para recuperación de cuenta por correo (CU03), sentencias preparadas vía PDO/ORM para prevenir Inyección SQL, protección CSRF y registro inmutable en la tabla bitacora (CU05).
+2.7. Método de Ishikawa Aplicado a CLÍNICA MEDICAL
+1) IDENTIFICAR EL PROBLEMA
+El problema central identificado es la ineficiencia operativa en el agendamiento de citas ambulatorias, control de horarios de las 22 especialidades y seguimiento de historiales clínicos en CLÍNICA MEDICAL, producto de la gestión manual y la carencia de una plataforma web centralizada.
+1.1) Lista Inicial y Depuración de Problemas
+Se identificaron y depuraron los problemas principales, descartando aquellos que son efectos secundarios directos:
+
+
+ID
+	Problema Identificado
+	Área Afectada
+	Propietario del Problema
+	P01
+	Registro manual de pacientes con duplicidad de CI y demoras en ventanilla al buscar datos previos.
+	Recepción y Admisión
+	Recepcionista
+	P02
+	Cruces de turnos y cálculo erróneo de bloques libres de 15 minutos en las 22 especialidades médicas.
+	Gestión de Horarios y Agendas
+	Administrador
+	P03
+	Imposibilidad de confirmar reservas web con pago electrónico inmediato y emisión de comprobante oficial (CM-XXXX).
+	Reserva de Citas y Caja
+	Paciente / Recepcionista
+	P04
+	Descontrol en la reprogramación, cancelación y registro de asistencia o inasistencia de pacientes en sala.
+	Control Operativo de Consultorios
+	Recepcionista
+	P05
+	Fragmentación del historial clínico y falta de acceso inmediato a los antecedentes médicos de riesgo del paciente.
+	Atención Médica Ambulatoria
+	Médico
+	P06
+	Ausencia de bitácora de auditoría y demora en la elaboración de reportes estadísticos de atención e ingresos.
+	Dirección y Auditoría
+	Administrador
+	1.2) Análisis Causal de Problemas (Grafo Dirigido)
+Nodo Origen
+	Nodo Destino
+	Relación de Causalidad Directa
+	P01
+	P03
+	Pacientes duplicados o sin CI validado impiden emitir comprobantes únicos de cita.
+	P01
+	P05
+	La duplicidad de fichas dispersa los antecedentes y evoluciones clínicas del mismo paciente.
+	P02
+	P03
+	Sin cálculo automático de bloques de 15 min no se pueden ofrecer turnos reales en línea.
+	P02
+	P04
+	Horarios mal configurados provocan colisiones y reprogramaciones forzadas en recepción.
+	P03, P04
+	P06
+	La falta de estados claros de pago y asistencia distorsiona las métricas e informes gerenciales.
+	P05
+	P06
+	Consultas no digitalizadas impiden auditar las atenciones efectivas por especialidad.
+	1.3) Estimación, Cuantificación y Alternativas de Cambio
+ID
+	Frecuencia
+	Impacto
+	Justificación Cuantitativa
+	Alternativa de Cambio en CLÍNICA MEDICAL
+	P01
+	Diaria
+	Alto
+	Pérdida de 5 a 8 min por paciente en recepción y registros duplicados.
+	Búsqueda automática por CI, autocompletado y validación RN01 (CU06, CU07).
+	P02
+	Diaria
+	Alto
+	Sobrecupos y tiempos de espera superiores a 45 minutos en consultorio.
+	Configuración de horarios sin solapamiento y cálculo dinámico cada 15 min RF05 (CU12, CU13).
+	P03
+	Diaria
+	Alto
+	Abandono de reservas telefónicas y falta de cobro anticipado.
+	Reserva web con Pasarela de Pago y comprobante secuencial CM-0001 (CU14, CU15).
+	P04
+	Diaria
+	Medio-Alto
+	Cupos perdidos por cancelaciones no liberadas a tiempo.
+	Reprogramación, cancelación con motivo y control de asistencia en sala (CU16, CU17, CU18).
+	P05
+	Diaria
+	Alto
+	Riesgo clínico por desconocimiento de alergias o patologías crónicas.
+	Expediente clínico digital inmutable y ficha de antecedentes permanentes (CU20, CU21, CU22).
+	P06
+	Semanal
+	Alto
+	Días de retraso en cierres estadísticos y falta de trazabilidad de cambios.
+	Bitácora inmutable y generador de reportes en PDF/CSV (CU05, CU23).
+	2) IDENTIFICAR LAS PRINCIPALES CATEGORÍAS (6M) Y 3) CAUSAS RAÍZ
+Categoría (6M)
+	Descripción en el Contexto de CLÍNICA MEDICAL
+	Causas Específicas Identificadas
+	1. Mano de Obra
+	Personal de recepción, médicos de las 22 especialidades y administración.
+	• Recepcionistas que buscan fichas manualmente.• Sobrecarga operativa en horas pico de consulta ambulatoria.• Falta de roles digitales diferenciados por función.
+	2. Métodos
+	Procedimientos de admisión, agendamiento, cobro y registro clínico.
+	• Agendamiento empírico sin cálculo de bloques de 15 minutos.• Verificación manual de disponibilidad médico por médico.• Ausencia de aviso estandarizado de política sin internación.
+	3. Máquinas / Tecnología
+	Infraestructura de software, base de datos y servicios de red.
+	• Carencia de plataforma web integrada con pasarela de pagos.• Inexistencia de base de datos PostgreSQL transaccional.• Falta de integración SMTP para autogestión de contraseñas.
+	4. Materiales / Datos
+	Padrón de pacientes, horarios, historias clínicas y comprobantes.
+	• Cédulas de identidad (CI) duplicadas o incompletas.• Historiales clínicos y antecedentes en papel.• Comprobantes manuales sin numeración secuencial CM-XXXX.
+	5. Medio Ambiente
+	Demanda asistencial en las 22 especialidades y 9 servicios clínicos.
+	• Alta afluencia de pacientes ambulatorios de corta estancia.• Exigencia de atención puntual y reserva desde dispositivos móviles.
+	6. Medición / Control
+	Indicadores de asistencia, ingresos, cancelaciones y auditoría.
+	• Sin registro de auditoría (IP, usuario, fecha/hora, acción).• Imposibilidad de medir tasas de inasistencia y efectividad por médico en tiempo real.
+	4) ANALIZAR Y DISCUTIR EL DIAGRAMA DE ISHIKAWA
+El análisis demuestra que las categorías Métodos y Máquinas/Tecnología concentran las causas raíz determinantes. La carencia de un motor transaccional que articule el catálogo de 22 especialidades y 9 servicios ambulatorios con el cálculo automático de bloques de 15 minutos (RF05) y la validación de CI único (RN01) desencadena cuellos de botella tanto en recepción como en los consultorios médicos. La implementación de los 23 casos de uso del sistema CLÍNICA MEDICAL erradica directamente estas causas raíz.
+CAPÍTULO 3. MODELO DE NEGOCIO
+3.1. Diagramas de Actividades de los Procesos Principales
+Proceso 1: Reserva de Cita Médica Web con Búsqueda por CI y Pasarela de Pago (CU06, CU13, CU14, CU15)
+   1. Paciente / Recepcionista: Accede al botón «Pedir Cita» general o desde la ficha de una de las 22 especialidades médicas.
+   2. Actor: Ingresa la Cédula de Identidad (CI) del paciente.
+   3. Sistema CLÍNICA MEDICAL: Busca el CI en PostgreSQL:
+   * [Si el CI existe]: Autocompleta nombres, apellidos, teléfono y antecedentes.
+   * [Si el CI es nuevo]: Valida la no duplicación (RN01) y registra inmediatamente al paciente en estado activo (CU06).
+   4. Actor: Selecciona Especialidad (entre las 22 disponibles), Médico asignado y Fecha deseada.
+   5. Sistema: Ejecuta cálculo dinámico de disponibilidad (RF05), generando bloques fijos de 15 minutos y descontando turnos ocupados (Programada / Confirmada).
+   6. Actor: Selecciona bloque horario libre e ingresa motivo de consulta.
+   7. Sistema: Inicia transacción en PostgreSQL, verifica ausencia de colisión concurrente y crea la cita:
+   * [Si es por Recepción]: Registra estado Programada y emite comprobante oficial CM-XXXX.
+   * [Si es por Paciente Web]: Registra estado Pendiente y redirige a la Pasarela de Pago (CU15).
+   8. Pasarela de Pago: Procesa el cobro digital (QR/Tarjeta/Transferencia):
+   * [Pago Aprobado]: Sistema registra token de transacción, cambia estado a Confirmada y genera el Comprobante Oficial secuencial (CM-0001, detalle de consultorio y aviso de política ambulatoria sin internación) listo para descargar o imprimir.
+   * [Pago Rechazado]: Sistema anula la reserva temporal y libera el bloque de 15 minutos.
+Proceso 2: Control de Asistencia en Sala y Atención Médica con Historial Clínico (CU18, CU19, CU20, CU22)
+   1. Paciente: Asiste a las instalaciones de CLÍNICA MEDICAL con su comprobante CM-XXXX.
+   2. Recepcionista: Consulta la cita del día actual y registra la asistencia cambiando el estado a Confirmada (o al cierre de la jornada marca Inasistencia si no se presentó - CU18).
+   3. Médico: Consulta su Agenda Médica del día (CU19), visualiza al paciente en sala de espera y selecciona «Atender Consulta» (CU20).
+   4. Sistema: Carga automáticamente los antecedentes médicos permanentes del paciente (grupo sanguíneo, alergias, patologías crónicas - CU22).
+   5. Médico: Registra signos vitales, síntomas, anamnesis, diagnóstico principal, tratamiento recetado y observaciones; actualiza antecedentes si corresponde.
+   6. Sistema: Guarda el registro clínico inmutable en historial_clinico, actualiza el estado de la cita a Atendida y graba el evento en la bitacora del sistema (CU05).
+CAPÍTULO 4. FLUJO DE TRABAJO: CAPTURA DE REQUISITOS
+4.1. Encontrar e Identificar Actores y Casos de Uso
+4.1.1. Identificación y Descripción de los Actores
+Código
+	Actor
+	Tipo de Actor
+	Descripción de Responsabilidades en CLÍNICA MEDICAL
+	A0
+	Usuario
+	Actor Abstracto
+	Representa la entidad base del sistema de la cual heredan los roles humanos. Proporciona los atributos y comportamientos comunes de autenticación y manejo de sesión (CU01, CU02).
+	A1
+	Administrador
+	Actor Humano (Primario)
+	Personal directivo con acceso total para parametrizar el sistema, administrar cuentas de usuarios, roles, catálogos de médicos, las 22 especialidades y 9 servicios, configuración de horarios, auditoría mediante la bitácora y emisión de reportes estadísticos globales.
+	A2
+	Recepcionista
+	Actor Humano (Primario)
+	Personal operativo del área de recepción encargado del registro presencial de pacientes (con búsqueda por CI), búsqueda de disponibilidades, agendamiento, reprogramación, cancelación de citas y control físico de asistencia en sala.
+	A3
+	Médico
+	Actor Humano (Primario)
+	Profesional de salud colegiado que accede a su agenda diaria de consultas programadas, revisa los antecedentes clínicos de los pacientes asignados y registra el detalle de cada atención médica ambulatoria.
+	A4
+	Paciente
+	Actor Humano (Primario)
+	Usuario externo o cliente de CLÍNICA MEDICAL que accede a la plataforma web para autogestionar su perfil, recuperar su acceso mediante correo electrónico, buscar médicos en las 22 especialidades, reservar citas con pago digital y consultar su propio historial.
+	A5
+	Pasarela de Pago
+	Sistema Externo (Secundario)
+	Plataforma transaccional financiera externa que procesa y valida los pagos electrónicos (tarjetas, transferencias o QR) para confirmar las citas médicas solicitadas en línea (CU15).
+	A6
+	Servidor de Correo SMTP
+	Sistema Externo (Secundario)
+	Servicio de mensajería encargado de enviar los enlaces seguros y tokens de verificación temporal para la recuperación de contraseñas de los pacientes (CU03).
+	4.1.2. Listado Estructurado de los 23 Casos de Uso por Módulo
+   * Módulo I: Seguridad, Acceso y Auditoría
+   * CU01: Iniciar Sesión
+   * CU02: Cerrar Sesión
+   * CU03: Recuperar Contraseña por Correo
+   * CU04: Gestionar Usuarios y Permisos
+   * CU05: Consultar Bitácora del Sistema
+   * Módulo II: Pacientes y Datos Generales
+   * CU06: Registrar Paciente
+   * CU07: Gestionar Datos de Paciente
+   * CU08: Consultar Historial de Citas del Paciente
+   * Módulo III: Médicos, Especialidades y Horarios
+   * CU09: Gestionar Médicos
+   * CU10: Gestionar Especialidades Médicas
+   * CU11: Asignar Especialidad a Médico
+   * CU12: Configurar Horarios de Atención
+   * Módulo IV: Gestión de Citas y Turnos Médicos
+   * CU13: Consultar Disponibilidad de Citas
+   * CU14: Programar Cita Médica
+   * CU15: Confirmar Cita con Pasarela de Pago
+   * CU16: Reprogramar Cita Médica
+   * CU17: Cancelar Cita Médica
+   * CU18: Registrar Asistencia del Paciente
+   * CU19: Consultar Agenda Médica
+   * Módulo V: Historial Clínico y Expediente Médico
+   * CU20: Registrar Consulta en Historial Clínico
+   * CU21: Consultar Expediente e Historial Clínico
+   * CU22: Actualizar Antecedentes Médicos del Paciente
+   * Módulo VI: Reportería y Análisis de Gestión
+   * CU23: Generar Reportes y Estadísticas de Atención
+4.2. Tabla de Priorización de Casos de Uso y Matriz General de Relaciones UML
+Código
+	Nombre del Caso de Uso
+	Actores Primarios / Secundarios
+	Tipo de Relación UML
+	Criticidad
+	Prioridad
+	Ciclo PUDS
+	CU01
+	Iniciar Sesión
+	Administrador, Recepcionista, Médico, Paciente
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU02
+	Cerrar Sesión
+	Administrador, Recepcionista, Médico, Paciente
+	Asociación directa
+	Alta
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU03
+	Recuperar Contraseña por Correo
+	Paciente, Servidor Correo SMTP
+	Asociación directa
+	Media
+	2 - Media
+	Ciclo 2 (Final 100%)
+	CU04
+	Gestionar Usuarios y Permisos
+	Administrador
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU05
+	Consultar Bitácora del Sistema
+	Administrador
+	Asociación directa
+	Alta
+	2 - Alta
+	Ciclo 2 (Final 100%)
+	CU06
+	Registrar Paciente
+	Recepcionista, Paciente
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU07
+	Gestionar Datos de Paciente
+	Recepcionista, Paciente
+	Asociación directa
+	Alta
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU08
+	Consultar Historial de Citas del Paciente
+	Recepcionista, Paciente, Médico
+	Asociación directa
+	Media
+	2 - Media
+	Ciclo 2 (Final 100%)
+	CU09
+	Gestionar Médicos
+	Administrador
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU10
+	Gestionar Especialidades Médicas
+	Administrador
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU11
+	Asignar Especialidad a Médico
+	Administrador
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU12
+	Configurar Horarios de Atención
+	Administrador
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU13
+	Consultar Disponibilidad de Citas
+	Recepcionista, Paciente, Médico
+	<<include>> de CU14
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU14
+	Programar Cita Médica
+	Recepcionista, Paciente
+	Caso de uso principal
+	Crítica
+	1 - Alta
+	Ciclo 1 (Avance 50%)
+	CU15
+	Confirmar Cita con Pasarela de Pago
+	Paciente, Pasarela de Pago
+	<<include>> de CU14 (Paciente)
+	Crítica
+	1 - Alta
+	Ciclo 2 (Final 100%)
+	CU16
+	Reprogramar Cita Médica
+	Recepcionista
+	<<extend>> de CU14
+	Alta
+	2 - Alta
+	Ciclo 2 (Final 100%)
+	CU17
+	Cancelar Cita Médica
+	Recepcionista, Paciente
+	Asociación directa
+	Alta
+	2 - Alta
+	Ciclo 2 (Final 100%)
+	CU18
+	Registrar Asistencia del Paciente
+	Recepcionista
+	Asociación directa
+	Alta
+	2 - Alta
+	Ciclo 2 (Final 100%)
+	CU19
+	Consultar Agenda Médica
+	Médico, Recepcionista
+	Asociación directa
+	Alta
+	1 - Alta
+	Ciclo 2 (Final 100%)
+	CU20
+	Registrar Consulta en Historial Clínico
+	Médico
+	Asociación directa
+	Crítica
+	1 - Alta
+	Ciclo 2 (Final 100%)
+	CU21
+	Consultar Expediente e Historial Clínico
+	Médico, Paciente
+	Asociación directa
+	Alta
+	2 - Alta
+	Ciclo 2 (Final 100%)
+	CU22
+	Actualizar Antecedentes Médicos del Paciente
+	Médico, Paciente
+	Asociación directa
+	Alta
+	2 - Alta
+	Ciclo 2 (Final 100%)
+	CU23
+	Generar Reportes y Estadísticas de Atención
+	Administrador, Recepcionista
+	Asociación directa
+	Alta
+	2 - Media
+	Ciclo 2 (Final 100%)
+	
+
+   * Justificación de Selección para el Ciclo #1 (Avance 50% — 11 Casos de Uso): Se seleccionaron CU01, CU02, CU04, CU06, CU07, CU09, CU10, CU11, CU12, CU13 y CU14 porque construyen la arquitectura base de autenticación, control de usuarios/roles, registro de pacientes con validación de CI único (RN01), administración del plantel médico, catálogo de las 22 especialidades médicas, matriz semanal de horarios en bloques de 30 minutos (RF05) y el flujo central de disponibilidad y programación de citas médicas.
+   * Justificación de Selección para el Ciclo #2 (Final 100% — 12 Casos de Uso): Se seleccionaron CU03, CU05, CU08, CU15, CU16, CU17, CU18, CU19, CU20, CU21, CU22 y CU23 porque completan el ciclo transaccional, financiero, asistencial y analítico: cobro electrónico con pasarela de pagos, recuperación de contraseñas vía SMTP, reprogramación, cancelación, control de asistencia en sala, agenda médica diaria, expediente clínico inmutable, antecedentes de riesgo, bitácora de auditoría y reportes estadísticos exportables.
+4.3. Detalles y Especificación Completa de los 23 Casos de Uso
+MÓDULO I: SEGURIDAD, ACCESO Y AUDITORÍA
+4.3.1. CU01: Iniciar Sesión
+Atributo
+	Especificación
+	Caso de Uso
+	CU01: Iniciar Sesión
+	Actores
+	Administrador, Recepcionista, Médico, Paciente (heredan de Usuario).
+	Propósito
+	Validar la identidad del usuario y otorgar acceso al menú correspondiente según su rol.
+	Descripción
+	El usuario ingresa su identificador (nombre de usuario o correo electrónico) y su contraseña. El sistema comprueba la existencia de la cuenta, verifica que el estado esté activo y contrasta la clave encriptada utilizando las funciones criptográficas seguras de PHP (password_verify). Si las credenciales son válidas, inicializa la sesión en el servidor y carga la vista permitida.
+	Precondición
+	El usuario debe estar registrado en el sistema con estado activo.
+	Flujo de Proceso
+	1. El actor accede al formulario de inicio de sesión de CLÍNICA MEDICAL.2. Ingresa su usuario/correo y contraseña.3. El sistema verifica la existencia del registro y que estado = 'activo'.4. El sistema valida el hash de la contraseña mediante password_verify.5. El sistema crea la sesión autenticada, registra el evento en la bitácora y redirige al panel de su rol.
+	Postcondición
+	Sesión autenticada creada en el servidor y redirección al panel de control.
+	Excepciones
+	Credenciales incorrectas; cuenta inactiva o suspendida; campos vacíos.
+	4.3.2. CU02: Cerrar Sesión
+Atributo
+	Especificación
+	Caso de Uso
+	CU02: Cerrar Sesión
+	Actores
+	Administrador, Recepcionista, Médico, Paciente.
+	Propósito
+	Finalizar la sesión activa del usuario para garantizar la seguridad de los datos.
+	Descripción
+	El actor selecciona la opción de cerrar sesión. El sistema destruye todas las variables de sesión del servidor web, invalida la cookie de sesión y redirige inmediatamente al formulario de acceso público, impidiendo el retorno mediante el historial del navegador.
+	Precondición
+	Existir una sesión activa en el navegador.
+	Postcondición
+	Sesión destruida y acceso restringido a páginas internas.
+	4.3.3. CU03: Recuperar Contraseña por Correo
+Atributo
+	Especificación
+	Caso de Uso
+	CU03: Recuperar Contraseña por Correo
+	Actores
+	Paciente (Iniciador), Servidor de Correo SMTP (Secundario).
+	Propósito
+	Permitir al paciente restablecer sus credenciales de acceso de forma segura sin intervención manual del personal administrativo.
+	Descripción
+	El paciente accede a la opción de recuperación de cuenta e introduce su correo electrónico registrado. El sistema comprueba que el correo pertenezca exclusivamente a un paciente activo; de ser así, genera un token criptográfico único con una vigencia temporal limitada (30 minutos) que persiste en la base de datos PostgreSQL. El sistema solicita al Servidor de Correo SMTP el despacho de un enlace de restablecimiento. Al abrir el enlace, el paciente ingresa su nueva contraseña, la cual es hasheada y actualizada en la base de datos.
+	Precondición
+	La cuenta debe existir, estar activa y poseer un correo electrónico válido registrado.
+	Postcondición
+	Contraseña actualizada y token invalidado tras su uso o expiración.
+	4.3.4. CU04: Gestionar Usuarios y Permisos
+Atributo
+	Especificación
+	Caso de Uso
+	CU04: Gestionar Usuarios y Permisos
+	Actores
+	Administrador.
+	Propósito
+	Administrar las cuentas de acceso del personal de la clínica y definir sus privilegios.
+	Descripción
+	Permite al administrador crear nuevas cuentas de acceso, asociarlas a un perfil (médico, recepcionista, administrador o paciente), modificar nombres de usuario, restablecer contraseñas de personal administrativo y asignar o restringir roles de acceso. Incluye la activación o desactivación lógica de cuentas para impedir accesos no autorizados sin eliminar la integridad referencial.
+	Precondición
+	Administrador autenticado en el sistema.
+	Postcondición
+	Cuenta de usuario creada, actualizada o desactivada en la base de datos.
+	4.3.5. CU05: Consultar Bitácora del Sistema
+Atributo
+	Especificación
+	Caso de Uso
+	CU05: Consultar Bitácora del Sistema
+	Actores
+	Administrador.
+	Propósito
+	Monitorear y auditar de forma exhaustiva las operaciones sensibles realizadas en la aplicación.
+	Descripción
+	El administrador accede al módulo exclusivo de auditoría. El sistema despliega un registro cronológico no modificable que detalla: identificador de la acción, usuario ejecutor, rol, fecha, hora exacta, dirección IP, módulo afectado y tipo de evento ejecutado (login, creación de cita, reprogramación, pagos, modificación de expedientes). El módulo permite aplicar filtros por rango de fechas, usuario o tipo de operación.
+	Precondición
+	Administrador autenticado con rol exclusivo.
+	Postcondición
+	Despliegue de los registros de auditoría sin alteración del contenido de la base de datos.
+	MÓDULO II: PACIENTES Y DATOS GENERALES
+4.3.6. CU06: Registrar Paciente
+Atributo
+	Especificación
+	Caso de Uso
+	CU06: Registrar Paciente
+	Actores
+	Recepcionista, Paciente.
+	Propósito
+	Ingresar un nuevo paciente al sistema garantizando la consistencia de sus datos básicos.
+	Descripción
+	El actor completa el formulario con los campos mínimos requeridos: Cédula de Identidad (CI), nombres, apellidos, fecha de nacimiento, sexo, teléfono, correo electrónico y dirección domiciliaria. El sistema valida la integridad de los datos y comprueba mediante reglas de negocio (RN01) que no exista otro paciente con el mismo documento de identidad. Si las validaciones son exitosas, almacena el registro en PostgreSQL en estado activo. También puede invocarse de inmediato desde el buscador por CI durante la reserva de cita si el paciente es nuevo.
+	Precondición
+	El documento de identidad (CI) ingresado no debe estar registrado previamente (RN01).
+	Postcondición
+	Paciente creado y habilitado para recibir programaciones de citas médicas.
+	4.3.7. CU07: Gestionar Datos de Paciente
+Atributo
+	Especificación
+	Caso de Uso
+	CU07: Gestionar Datos de Paciente
+	Actores
+	Recepcionista, Paciente.
+	Propósito
+	Actualizar la información de contacto o demográfica del paciente y controlar su estado en el sistema.
+	Descripción
+	Permite buscar y seleccionar a un paciente por su CI o apellidos para actualizar teléfonos, correo electrónico o dirección. Al ingresar el CI en el módulo de citas, autocompleta automáticamente nombres, apellidos, teléfono y antecedentes. La recepcionista puede además realizar una desactivación lógica de la cuenta cuando el paciente ya no requiera atención en la clínica, preservando en todo momento sus registros históricos.
+	Precondición
+	El paciente debe existir registrado en la base de datos.
+	Postcondición
+	Datos personales modificados o estado del paciente actualizado.
+	4.3.8. CU08: Consultar Historial de Citas del Paciente
+Atributo
+	Especificación
+	Caso de Uso
+	CU08: Consultar Historial de Citas del Paciente
+	Actores
+	Recepcionista, Paciente, Médico.
+	Propósito
+	Brindar visibilidad completa sobre los turnos médicos previos y futuros del paciente.
+	Descripción
+	Presenta una lista detallada y ordenada cronológicamente de todas las citas asociadas al paciente. Para cada registro se visualiza: código secuencial de cita (CM-0001), fecha, hora, médico tratante, especialidad médica, consultorio y estado (Programada, Pendiente, Confirmada, Atendida, Cancelada o Inasistencia).
+	Precondición
+	Paciente identificado y seleccionado en el sistema.
+	Postcondición
+	Despliegue de la trazabilidad de citas sin alterar el estado de los datos.
+	MÓDULO III: MÉDICOS, ESPECIALIDADES Y HORARIOS
+4.3.9. CU09: Gestionar Médicos
+Atributo
+	Especificación
+	Caso de Uso
+	CU09: Gestionar Médicos
+	Actores
+	Administrador.
+	Propósito
+	Mantener actualizado el registro y estado operativo del personal médico colegiado.
+	Descripción
+	El administrador puede registrar nuevos profesionales de la salud ingresando su número de matrícula profesional, nombres, apellidos, teléfono, correo electrónico, consultorio asignado y estado operativo. Asimismo, permite modificar los datos del médico o aplicar una baja lógica (desactivar médico), lo que impide que reciba nuevas citas pero salvaguarda de forma estricta sus registros de atención previos.
+	Precondición
+	Administrador autenticado; matrícula profesional única en el sistema.
+	Postcondición
+	Profesional médico registrado, modificado o desactivado en PostgreSQL.
+	4.3.10. CU10: Gestionar Especialidades Médicas
+Atributo
+	Especificación
+	Caso de Uso
+	CU10: Gestionar Especialidades Médicas
+	Actores
+	Administrador.
+	Propósito
+	Definir y controlar las ramas o especialidades médicas y servicios ambulatorios ofrecidos por CLÍNICA MEDICAL.
+	Descripción
+	Permite dar de alta, editar y listar las 22 Especialidades Médicas (Cardiología, Dermatología, Endocrinología, Fisioterapia, Fonoaudiología, Gastroenterología, Ginecología, Mastología, Medicina General, Medicina Vascular, Neumología, Neurología, Nutriología, Oftalmología, Otorrinolaringología, Pediatría, Proctología, Psicología, Psiquiatría, Reumatología, Traumatología y Urología) y los 9 Servicios Clínicos y Diagnósticos Ambulatorios, incluyendo su ficha orientativa, lista de servicios específicos y costo de consulta. El sistema valida y rechaza nombres duplicados mediante comparación de cadenas normalizadas.
+	Precondición
+	Administrador autenticado.
+	Postcondición
+	Catálogo de 22 especialidades y 9 servicios disponible para vinculación médica y agendamiento con botón directo «Pedir Cita».
+	4.3.11. CU11: Asignar Especialidad a Médico
+Atributo
+	Especificación
+	Caso de Uso
+	CU11: Asignar Especialidad a Médico
+	Actores
+	Administrador.
+	Propósito
+	Vincular a un médico con una o más especialidades para las cuales está calificado.
+	Descripción
+	El administrador selecciona un médico activo y define las especialidades que atenderá dentro de CLÍNICA MEDICAL, registrando la relación en la tabla intermedia correspondiente (medico_especialidad). Permite remover o asociar nuevas especialidades de acuerdo con la formación profesional del médico.
+	Precondición
+	Tanto el médico como las especialidades seleccionadas deben encontrarse activos en el sistema.
+	Postcondición
+	Relación médico-especialidad persistida para el filtro de citas de los pacientes.
+	4.3.12. CU12: Configurar Horarios de Atención
+Atributo
+	Especificación
+	Caso de Uso
+	CU12: Configurar Horarios de Atención
+	Actores
+	Administrador.
+	Propósito
+	Establecer los intervalos de disponibilidad semanal de cada médico.
+	Descripción
+	Permite configurar para cada médico sus días de atención (lunes a viernes, y sábados hasta el mediodía), hora inicial, hora final, consultorio y duración fija de cada bloque de cita (15 minutos, conforme a RF05). El sistema valida obligatoriamente que la hora de fin sea strictly mayor a la hora de inicio y rechaza cualquier solapamiento de turnos para el mismo profesional o consultorio.
+	Precondición
+	Médico seleccionado con estado activo.
+	Postcondición
+	Matriz de horarios guardada y habilitada para la generación automática de cupos de 15 minutos.
+	MÓDULO IV: GESTIÓN DE CITAS Y TURNOS MÉDICOS
+4.3.13. CU13: Consultar Disponibilidad de Citas
+Atributo
+	Especificación
+	Caso de Uso
+	CU13: Consultar Disponibilidad de Citas
+	Actores
+	Recepcionista, Paciente, Médico.
+	Propósito
+	Visualizar de forma dinámica los cupos libres de atención médica en bloques de 15 minutos.
+	Descripción
+	El usuario selecciona una de las 22 especialidades, un médico y una fecha en el calendario. El sistema procesa los horarios asignados al médico para ese día de la semana, genera automáticamente los bloques fijos de 15 minutos (RF05) y descuenta aquellos que ya cuenten con citas registradas en estados Programada, Pendiente o Confirmada. La interfaz despliega únicamente los horarios vacantes en fechas presentes o futuras.
+	Precondición
+	Médico activo con horarios configurados para el día consultado.
+	Postcondición
+	Lista de franjas horarias disponibles de 15 minutos presentada al actor.
+	4.3.14. CU14: Programar Cita Médica
+Atributo
+	Especificación
+	Caso de Uso
+	CU14: Programar Cita Médica
+	Actores
+	Recepcionista, Paciente.
+	Propósito
+	Reservar un bloque horario de 15 minutos de atención médica para un paciente determinado.
+	Descripción
+	El actor accede desde el botón general «Pedir Cita» o desde la tarjeta de cualquiera de las 22 especialidades. Ingresa el CI del paciente (el sistema autocompleta sus nombres, apellidos, teléfono y antecedentes, o si es nuevo valida la no duplicación RN01 y lo registra de inmediato). Selecciona especialidad, médico, fecha y bloque de 15 minutos disponible (incluyendo CU13). Al confirmar, el backend abre una transacción en PostgreSQL, verifica que el bloque siga libre, genera el código secuencial oficial (CM-0001, CM-0009), asigna el detalle de consultorio y guarda la cita en estado Programada (si es por recepción) o Pendiente (si procede de reserva web del paciente, invocando CU15), habilitando la impresión o descarga del comprobante oficial.
+	Precondición
+	Paciente y médico activos; bloque horario de 15 minutos disponible en el servidor.
+	Postcondición
+	Cita médica creada con código secuencial CM-XXXX, cupo bloqueado en la agenda y comprobante oficial emitido.
+	4.3.15. CU15: Confirmar Cita con Pasarela de Pago
+Atributo
+	Especificación
+	Caso de Uso
+	CU15: Confirmar Cita con Pasarela de Pago
+	Actores
+	Paciente (Iniciador), Pasarela de Pago (Secundario).
+	Propósito
+	Asegurar la reserva de la cita web mediante el cobro electrónico anticipado.
+	Descripción
+	Se ejecuta como paso subsiguiente (<<include>>) a la programación de cita médica web por parte del paciente. El sistema presenta el monto de la consulta y enlaza con la pasarela de pago digital (QR, tarjeta o transferencia). Tras la aprobación de la transacción, el sistema captura el comprobante/token de pago, transfiere la cita al estado Confirmada y notifica al paciente con su Comprobante Oficial (CM-0001), detalle de consultorio y botón para imprimir o descargar. En caso de rechazo, la cita pendiente se libera automáticamente para otros usuarios.
+	Precondición
+	Cita en estado Pendiente con cupo reservado temporalmente.
+	Postcondición
+	Transacción financiera registrada, estado de la cita cambiado a Confirmada y comprobante oficial habilitado para descarga.
+	4.3.16. CU16: Reprogramar Cita Médica
+Atributo
+	Especificación
+	Caso de Uso
+	CU16: Reprogramar Cita Médica
+	Actores
+	Recepcionista.
+	Propósito
+	Modificar la fecha u horario de una cita médica previamente agendada.
+	Descripción
+	La recepcionista busca la cita médica registrada por código (CM-XXXX) o CI del paciente (en estado Programada o Confirmada), consulta la nueva fecha solicitada y selecciona un nuevo bloque de 15 minutos disponible para el mismo médico. El sistema valida la ausencia de solapamiento en el nuevo bloque, actualiza la fecha/hora y libera el bloque horario anterior en la agenda.
+	Precondición
+	La cita debe existir y encontrarse en estado Programada o Confirmada (no se permite reprogramar citas atendidas o canceladas).
+	Postcondición
+	Cita reasignada y horarios de agenda recalculados.
+	4.3.17. CU17: Cancelar Cita Médica
+Atributo
+	Especificación
+	Caso de Uso
+	CU17: Cancelar Cita Médica
+	Actores
+	Recepcionista, Paciente.
+	Propósito
+	Anular un turno médico liberando la agenda para otros pacientes.
+	Descripción
+	El actor selecciona una cita activa y elige la opción de cancelación, registrando obligatoriamente el motivo de la anulación. El sistema realiza una baja lógica modificando el estado de la cita a Cancelada. El bloque de 15 minutos queda disponible de inmediato para nuevas reservas, pero el registro original se conserva intacto en PostgreSQL para efectos de auditoría y trazabilidad.
+	Precondición
+	La cita no debe haber sido marcada como Atendida previamente.
+	Postcondición
+	Cita marcada como Cancelada y bloque horario liberado.
+	4.3.18. CU18: Registrar Asistencia del Paciente
+Atributo
+	Especificación
+	Caso de Uso
+	CU18: Registrar Asistencia del Paciente
+	Actores
+	Recepcionista.
+	Propósito
+	Controlar la llegada del paciente a las instalaciones de CLÍNICA MEDICAL para su atención.
+	Descripción
+	Al presentarse el paciente en el mostrador el día de su consulta con su comprobante CM-XXXX, la recepcionista ubica su cita en el sistema y cambia su estado a Confirmada (en caso de pagos en ventanilla o presencia física). Si concluida la jornada el paciente nunca asistió a su turno, la recepcionista actualiza el estado a Inasistencia.
+	Precondición
+	La cita debe corresponder a la fecha actual y encontrarse en estado Programada o Confirmada.
+	Postcondición
+	Estado de la cita actualizado a Confirmada (en sala) o Inasistencia.
+	4.3.19. CU19: Consultar Agenda Médica
+Atributo
+	Especificación
+	Caso de Uso
+	CU19: Consultar Agenda Médica
+	Actores
+	Médico, Recepcionista.
+	Propósito
+	Revisar el listado cronológico de turnos de una jornada médica específica.
+	Descripción
+	El usuario filtra las citas seleccionando médico y fecha. El sistema despliega el cronograma ordenado por bloques de 15 minutos que incluye código de cita (CM-XXXX), nombre completo del paciente, CI, edad, motivo básico y estado del turno. Permite al médico organizar sus atenciones ambulatorias y saber qué pacientes se encuentran en sala de espera.
+	Precondición
+	Existencia de una agenda médica configurada.
+	Postcondición
+	Despliegue de las citas correspondientes a la jornada consultada.
+	MÓDULO V: HISTORIAL CLÍNICO Y EXPEDIENTE MÉDICO
+4.3.20. CU20: Registrar Consulta en Historial Clínico
+Atributo
+	Especificación
+	Caso de Uso
+	CU20: Registrar Consulta en Historial Clínico
+	Actores
+	Médico.
+	Propósito
+	Documentar formalmente la evolución médica, diagnóstico y tratamiento recetado tras la atención ambulatoria.
+	Descripción
+	El médico selecciona la cita del paciente en su agenda diaria y presiona «Atender Consulta». El sistema abre el formulario clínico para registrar: constantes vitales (presión arterial, temperatura, peso, talla, saturación), síntomas, anamnesis, diagnóstico principal, tratamiento o medicamentos formulados y observaciones médicas. Al presionar guardar, el sistema crea un nuevo registro inmutable en la tabla historial_clinico vinculado al paciente, pasa el estado de la cita médica a Atendida y registra el evento en la bitácora del sistema.
+	Precondición
+	Médico autenticado; cita médica correspondiente al día en estado Confirmada.
+	Postcondición
+	Registro clínico almacenado de forma permanente y estado de la cita cambiado a Atendida.
+	4.3.21. CU21: Consultar Expediente e Historial Clínico
+Atributo
+	Especificación
+	Caso de Uso
+	CU21: Consultar Expediente e Historial Clínico
+	Actores
+	Médico, Paciente.
+	Propósito
+	Brindar acceso seguro a la evolución histórica y prescripciones médicas del paciente.
+	Descripción
+	Permite acceder a una vista cronológica completa de todas las atenciones ambulatorias recibidas por el paciente en cualquiera de las 22 especialidades. El médico puede ver todos los detalles para tomar decisiones diagnósticas fundamentadas, mientras que el paciente puede ingresar desde su cuenta web para revisar sus diagnósticos, recetas pasadas y recomendaciones de autocuidado.
+	Precondición
+	Usuario autenticado con permisos sobre el expediente.
+	Postcondición
+	Despliegue cronológico de las notas de atención y recetas médicas.
+	4.3.22. CU22: Actualizar Antecedentes Médicos del Paciente
+Atributo
+	Especificación
+	Caso de Uso
+	CU22: Actualizar Antecedentes Médicos del Paciente
+	Actores
+	Médico, Paciente.
+	Propósito
+	Mantener actualizada la ficha base de salud y factores de riesgo del paciente.
+	Descripción
+	Permite registrar y modificar datos clínicos permanentes del paciente: grupo sanguíneo, alergias conocidas a fármacos o alimentos, patologías crónicas (diabetes, hipertensión, asma, etc.), intervenciones quirúrgicas previas y datos de contacto de emergencia. Esta ficha se carga de forma automática en la pantalla del médico al momento de cada atención y en el autocompletado por CI.
+	Precondición
+	Paciente registrado en el sistema.
+	Postcondición
+	Antecedentes médicos del paciente guardados o actualizados en PostgreSQL.
+	MÓDULO VI: REPORTERÍA Y ANÁLISIS DE GESTIÓN
+4.3.23. CU23: Generar Reportes y Estadísticas de Atención
+Atributo
+	Especificación
+	Caso de Uso
+	CU23: Generar Reportes y Estadísticas de Atención
+	Actores
+	Administrador, Recepcionista.
+	Propósito
+	Consolidar métricas operativas y administrativas de CLÍNICA MEDICAL para apoyar la toma de decisiones.
+	Descripción
+	El usuario selecciona filtros por rango de fechas (diario, semanal, mensual), especialidad médica (entre las 22 especialidades), profesional de la salud o estado de la cita. El sistema calcula totales y genera reportes tabulares y cuantitativos sobre: cantidad de citas programadas, porcentaje de atenciones efectivas (Atendidas), tasa de inasistencias y cancelaciones, volumen de pacientes atendidos y resumen de ingresos confirmados por pasarela de pago. Permite visualizar la información en pantalla y exportarla a formatos descargables como PDF o CSV/Excel.
+	Precondición
+	Usuario autenticado con rol Administrador o Recepcionista.
+	Postcondición
+	Reporte administrativo generado y exportado sin modificar los datos del sistema.
+	4.4. Requerimientos Funcionales (RF) y Reglas de Negocio (RN)
+Requerimientos Funcionales
+   * RF01: El sistema debe autenticar a los usuarios (Administrador, Recepcionista, Médico, Paciente) validando estado activo y contraseña con password_verify, e implementar cierre seguro de sesión (CU01, CU02).
+   * RF02: El sistema debe permitir a los pacientes recuperar su contraseña por correo electrónico mediante un token criptográfico con expiración de 30 minutos enviado por Servidor SMTP (CU03).
+   * RF03: El sistema debe permitir al Administrador gestionar usuarios, roles, permisos y bajas lógicas de cuentas sin perder integridad referencial (CU04).
+   * RF04: El sistema debe registrar en una bitácora inmutable cada operación sensible detallando usuario, rol, fecha/hora exacta, dirección IP, módulo y evento (CU05).
+   * RF05 (Cálculo Dinámico de Disponibilidad): El sistema debe generar automáticamente bloques fijos de 15 minutos a partir de los horarios de atención configurados para cada médico en el día de la semana seleccionado, descontando los bloques ya ocupados (CU12, CU13).
+   * RF06 (Búsqueda Automática y Autocompletado por CI): Al ingresar el CI del paciente en el módulo de reserva de citas, el sistema debe autocompletar sus nombres, apellidos, teléfono y antecedentes médicos; si es un paciente nuevo, debe validar la no duplicación de CI y registrarlo de inmediato (CU06, CU07, CU14).
+   * RF07: El sistema debe exhibir el catálogo completo de las 22 Especialidades Médicas y los 9 Servicios Clínicos y Diagnósticos Ambulatorios, cada uno con su ficha descriptiva, médicos asignados y botón directo «Pedir Cita» (CU09, CU10, CU11).
+   * RF08 (Comprobante Oficial Secuencial): Al confirmar una cita médica, el sistema debe generar un código secuencial único (ej. CM-0001, CM-0009), el detalle del consultorio, el aviso de política asistencial ambulatoria y un botón para imprimir o descargar el comprobante en PDF (CU14, CU15).
+   * RF09: El sistema debe integrar el flujo de confirmación de citas web con una Pasarela de Pago electrónica (QR/Tarjeta/Transferencia), cambiando el estado de Pendiente a Confirmada tras la aprobación o liberando el cupo en caso de rechazo (CU15).
+   * RF10: El sistema debe permitir reprogramar citas (en estado Programada o Confirmada), cancelar citas registrando el motivo obligatorio y liberando el bloque de 15 minutos, y registrar la asistencia o inasistencia del paciente en sala (CU16, CU17, CU18).
+   * RF11: El sistema debe proveer al Médico y Recepcionista la agenda médica diaria ordenada cronológicamente y permitir al Médico registrar la consulta en el historial clínico inmutable y actualizar los antecedentes permanentes del paciente (CU19, CU20, CU21, CU22).
+   * RF12: El sistema debe generar reportes gerenciales y estadísticas de atención e ingresos filtrables por fechas, especialidad, médico y estado, exportables a PDF y CSV (CU23).
+Reglas de Negocio Institucionales (RN)
+   * RN01 (Unicidad de Cédula de Identidad): Ningún paciente ni usuario puede registrarse con un número de Cédula de Identidad (CI) duplicado en la base de datos.
+   * RN02 (Política Asistencial Ambulatoria): Todas las pantallas públicas, fichas de las 22 especialidades, fichas de los 9 servicios y comprobantes CM-XXXX deben incluir obligatoriamente la leyenda: «Atención médica especializada y procedimientos ambulatorios de corta estancia. No contamos con camas ni servicio de internación hospitalaria».
+   * RN03 (Duración Estándar de Bloque): Todo turno de consulta médica se estructura en bloques fijos de 15 minutos, sin solapamiento de horarios para un mismo médico ni consultorio.
+   * RN04 (Inmutabilidad del Historial Clínico y Bitácora): Una vez guardada una atención médica en historial_clinico (CU20) o un evento en bitacora (CU05), el registro no puede ser modificado ni eliminado físicamente.
+   * RN05 (Baja Lógica): La desactivación de usuarios, médicos, pacientes o citas médicas se realiza mediante cambio de estado lógico, preservando la integridad referencial histórica.
+4.5. Requerimientos No Funcionales (RNF)
+   * RNF01 (Rendimiento): El cálculo dinámico de bloques de 15 minutos (RF05) y el autocompletado de paciente por CI deben responder en menos de 1.5 segundos.
+   * RNF02 (Seguridad): Todas las contraseñas se almacenan con hash bcrypt (password_hash / password_verify), las comunicaciones viajan sobre HTTPS/TLS y los tokens de recuperación SMTP caducan a los 30 minutos.
+   * RNF03 (Integridad Transaccional): El agendamiento de citas (CU14) y confirmación de pago (CU15) se ejecutan dentro de transacciones ACID en PostgreSQL con bloqueo de fila para impedir que dos usuarios reserven el mismo bloque de 15 minutos simultáneamente.
+   * RNF04 (Usabilidad y Diseño Responsivo): La interfaz web debe adaptarse a teléfonos móviles, tablets y computadoras de escritorio (Bootstrap/TailwindCSS), destacando el botón «Pedir Cita» y el aviso de política ambulatoria.
+   * RNF05 (Disponibilidad): El sistema desplegado en la nube debe garantizar una disponibilidad del 99.5% para reservas web 24/7.
+4.6. Prototipo de Interfaz de Usuario (Estructura de Pantallas por Ciclo)
+   * Portal Público y Banner Reglamentario: Encabezado institucional de CLÍNICA MEDICAL con el aviso permanente: «Atención médica especializada y procedimientos ambulatorios de corta estancia. No contamos con camas ni servicio de internación hospitalaria», grilla interactiva de las 22 Especialidades Médicas y los 9 Servicios Clínicos y Diagnósticos, cada tarjeta con su botón directo «Pedir Cita».
+   * Modal / Vista «Pedir Cita» (CU06, CU13, CU14, CU15): Campo principal de búsqueda por CI con autocompletado instantáneo (nombres, apellidos, teléfono y antecedentes) o alta inmediata si es nuevo (RN01); selector de Especialidad, Médico y Fecha; grilla visual de bloques de 15 minutos libres (ej. 08:00 - 08:15, 08:15 - 08:30); pasarela de pago QR/Tarjeta y vista del Comprobante Oficial CM-0001 con consultorio asignado y botón «Imprimir / Descargar PDF».
+   * Panel de Recepcionista (CU16, CU17, CU18, CU19): Buscador rápido por código CM-XXXX o CI, botones de Confirmar Asistencia en Sala, Marcar Inasistencia, Reprogramar o Cancelar con motivo.
+   * Panel del Médico (CU19, CU20, CU21, CU22): Agenda del día por bloques de 15 minutos, alerta visual de antecedentes médicos (alergias, grupo sanguíneo, patologías crónicas) y formulario de «Atender Consulta» (signos vitales, anamnesis, diagnóstico CIE-10, receta médica).
+   * Panel del Administrador (CU04, CU05, CU09–CU12, CU23): Gestión de usuarios/roles, médicos, 22 especialidades, configurador visual de horarios semanales, visor de bitácora con filtros IP/usuario y dashboard de reportes exportables a PDF/CSV.
+4.7. Estructurar el Modelo de Caso de Uso (Diagrama General UML)
+   * Jerarquía de Actores: El actor abstracto Usuario generaliza a Administrador, Recepcionista, Médico y Paciente, quienes heredan CU01: Iniciar Sesión y CU02: Cerrar Sesión.
+   * Relaciones Estereotipadas Clave:
+   * CU14: Programar Cita Médica<<include>>CU13: Consultar Disponibilidad de Citas (toda programación requiere consultar y validar los bloques de 15 min disponibles).
+   * CU14: Programar Cita Médica (iniciado por Paciente web) <<include>> CU15: Confirmar Cita con Pasarela de Pago (asociado al actor secundario Pasarela de Pago).
+   * CU16: Reprogramar Cita Médica <<extend>> CU14: Programar Cita Médica (bajo la condición de que la cita esté en estado Programada o Confirmada).
+   * CU03: Recuperar Contraseña por Correo asocia al actor primario Paciente con el actor secundario Servidor de Correo SMTP.
+
+
+CAPÍTULO 5. FLUJO DE TRABAJO: ANÁLISIS
+5.1. Análisis de la Arquitectura
+5.1.1. Identificar Paquetes del Sistema
+Siguiendo el diseño modular de los 23 casos de uso de CLÍNICA MEDICAL, la arquitectura de análisis se organiza en 6 Paquetes Funcionales:
+   * P1: Seguridad, Acceso y Auditoría: Gestiona la autenticación de usuarios, control de sesiones, recuperación de contraseñas por SMTP, administración de cuentas/roles y bitácora inmutable de auditoría.
+   * P2: Pacientes y Datos Generales: Administra el registro de pacientes con validación de CI único (RN01), búsqueda y autocompletado por CI, actualización de datos demográficos y trazabilidad de citas por paciente.
+   * P3: Médicos, Especialidades y Horarios: Controla el padrón de médicos colegiados, el catálogo de las 22 especialidades médicas y 9 servicios ambulatorios, la asignación médico-especialidad y la configuración de horarios semanales en bloques de 15 minutos.
+   * P4: Gestión de Citas y Turnos Médicos: Ejecuta el cálculo dinámico de disponibilidad (RF05), la reserva de citas desde el botón «Pedir Cita», el cobro por Pasarela de Pago, la emisión del comprobante secuencial CM-0001, la reprogramación, la cancelación y el control de asistencia en sala.
+   * P5: Historial Clínico y Expediente Médico: Administra el registro inmutable de consultas médicas ambulatorias, la consulta cronológica del expediente clínico y la actualización de antecedentes médicos permanentes.
+   * P6: Reportería y Análisis de Gestión: Consolida indicadores operativos, tasas de asistencia/inasistencia/cancelación e ingresos financieros con exportación a PDF y CSV.
+5.1.2. Relacionar Paquetes y Casos de Uso (Trazabilidad <<trace>>)
+Paquete de Análisis
+	Casos de Uso Encapsulados (<<trace>>)
+	Dependencias entre Paquetes
+	P1: Seguridad, Acceso y Auditoría
+	CU01: Iniciar Sesión, CU02: Cerrar Sesión, CU03: Recuperar Contraseña por Correo, CU04: Gestionar Usuarios y Permisos, CU05: Consultar Bitácora del Sistema
+	Provee servicios de sesión y auditoría a P2, P3, P4, P5 y P6.
+	P2: Pacientes y Datos Generales
+	CU06: Registrar Paciente, CU07: Gestionar Datos de Paciente, CU08: Consultar Historial de Citas del Paciente
+	Depende de P1; provee entidad Paciente a P4 y P5.
+	P3: Médicos, Especialidades y Horarios
+	CU09: Gestionar Médicos, CU10: Gestionar Especialidades Médicas, CU11: Asignar Especialidad a Médico, CU12: Configurar Horarios de Atención
+	Depende de P1; provee Medico, Especialidad y HorarioAtencion a P4.
+	P4: Gestión de Citas y Turnos Médicos
+	CU13: Consultar Disponibilidad de Citas, CU14: Programar Cita Médica, CU15: Confirmar Cita con Pasarela de Pago, CU16: Reprogramar Cita Médica, CU17: Cancelar Cita Médica, CU18: Registrar Asistencia del Paciente, CU19: Consultar Agenda Médica
+	Depende de P2 y P3; provee citas confirmadas a P5 y datos transaccionales a P6.
+	P5: Historial Clínico y Expediente Médico
+	CU20: Registrar Consulta en Historial Clínico, CU21: Consultar Expediente e Historial Clínico, CU22: Actualizar Antecedentes Médicos del Paciente
+	Depende de P2, P3 y P4.
+	P6: Reportería y Análisis de Gestión
+	CU23: Generar Reportes y Estadísticas de Atención
+	Consulta datos consolidados de P2, P3, P4 y P5.
+	5.1.3. Vista de Paquetes y Encapsulamiento de Casos de Uso
+Cada paquete encapsula sus vistas de frontera (Boundary), controladores de lógica de negocio (Control) y clases de entidad (Entity), exponiendo interfaces limpias para evitar el acoplamiento directo entre tablas de distintos módulos.
+5.2. Analizar un Caso de Uso (Diagramas de Comunicación) y 5.3. Analizar una Clase (Modelo BCE)
+Siguiendo el estereotipado UML del Proceso Unificado (Boundary / Interfaz UI, Control / Controlador, Entity / Entidad de Datos), a continuación se documenta el análisis de comunicación y de clases para los 23 Casos de Uso divididos en Ciclo #1 y Ciclo #2:
+CICLO #1 (Avance 50% — Casos de Uso Fundacionales y Reserva Base)
+Caso de Uso
+	Clase Interfaz (Boundary)
+	Clase Controladora (Control)
+	Clases Entidad (Entity)
+	Flujo de Mensajes (Diagrama de Comunicación)
+	CU01: Iniciar Sesión
+	UI_Login
+	AuthController
+	Usuario, Rol, Bitacora
+	1: ingresarCredenciales(user, pass) → 2: autenticar() → 3: buscarPorIdentificador() → 4: password_verify() → 5: registrarEventoBitacora() → 6: redirigirPanelRol()
+	CU02: Cerrar Sesión
+	UI_BarraNavegacion
+	AuthController
+	Usuario, Bitacora
+	1: solicitarCerrarSesion() → 2: destruirSesionServidor() → 3: invalidarCookie() → 4: registrarCierreBitacora() → 5: mostrarLoginPublico()
+	CU04: Gestionar Usuarios y Permisos
+	UI_GestionUsuarios
+	UsuarioController
+	Usuario, Rol, Permiso, Bitacora
+	1: datosUsuarioRol() → 2: validarUnicidad() → 3: crearOActualizarUsuario() → 4: asignarRolPermisos() → 5: cambiarEstadoLogico()
+	CU06: Registrar Paciente
+	UI_RegistroPaciente
+	PacienteController
+	Paciente, Usuario, AntecedenteMedico
+	1: ingresarDatosPorCI(ci, datos) → 2: verificarCIUnico_RN01(ci) → 3: guardarPacienteActivo() → 4: inicializarFichaAntecedentes() → 5: confirmarRegistro()
+	CU07: Gestionar Datos de Paciente
+	UI_FichaPaciente
+	PacienteController
+	Paciente, AntecedenteMedico
+	1: buscarPorCI(ci) → 2: autocompletarDatosYAntecedentes() → 3: enviarCambiosContactoOEstado() → 4: actualizarPaciente()
+	CU09: Gestionar Médicos
+	UI_GestionMedicos
+	MedicoController
+	Medico, Usuario, Consultorio
+	1: ingresarDatosMedico(matricula, datos) → 2: validarMatriculaUnica() → 3: guardarOModificarMedico() → 4: aplicarBajaLogica()
+	CU10: Gestionar Especialidades Médicas
+	UI_CatalogoEspecialidades
+	EspecialidadController
+	Especialidad, ServicioClinico
+	1: registrarEspecialidadOServicio(nombre, ficha, precio) → 2: normalizarYValidarDuplicado() → 3: persistirCatalogo22Esp9Serv()
+	CU11: Asignar Especialidad a Médico
+	UI_AsignacionMedicoEsp
+	MedicoEspecialidadController
+	Medico, Especialidad, MedicoEspecialidad
+	1: seleccionarMedicoYEspecialidades() → 2: verificarEstadoActivoAmbos() → 3: sincronizarTablaIntermedia()
+	CU12: Configurar Horarios de Atención
+	UI_ConfigurarHorarios
+	HorarioController
+	HorarioAtencion, Medico, Consultorio
+	1: definirRangoSemanal(dia, inicio, fin, 15min) → 2: validarFinMayorInicio() → 3: verificarNoSolapamiento() → 4: guardarMatrizHorario()
+	CU13: Consultar Disponibilidad de Citas
+	UI_BuscadorDisponibilidad
+	DisponibilidadController
+	HorarioAtencion, CitaMedica
+	1: seleccionarEspMedicoFecha() → 2: obtenerHorariosDia() → 3: generarBloques15Min_RF05() → 4: descontarCitasOcupadas() → 5: retornarCuposLibres()
+	CU14: Programar Cita Médica
+	UI_PedirCita
+	CitaMedicaController
+	CitaMedica, Paciente, Medico, Comprobante
+	1: buscarAutocompletarCI() → 2: elegirBloque15Min() → 3: iniciarTransaccionPG() → 4: verificarCupoLibreServidor() → 5: generarCodigoSecuencial(CM-XXXX) → 6: guardarCita()
+	CICLO #2 (Final 100% — Pagos, Operaciones de Agenda, Expediente Clínico y Reportes)
+Caso de Uso
+	Clase Interfaz (Boundary)
+	Clase Controladora (Control)
+	Clases Entidad (Entity)
+	Flujo de Mensajes (Diagrama de Comunicación)
+	CU03: Recuperar Contraseña por Correo
+	UI_RecuperarPassword
+	RecuperacionController
+	Usuario, TokenRecuperacion, ServicioSMTP
+	1: ingresarCorreo(email) → 2: validarPacienteActivo() → 3: generarToken30Min() → 4: enviarEnlaceSMTP() → 5: actualizarPasswordHash()
+	CU05: Consultar Bitácora del Sistema
+	UI_BitacoraAuditoria
+	BitacoraController
+	Bitacora, Usuario
+	1: aplicarFiltros(fecha, usuario, modulo) → 2: consultarRegistrosInmutables() → 3: desplegarTrazabilidadConIP()
+	CU08: Consultar Historial de Citas del Paciente
+	UI_HistorialCitasPaciente
+	CitaMedicaController
+	CitaMedica, Medico, Especialidad
+	1: seleccionarPaciente(ci) → 2: listarCitasCronologicas() → 3: mostrarCodigosYEstados()
+	CU15: Confirmar Cita con Pasarela de Pago
+	UI_PasarelaPago
+	PagoCitaController
+	CitaMedica, Pago, PasarelaExterna
+	1: iniciarCobroElectronico(cita_id, monto) → 2: procesarPagoQR_Tarjeta() → 3: registrarTokenPago() → 4: actualizarCitaConfirmada() → 5: emitirComprobanteCM()
+	CU16: Reprogramar Cita Médica
+	UI_ReprogramarCita
+	CitaMedicaController
+	CitaMedica, HorarioAtencion, Bitacora
+	1: buscarCitaActiva(CM-XXXX) → 2: seleccionarNuevaFechaBloque15Min() → 3: validarNuevoCupoLibre() → 4: liberarBloqueAnteriorYActualizar()
+	CU17: Cancelar Cita Médica
+	UI_CancelarCita
+	CitaMedicaController
+	CitaMedica, Bitacora
+	1: seleccionarCitaNoAtendida() → 2: ingresarMotivoCancelacion() → 3: cambiarEstadoCancelada() → 4: liberarBloque15Min()
+	CU18: Registrar Asistencia del Paciente
+	UI_ControlSalaEspera
+	AsistenciaCitaController
+	CitaMedica, Bitacora
+	1: ubicarCitaDelDia(CM-XXXX) → 2: marcarConfirmadaEnSala_O_Inasistencia() → 3: actualizarEstadoTurno()
+	CU19: Consultar Agenda Médica
+	UI_AgendaMedicaDiaria
+	AgendaController
+	CitaMedica, Paciente, Medico
+	1: filtrarPorMedicoYFecha() → 2: obtenerCronogramaPorHora() → 3: mostrarPacientesEnSalaYEstados()
+	CU20: Registrar Consulta en Historial Clínico
+	UI_AtenderConsulta
+	HistorialClinicoController
+	HistorialClinico, CitaMedica, Bitacora
+	1: abrirCitaConfirmada() → 2: ingresarSignosVitalesDiagnosticoReceta() → 3: insertarHistorialInmutable() → 4: pasarCitaAAtendida() → 5: auditarEnBitacora()
+	CU21: Consultar Expediente e Historial Clínico
+	UI_ExpedienteClinico
+	HistorialClinicoController
+	HistorialClinico, AntecedenteMedico, Paciente
+	1: solicitarExpediente(paciente_id) → 2: verificarPermisoRol() → 3: listarEvolucionesYRecetasCronologicas()
+	CU22: Actualizar Antecedentes Médicos del Paciente
+	UI_AntecedentesMedicos
+	AntecedenteController
+	AntecedenteMedico, Paciente, Bitacora
+	1: cargarFichaSaludBase() → 2: editarGrupoSanguineoAlergiasCronicas() → 3: guardarAntecedentesPostgreSQL()
+	CU23: Generar Reportes y Estadísticas de Atención
+	UI_ReportesEstadisticos
+	ReporteController
+	CitaMedica, Pago, Especialidad, Medico
+	1: definirFiltros(rango, esp, medico, estado) → 2: calcularMetricasTotalesEIngresos() → 3: renderizarVistaPrevia() → 4: exportarPDF_CSV()
+	5.4. Analizar un Paquete (Arquitectura Integrada por Paquetes)
+El paquete central P4: Gestión de Citas y Turnos Médicos actúa como orquestador transaccional del sistema: consume la validación de identidad y sesión de P1, la búsqueda instantánea por CI de P2 y la matriz de horarios de 15 minutos de las 22 especialidades en P3, para alimentar con citas confirmadas al expediente clínico en P5 y a los reportes gerenciales en P6.
+________________
+
+
+CAPÍTULO 6. FLUJO DE TRABAJO: DISEÑO
+6.1. Diseño de Arquitectura (Lógico y Físico)
+6.1.1. Diseño Físico (Diagrama de Despliegue UML)
+   * Nodo Cliente (Navegador Web Móvil / Escritorio): Ejecuta la interfaz responsiva de CLÍNICA MEDICAL sobre protocolo seguro HTTPS (TLS 1.3).
+   * Nodo Servidor de Aplicación Web (Cloud Render / Railway): Contenedor Linux con servidor web Nginx/Apache y motor PHP 8.2+ (Laravel) que ejecuta los controladores, validaciones de reglas de negocio (RN01 a RN05), cálculo dinámico de bloques de 15 minutos (RF05) y generación de comprobantes PDF (CM-0001).
+   * Nodo Servidor de Base de Datos (Puerto 5432): Motor PostgreSQL 16+ con soporte transaccional ACID, triggers de auditoría y procedimientos almacenados.
+   * Nodos de Sistemas Externos:
+   * Pasarela de Pago (API HTTPS REST): Valida transacciones electrónicas con QR/Tarjeta (CU15).
+   * Servidor de Correo SMTP (Puerto 587 TLS): Despacha correos con enlaces y tokens de recuperación de contraseña (CU03).
+6.1.2. Diseño Lógico (Arquitectura en Tres Capas)
+   9. Capa de Presentación (Frontend): Vistas responsivas (Blade / React / Vue + TailwindCSS), banners de política asistencial ambulatoria sin internación, tarjetas de las 22 especialidades y 9 servicios clínicos, buscador reactivo por CI y paneles administrativos.
+   10. Capa de Lógica de Negocio (Backend PHP/Laravel): Middleware de control de roles (RBAC), Servicios de Cálculo de Disponibilidad de 15 min, Servicio de Comprobantes Secuenciales CM-XXXX, Servicio de Pasarela de Pago y Servicio de Expediente Clínico.
+   11. Capa de Persistencia de Datos (PostgreSQL): Modelos Eloquent/PDO, transacciones con bloqueo pesimista para evitar colisiones de citas, restricciones de integridad y triggers automáticos.
+________________
+
+
+6.2. Diseño de Datos (Lógico y Físico)
+6.2.1. Diseño de Datos Lógico y Mapeo Relacional
+El modelo relacional de CLÍNICA MEDICAL se encuentra normalizado en 1FN, 2FN, 3FN y Forma Normal de Boyce-Codd (BCNF), compuesto por 15 tablas relacionales:
+   12. roles: (id [PK], nombre [UNIQUE], descripción)
+   13. permisos: (id [PK], nombre [UNIQUE], modulo, descripcion)
+   14. rol_permiso: (id [PK], rol_id [FK -> roles.id], permiso_id [FK -> permisos.id])
+   15. usuarios: (id [PK], rol_id [FK -> roles.id], username [UNIQUE], correo [UNIQUE], password_hash, estado, último acceso, created_at, updated_at)
+   16. tokens_recuperacion: (id [PK], usuario_id [FK -> usuarios.id], token_hash [UNIQUE], expira_en, usado, created_at)
+   17. pacientes: (id [PK], usuario_id [FK -> usuarios.id, Nullable], ci [UNIQUE - RN01], nombres, apellidos, fecha_nacimiento, sexo, telefono, correo, direccion, estado, created_at)
+   18. antecedentes_medicos: (id [PK], paciente_id [FK -> pacientes.id, UNIQUE], grupo_sanguineo, alergias, patologias_cronicas, cirugias_previas, medicacion_habitual, contacto_emergencia_nombre, contacto_emergencia_telefono, updated_at)
+   19. especialidades: (id [PK], codigo [UNIQUE], nombre [UNIQUE], tipo_catalogo, descripcion_orientativa, servicios_especificos, costo_consulta, politica_ambulatoria, estado) (Almacena las 22 Especialidades Médicas y los 9 Servicios Clínicos y Diagnósticos Ambulatorios).
+   20. consultorios: (id [PK], codigo [UNIQUE], nombre, piso, equipamiento, estado)
+   21. medicos: (id [PK], usuario_id [FK -> usuarios.id, UNIQUE], consultorio_id [FK -> consultorios.id], matricula_profesional [UNIQUE], ci [UNIQUE], nombres, apellidos, telefono, correo, estado_operativo)
+   22. medico_especialidad: (id [PK], medico_id [FK -> medicos.id], especialidad_id [FK -> especialidades.id], activo)
+   23. horarios_atencion: (id [PK], medico_id [FK -> medicos.id], especialidad_id [FK -> especialidades.id], consultorio_id [FK -> consultorios.id], dia_semana, hora_inicio, hora_fin, duracion_bloque_min [DEFAULT 15], estado)
+   24. citas_medicas: (id [PK], codigo_cita [UNIQUE - ej. 'CM-0001'], paciente_id [FK -> pacientes.id], medico_id [FK -> medicos.id], especialidad_id [FK -> especialidades.id], consultorio_id [FK -> consultorios.id], horario_id [FK -> horarios_atencion.id], fecha_cita, hora_inicio_bloque, hora_fin_bloque, motivo_consulta, estado_cita, motivo_cancelacion, fecha_registro)
+   25. pagos_citas: (id [PK], cita_id [FK -> citas_medicas.id, UNIQUE], monto, metodo_pago, transaccion_pasarela_id [UNIQUE], estado_pago, comprobante_oficial_nro, fecha_pago)
+   26. historial_clinico: (id [PK], cita_id [FK -> citas_medicas.id, UNIQUE], paciente_id [FK -> pacientes.id], medico_id [FK -> medicos.id], presion_arterial, temperatura_c, frecuencia_cardiaca, peso_kg, talla_cm, sintomas, anamnesis, diagnostico_principal, tratamiento_receta, observaciones, fecha_atencion [INMUTABLE])
+   27. bitacora: (id [PK], usuario_id [FK -> usuarios.id], rol_ejecutor, modulo_afectado, tipo_evento, descripcion_accion, ip_direccion, fecha_hora [INMUTABLE])
+________________
+
+
+6.2.2. Diseño de Datos Físico
+6.2.2.1. Tabla de Volumen y Diccionario de Datos (Tablas Principales)
+Tabla: pacientes (CU06, CU07)
+Atributo
+	Tipo de Dato
+	Descripción
+	Tamaño
+	Nulo
+	Llave / Restricción
+	id
+	SERIAL
+	Identificador único del paciente
+	4 bytes
+	No
+	PK
+	usuario_id
+	INTEGER
+	Cuenta de usuario web asociada
+	4 bytes
+	Sí
+	FK -> usuarios(id)
+	ci
+	VARCHAR(20)
+	Cédula de Identidad única (RN01)
+	20 caract.
+	No
+	UNIQUE
+	nombres
+	VARCHAR(100)
+	Nombres del paciente
+	100 caract.
+	No
+	-
+	apellidos
+	VARCHAR(100)
+	Apellidos del paciente
+	100 caract.
+	No
+	-
+	fecha_nacimiento
+	DATE
+	Fecha de nacimiento
+	4 bytes
+	No
+	-
+	sexo
+	CHAR(1)
+	Sexo biológico (M, F)
+	1 caract.
+	No
+	CHECK
+	telefono
+	VARCHAR(30)
+	Teléfono móvil / WhatsApp
+	30 caract.
+	No
+	-
+	correo
+	VARCHAR(150)
+	Correo electrónico del paciente
+	150 caract.
+	Sí
+	UNIQUE
+	direccion
+	TEXT
+	Dirección domiciliaria
+	Variable
+	Sí
+	-
+	estado
+	VARCHAR(20)
+	Estado lógico (activo, inactivo)
+	20 caract.
+	No
+	DEFAULT 'activo'
+	Tabla: citas_medicas (CU13, CU14, CU16, CU17, CU18, CU19)
+Atributo
+	Tipo de Dato
+	Descripción
+	Tamaño
+	Nulo
+	Llave / Restricción
+	id
+	SERIAL
+	Identificador interno de la cita
+	4 bytes
+	No
+	PK
+	codigo_cita
+	VARCHAR(20)
+	Código secuencial oficial (CM-0001)
+	20 caract.
+	No
+	UNIQUE
+	paciente_id
+	INTEGER
+	Paciente titular del turno
+	4 bytes
+	No
+	FK -> pacientes(id)
+	medico_id
+	INTEGER
+	Médico asignado
+	4 bytes
+	No
+	FK -> medicos(id)
+	especialidad_id
+	INTEGER
+	Especialidad o servicio ambulatorio
+	4 bytes
+	No
+	FK -> especialidades(id)
+	consultorio_id
+	INTEGER
+	Consultorio físico asignado
+	4 bytes
+	No
+	FK -> consultorios(id)
+	fecha_cita
+	DATE
+	Fecha programada del turno
+	4 bytes
+	No
+	CHECK >= CURRENT_DATE
+	hora_inicio_bloque
+	TIME
+	Hora de inicio del bloque de 30 min
+	8 bytes
+	No
+	-
+	hora_fin_bloque
+	TIME
+	Hora de fin del bloque de 30 min
+	8 bytes
+	No
+	CHECK > hora_inicio
+	motivo_consulta
+	TEXT
+	Motivo breve de la consulta
+	Variable
+	Sí
+	-
+	estado_cita
+	VARCHAR(25)
+	Pendiente, Programada, Confirmada, Atendida, Cancelada, Inasistencia
+	25 caract.
+	No
+	CHECK
+	motivo_cancelacion
+	TEXT
+	Motivo obligatorio en caso de anulación
+	Variable
+	Sí
+	-
+	________________
+
+
+6.2.2.2. Script Completo de Base de Datos en PostgreSQL (DDL + Datos Iniciales de las 22 Especialidades y 9 Servicios)
+
+
+-- =========================================================================
+-- SCRIPT OFICIAL DE BASE DE DATOS POSTGRESQL
+-- PROYECTO E INSTITUCIÓN: CLÍNICA MEDICAL
+-- POLÍTICA: Atención médica especializada y procedimientos ambulatorios de
+--           corta estancia. No contamos con camas ni servicio de internación.
+-- =========================================================================
+
+
+CREATE DATABASE clinica_medical_db;
+\c clinica_medical_db;
+
+
+-- Secuencia para el Comprobante Oficial (CM-0001, CM-0002, ...)
+CREATE SEQUENCE seq_codigo_cita START 1 INCREMENT 1;
+
+
+-- 1. Tabla ROLES
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(255) NOT NULL
+);
+
+
+-- 2. Tabla PERMISOS
+CREATE TABLE permisos (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(80) NOT NULL UNIQUE,
+    modulo VARCHAR(80) NOT NULL,
+    descripcion VARCHAR(255)
+);
+
+
+-- 3. Tabla ROL_PERMISO
+CREATE TABLE rol_permiso (
+    id SERIAL PRIMARY KEY,
+    rol_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    permiso_id INTEGER NOT NULL REFERENCES permisos(id) ON DELETE CASCADE,
+    UNIQUE (rol_id, permiso_id)
+);
+
+
+-- 4. Tabla USUARIOS (Actor Abstracto Usuario)
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    rol_id INTEGER NOT NULL REFERENCES roles(id),
+    username VARCHAR(80) NOT NULL UNIQUE,
+    correo VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'activo',
+    ultimo_acceso TIMESTAMP NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_usuario_estado CHECK (estado IN ('activo', 'inactivo'))
+);
+
+
+-- 5. Tabla TOKENS_RECUPERACION (CU03 - SMTP 30 min)
+CREATE TABLE tokens_recuperacion (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    token_hash VARCHAR(255) NOT NULL UNIQUE,
+    expira_en TIMESTAMP NOT NULL,
+    usado BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- 6. Tabla PACIENTES (CU06, CU07 - RN01 CI Único)
+CREATE TABLE pacientes (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER UNIQUE REFERENCES usuarios(id) ON DELETE SET NULL,
+    ci VARCHAR(20) NOT NULL UNIQUE,
+    nombres VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    sexo CHAR(1) NOT NULL CHECK (sexo IN ('M', 'F')),
+    telefono VARCHAR(30) NOT NULL,
+    correo VARCHAR(150) UNIQUE,
+    direccion TEXT,
+    estado VARCHAR(20) NOT NULL DEFAULT 'activo' CHECK (estado IN ('activo', 'inactivo')),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- 7. Tabla ANTECEDENTES_MEDICOS (CU22)
+CREATE TABLE antecedentes_medicos (
+    id SERIAL PRIMARY KEY,
+    paciente_id INTEGER NOT NULL UNIQUE REFERENCES pacientes(id) ON DELETE CASCADE,
+    grupo_sanguineo VARCHAR(10) DEFAULT 'No especificado',
+    alergias TEXT DEFAULT 'Ninguna conocida',
+    patologias_cronicas TEXT DEFAULT 'Ninguna',
+    cirugias_previas TEXT DEFAULT 'Ninguna',
+    medicacion_habitual TEXT DEFAULT 'Ninguna',
+    contacto_emergencia_nombre VARCHAR(120),
+    contacto_emergencia_telefono VARCHAR(30),
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- 8. Tabla ESPECIALIDADES (22 Especialidades Médicas + 9 Servicios Ambulatorios - CU10)
+CREATE TABLE especialidades (
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(20) NOT NULL UNIQUE,
+    nombre VARCHAR(120) NOT NULL UNIQUE,
+    tipo_catalogo VARCHAR(30) NOT NULL DEFAULT 'ESPECIALIDAD'
+        CHECK (tipo_catalogo IN ('ESPECIALIDAD', 'SERVICIO_DIAGNOSTICO')),
+    descripcion_orientativa TEXT NOT NULL,
+    servicios_especificos TEXT NOT NULL,
+    costo_consulta NUMERIC(10,2) NOT NULL DEFAULT 150.00 CHECK (costo_consulta >= 0),
+    politica_ambulatoria TEXT NOT NULL DEFAULT 'Atención médica especializada y procedimientos ambulatorios de corta estancia. No contamos con camas ni servicio de internación hospitalaria.',
+    estado VARCHAR(20) NOT NULL DEFAULT 'activo' CHECK (estado IN ('activo', 'inactivo'))
+);
+
+
+-- 9. Tabla CONSULTORIOS
+CREATE TABLE consultorios (
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(20) NOT NULL UNIQUE,
+    nombre VARCHAR(100) NOT NULL,
+    piso VARCHAR(30) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'activo'
+);
+
+
+-- 10. Tabla MEDICOS (CU09)
+CREATE TABLE medicos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL UNIQUE REFERENCES usuarios(id) ON DELETE CASCADE,
+    consultorio_id INTEGER REFERENCES consultorios(id),
+    matricula_profesional VARCHAR(50) NOT NULL UNIQUE,
+    ci VARCHAR(20) NOT NULL UNIQUE,
+    nombres VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    telefono VARCHAR(30) NOT NULL,
+    correo VARCHAR(150) NOT NULL UNIQUE,
+    estado_operativo VARCHAR(20) NOT NULL DEFAULT 'activo'
+        CHECK (estado_operativo IN ('activo', 'inactivo'))
+);
+
+
+-- 11. Tabla MEDICO_ESPECIALIDAD (CU11)
+CREATE TABLE medico_especialidad (
+    id SERIAL PRIMARY KEY,
+    medico_id INTEGER NOT NULL REFERENCES medicos(id) ON DELETE CASCADE,
+    especialidad_id INTEGER NOT NULL REFERENCES especialidades(id) ON DELETE CASCADE,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    UNIQUE (medico_id, especialidad_id)
+);
+
+
+-- 12. Tabla HORARIOS_ATENCION (CU12 - Bloques de 15 minutos RF05)
+
+
+CREATE TABLE horarios_atencion (
+    id SERIAL PRIMARY KEY,
+    medico_id INTEGER NOT NULL REFERENCES medicos(id) ON DELETE CASCADE,
+    especialidad_id INTEGER NOT NULL REFERENCES especialidades(id),
+    consultorio_id INTEGER NOT NULL REFERENCES consultorios(id),
+
+
+    dia_semana VARCHAR(15) NOT NULL
+
+
+        CHECK (dia_semana IN ('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado')),
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+    duracion_bloque_min INTEGER NOT NULL DEFAULT 15 CHECK (duracion_bloque_min = 15),
+    estado VARCHAR(20) NOT NULL DEFAULT 'activo',
+
+
+    CONSTRAINT chk_horario_rango CHECK (hora_fin > hora_inicio),
+
+
+    CONSTRAINT chk_sabado_mediodia CHECK (dia_semana != 'Sabado' OR hora_fin <= '12:00:00'::TIME)
+);
+
+
+-- 13. Tabla CITAS_MEDICAS (CU13 a CU19)
+CREATE TABLE citas_medicas (
+    id SERIAL PRIMARY KEY,
+    codigo_cita VARCHAR(20) NOT NULL UNIQUE DEFAULT ('CM-' || LPAD(nextval('seq_codigo_cita')::TEXT, 4, '0')),
+    paciente_id INTEGER NOT NULL REFERENCES pacientes(id),
+    medico_id INTEGER NOT NULL REFERENCES medicos(id),
+    especialidad_id INTEGER NOT NULL REFERENCES especialidades(id),
+    consultorio_id INTEGER NOT NULL REFERENCES consultorios(id),
+    fecha_cita DATE NOT NULL,
+    hora_inicio_bloque TIME NOT NULL,
+    hora_fin_bloque TIME NOT NULL,
+    motivo_consulta TEXT,
+    estado_cita VARCHAR(25) NOT NULL DEFAULT 'Programada'
+        CHECK (estado_cita IN ('Pendiente', 'Programada', 'Confirmada', 'Atendida', 'Cancelada', 'Inasistencia')),
+    motivo_cancelacion TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_cita_bloque CHECK (hora_fin_bloque > hora_inicio_bloque)
+);
+
+
+-- 14. Tabla PAGOS_CITAS (CU15 - Pasarela de Pago)
+CREATE TABLE pagos_citas (
+    id SERIAL PRIMARY KEY,
+    cita_id INTEGER NOT NULL UNIQUE REFERENCES citas_medicas(id) ON DELETE CASCADE,
+    monto NUMERIC(10,2) NOT NULL CHECK (monto >= 0),
+    metodo_pago VARCHAR(40) NOT NULL CHECK (metodo_pago IN ('QR_SIMPLE', 'TARJETA', 'TRANSFERENCIA', 'VENTANILLA')),
+    transaccion_pasarela_id VARCHAR(100) UNIQUE,
+    estado_pago VARCHAR(25) NOT NULL DEFAULT 'Aprobado'
+        CHECK (estado_pago IN ('Pendiente', 'Aprobado', 'Rechazado')),
+    comprobante_oficial_nro VARCHAR(30) NOT NULL UNIQUE,
+    fecha_pago TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- 15. Tabla HISTORIAL_CLINICO (CU20, CU21 - Registro Inmutable)
+CREATE TABLE historial_clinico (
+    id SERIAL PRIMARY KEY,
+    cita_id INTEGER NOT NULL UNIQUE REFERENCES citas_medicas(id),
+    paciente_id INTEGER NOT NULL REFERENCES pacientes(id),
+    medico_id INTEGER NOT NULL REFERENCES medicos(id),
+    presion_arterial VARCHAR(20),
+    temperatura_c NUMERIC(4,1),
+    frecuencia_cardiaca INTEGER,
+    peso_kg NUMERIC(5,2),
+    talla_cm NUMERIC(5,2),
+    sintomas TEXT NOT NULL,
+    anamnesis TEXT NOT NULL,
+    diagnostico_principal TEXT NOT NULL,
+    tratamiento_receta TEXT NOT NULL,
+    observaciones TEXT,
+    fecha_atencion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- 16. Tabla BITACORA (CU05 - Auditoría Inmutable)
+CREATE TABLE bitacora (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER REFERENCES usuarios(id),
+    rol_ejecutor VARCHAR(50) NOT NULL,
+    modulo_afectado VARCHAR(80) NOT NULL,
+    tipo_evento VARCHAR(60) NOT NULL,
+    descripcion_accion TEXT NOT NULL,
+    ip_direccion VARCHAR(45) NOT NULL,
+    fecha_hora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+________________
+6.2.2.3. Inserción de Tuplas (Población Inicial de las 22 Especialidades y 9 Servicios Ambulatorios)
+INSERT INTO roles (nombre, descripcion) VALUES
+('Administrador', 'Acceso total a configuración, médicos, 22 especialidades, horarios, bitácora y reportes'),
+('Recepcionista', 'Registro de pacientes por CI, agendamiento, reprogramación, cancelación y asistencia en sala'),
+('Medico', 'Consulta de agenda diaria, antecedentes médicos y registro en historial clínico'),
+('Paciente', 'Autogestión de perfil, reserva de citas web con pasarela de pago y consulta de historial');
+
+
+-- Población de las 22 Especialidades Médicas de CLÍNICA MEDICAL
+INSERT INTO especialidades (codigo, nombre, tipo_catalogo, descripcion_orientativa, servicios_especificos, costo_consulta) VALUES
+('ESP-01', 'CARDIOLOGÍA', 'ESPECIALIDAD', 'Evaluación integral cardiovascular ambulatoria', 'Electrocardiograma digital de reposo, Monitoreo MAPA 24h, Holter de ritmo cardíaco, riesgo quirúrgico.', 200.00),
+('ESP-02', 'DERMATOLOGÍA', 'ESPECIALIDAD', 'Diagnóstico y tratamiento ambulatorio de la piel', 'Dermatoscopía digital, acné y rosácea, crioterapia de lesiones, extirpación menor ambulatoria.', 180.00),
+('ESP-03', 'ENDOCRINOLOGÍA', 'ESPECIALIDAD', 'Manejo especializado de trastornos hormonales y metabólicos', 'Control de diabetes mellitus, patología tiroidea, nódulos y metabolismo hormonal.', 200.00),
+('ESP-04', 'FISIOTERAPIA', 'ESPECIALIDAD', 'Recuperación funcional y kinesioterapia ambulatoria', 'Rehabilitación motora traumatológica, dolor cervical/lumbar, lesiones deportivas, electroestimulación.', 120.00),
+('ESP-05', 'FONOAUDIOLOGÍA', 'ESPECIALIDAD', 'Rehabilitación del habla, audición y deglución', 'Terapia de deglución (disfagia), articulación del lenguaje infantil y rehabilitación de la voz.', 130.00),
+('ESP-06', 'GASTROENTEROLOGÍA', 'ESPECIALIDAD', 'Atención de patologías del aparato digestivo e hígado', 'Reflujo gastroesofágico, gastritis, Helicobacter pylori, colon irritable e hígado graso.', 190.00),
+('ESP-07', 'GINECOLOGÍA', 'ESPECIALIDAD', 'Salud integral de la mujer y prevención ginecológica', 'Control anual, citología cervical, Papanicolaou, colposcopía HD y planificación familiar.', 180.00),
+('ESP-08', 'MASTOLOGÍA', 'ESPECIALIDAD', 'Diagnóstico precoz y patología mamaria ambulatoria', 'Examen clínico mamario, detección precoz, correlación ecográfica y punción PAAF ambulatoria.', 220.00),
+('ESP-09', 'MEDICINA GENERAL', 'ESPECIALIDAD', 'Atención primaria, prevención y triaje clínico', 'Chequeos preventivos, patologías agudas, certificados de salud y triaje asistencial.', 100.00),
+('ESP-10', 'MEDICINA VASCULAR', 'ESPECIALIDAD', 'Diagnóstico y tratamiento circulatorio periférico', 'Insuficiencia venosa, várices, escleroterapia ambulatoria y prevención de trombosis.', 210.00),
+('ESP-11', 'NEUMOLOGÍA', 'ESPECIALIDAD', 'Salud respiratoria y pruebas funcionales pulmonares', 'Espirometría simple y con broncodilatador, control de asma, EPOC y apnea del sueño.', 190.00),
+('ESP-12', 'NEUROLOGÍA', 'ESPECIALIDAD', 'Evaluación del sistema nervioso central y periférico', 'Cefaleas complejas, migrañas, epilepsia, temblores, neuropatías periféricas y memoria.', 220.00),
+('ESP-13', 'NUTRIOLOGÍA', 'ESPECIALIDAD', 'Evaluación antropométrica y dietoterapia clínica', 'Bioimpedanciometría corporal, planes para diabetes e hipertensión, nutrición clínica.', 140.00),
+('ESP-14', 'OFTALMOLOGÍA', 'ESPECIALIDAD', 'Salud visual y diagnóstico ocular computarizado', 'Agudeza visual computarizada, tonometría de aplanación (glaucoma), biomicroscopía y fondo de ojo.', 180.00),
+('ESP-15', 'OTORRINOLARINGOLOGÍA', 'ESPECIALIDAD', 'Atención de oído, nariz, garganta y laringe', 'Videootoscopía, nasofaringoscopía, lavado y aspiración ótica, rinitis y sinusitis.', 180.00),
+('ESP-16', 'PEDIATRÍA', 'ESPECIALIDAD', 'Cuidado integral del desarrollo infantil y adolescente', 'Control de niño sano, curvas de crecimiento, esquemas de vacunación e infecciones pediátricas.', 150.00),
+('ESP-17', 'PROCTOLOGÍA', 'ESPECIALIDAD', 'Diagnóstico y tratamiento coloproctológico de consultorio', 'Anoscopía diagnóstica de consultorio, ligadura elástica de hemorroides y fisuras anales.', 210.00),
+('ESP-18', 'PSICOLOGÍA', 'ESPECIALIDAD', 'Salud mental y psicoterapia clínica ambulatoria', 'Psicoterapia cognitivo-conductual, manejo de ansiedad, estrés, duelo y regulación emocional.', 150.00),
+('ESP-19', 'PSIQUIATRÍA', 'ESPECIALIDAD', 'Diagnóstico médico psiquiátrico y psicofarmacología', 'Evaluación diagnóstica médica, psicofarmacología, depresión mayor, insomnio y TDAH.', 230.00),
+('ESP-20', 'REUMATOLOGÍA', 'ESPECIALIDAD', 'Manejo de enfermedades articulares y autoinmunes', 'Artritis reumatoide, lupus eritematoso, infiltraciones articulares analgésicas y gota.', 210.00),
+('ESP-21', 'TRAUMATOLOGÍA', 'ESPECIALIDAD', 'Lesiones osteomusculares y ortopedia ambulatoria', 'Inmovilizaciones ortopédicas (fibra de vidrio), esguinces, infiltración de ácido hialurónico y controles.', 190.00),
+('ESP-22', 'UROLOGÍA', 'ESPECIALIDAD', 'Salud genitourinaria y prevención prostática', 'Chequeo prostático preventivo (PSA + tacto rectal), litiasis renal e infecciones urinarias.', 200.00),
+-- Población de los 9 Servicios Clínicos y Diagnósticos Ambulatorios
+('SRV-01', 'AUDIOMETRÍA', 'SERVICIO_DIAGNOSTICO', 'Estudio auditivo en cabina insonorizada', 'Cabina insonorizada certificada y audiometría tonal/vocal (reposo auditivo de 14h previas).', 160.00),
+('SRV-02', 'BIOPSIAS', 'SERVICIO_DIAGNOSTICO', 'Toma ambulatoria de muestras histológicas', 'Toma ambulatoria de muestras tisulares cutáneas y de partes blandas con anestesia local.', 280.00),
+('SRV-03', 'CIRUGÍAS OFTALMOLÓGICAS', 'SERVICIO_DIAGNOSTICO', 'Microcirugía ocular ambulatoria sin internación', 'Procedimientos de corta estancia (pterigión, chalazión, blefaroplastia menor) con alta el mismo día y sin internación.', 850.00),
+('SRV-04', 'DERMATOLOGÍA (Procedimientos)', 'SERVICIO_DIAGNOSTICO', 'Procedimientos dermatológicos menores', 'Crioterapia con nitrógeno líquido, electrofulguración y legrados indoloros.', 220.00),
+('SRV-05', 'ELECTROMEDICINA', 'SERVICIO_DIAGNOSTICO', 'Estudios funcionales cardiorrespiratorios', 'Electrocardiogramas continuos, Holter 24h, espirometría digital y electrodiagnóstico.', 200.00),
+('SRV-06', 'ENFERMERÍA', 'SERVICIO_DIAGNOSTICO', 'Procedimientos de enfermería ambulatoria', 'Inyectables intramusculares y endovenosos, curaciones avanzadas de heridas y toma de signos vitales.', 50.00),
+('SRV-07', 'FONOAUDIOLOGÍA (Servicio)', 'SERVICIO_DIAGNOSTICO', 'Sesiones programadas de rehabilitación vocal y deglutoria', 'Sesiones programadas de entrenamiento foniátrico y deglutorio.', 120.00),
+('SRV-08', 'IMAGENOLOGÍA', 'SERVICIO_DIAGNOSTICO', 'Diagnóstico por imágenes digital y ecografía Doppler', 'Radiografías digitales de alta definición (Rayos X) y ecografía doppler general y vascular.', 180.00),
+('SRV-09', 'PAPANICOLAOU-COLPOSCOPIA Y LABORATORIO CLÍNICO', 'SERVICIO_DIAGNOSTICO', 'Citología cervical, colposcopía y análisis clínicos', 'Citología cervical convencional y en base líquida, colposcopía videodirigida, más toma de muestras de sangre y orina.', 170.00);
+
+________________
+6.2.2.4. Consultas SQL (Básicas, Intermedias y Avanzadas)
+-- CONSULTA BÁSICA 1: Búsqueda instantánea y autocompletado de paciente por CI (CU06, CU07, CU14)
+SELECT p.id, p.ci, p.nombres, p.apellidos, p.telefono, p.correo,
+       a.grupo_sanguineo, a.alergias, a.patologias_cronicas
+FROM pacientes p
+LEFT JOIN antecedentes_medicos a ON a.paciente_id = p.id
+WHERE p.ci = '8845123' AND p.estado = 'activo';
+
+
+-- CONSULTA BÁSICA 2: Listar las 22 Especialidades y 9 Servicios con su política ambulatoria (CU10)
+SELECT codigo, nombre, tipo_catalogo, servicios_especificos, costo_consulta, politica_ambulatoria
+FROM especialidades
+WHERE estado = 'activo'
+ORDER BY tipo_catalogo, nombre;
+
+
+
+
+-- CONSULTA INTERMEDIA 3: Agenda Médica Diaria ordenada por bloques de 15 minutos (CU19)
+SELECT c.codigo_cita, c.hora_inicio_bloque, c.hora_fin_bloque,
+       p.ci, p.nombres || ' ' || p.apellidos AS paciente,
+       EXTRACT(YEAR FROM AGE(c.fecha_cita, p.fecha_nacimiento)) AS edad,
+       c.motivo_consulta, c.estado_cita, con.codigo AS consultorio
+FROM citas_medicas c
+INNER JOIN pacientes p ON p.id = c.paciente_id
+INNER JOIN consultorios con ON con.id = c.consultorio_id
+WHERE c.medico_id = 1 AND c.fecha_cita = CURRENT_DATE
+ORDER BY c.hora_inicio_bloque ASC;
+
+
+-- CONSULTA AVANZADA 4: Reporte Estadístico Gerencial por Especialidad e Ingresos (CU23)
+SELECT e.nombre AS especialidad,
+       COUNT(c.id) AS total_citas,
+       SUM(CASE WHEN c.estado_cita = 'Atendida' THEN 1 ELSE 0 END) AS atendidas,
+       SUM(CASE WHEN c.estado_cita = 'Cancelada' THEN 1 ELSE 0 END) AS canceladas,
+       SUM(CASE WHEN c.estado_cita = 'Inasistencia' THEN 1 ELSE 0 END) AS inasistencias,
+       ROUND(SUM(CASE WHEN c.estado_cita = 'Atendida' THEN 1 ELSE 0 END)::NUMERIC / NULLIF(COUNT(c.id), 0) * 100, 2) AS tasa_efectividad_pct,
+       COALESCE(SUM(CASE WHEN pg.estado_pago = 'Aprobado' THEN pg.monto ELSE 0 END), 0) AS ingresos_confirmados_bs
+FROM especialidades e
+LEFT JOIN citas_medicas c ON c.especialidad_id = e.id
+LEFT JOIN pagos_citas pg ON pg.cita_id = c.id
+GROUP BY e.id, e.nombre
+ORDER BY ingresos_confirmados_bs DESC;
+
+________________
+6.2.2.5. Procedimientos Almacenados (Funciones PL/pgSQL) y Triggers
+1. Función Almacenada para Cálculo Dinámico de Bloques de 15 Minutos (RF05 - CU13):
+
+
+CREATE OR REPLACE FUNCTION sp_calcular_bloques_disponibles_15min(
+    p_medico_id INTEGER,
+    p_especialidad_id INTEGER,
+    p_fecha DATE,
+    p_dia_semana VARCHAR
+)
+RETURNS TABLE (
+    bloque_inicio TIME,
+    bloque_fin TIME,
+    consultorio_id INTEGER,
+    estado_cupo VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    WITH bloques_generados AS (
+        SELECT
+            (gs)::TIME AS b_inicio,
+            (gs + INTERVAL '15 minutes')::TIME AS b_fin,
+            h.consultorio_id AS c_id
+        FROM horarios_atencion h,
+        GENERATE_SERIES(
+            p_fecha + h.hora_inicio,
+            p_fecha + h.hora_fin - INTERVAL '15 minutes',
+            INTERVAL '15 minutes'
+        ) AS gs
+        WHERE h.medico_id = p_medico_id
+          AND h.especialidad_id = p_especialidad_id
+          AND h.dia_semana = p_dia_semana
+          AND h.estado = 'activo'
+    )
+    SELECT
+        bg.b_inicio,
+        bg.b_fin,
+        bg.c_id,
+        'DISPONIBLE'::VARCHAR
+    FROM bloques_generados bg
+    WHERE NOT EXISTS (
+        SELECT 1 FROM citas_medicas cm
+        WHERE cm.medico_id = p_medico_id
+          AND cm.fecha_cita = p_fecha
+          AND cm.hora_inicio_bloque = bg.b_inicio
+          AND cm.estado_cita IN ('Pendiente', 'Programada', 'Confirmada', 'Atendida')
+    )
+    ORDER BY bg.b_inicio;
+END;
+$$ LANGUAGE plpgsql;
+2. Trigger para Evitar Solapamiento de Citas Médicas y Registrar Bitácora (CU05, CU14, CU20):
+CREATE OR REPLACE FUNCTION fn_validar_colision_cita()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_ocupado INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO v_ocupado
+    FROM citas_medicas
+    WHERE medico_id = NEW.medico_id
+      AND fecha_cita = NEW.fecha_cita
+      AND hora_inicio_bloque = NEW.hora_inicio_bloque
+      AND estado_cita IN ('Pendiente', 'Programada', 'Confirmada', 'Atendida')
+      AND id != COALESCE(NEW.id, 0);
+
+
+    IF v_ocupado > 0 THEN
+
+
+        RAISE EXCEPTION 'CONFLICTO DE AGENDA: El bloque de 15 minutos ya fue reservado para este médico.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_evitar_colision_cita
+BEFORE INSERT OR UPDATE ON citas_medicas
+FOR EACH ROW EXECUTE FUNCTION fn_validar_colision_cita();
+
+
+-- Trigger para impedir borrado o edición en HISTORIAL_CLINICO (Inmutabilidad CU20)
+CREATE OR REPLACE FUNCTION fn_proteger_historial_inmutable()
+RETURNS TRIGGER AS $$
+BEGIN
+    RAISE EXCEPTION 'PROHIBIDO: Los registros del Historial Clínico de CLÍNICA MEDICAL son inmutables por normativa legal.';
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_historial_inmutable
+BEFORE UPDATE OR DELETE ON historial_clinico
+FOR EACH ROW EXECUTE FUNCTION fn_proteger_historial_inmutable();
+
+________________
+6.3. Diseñar un Caso de Uso (Diagramas de Secuencia de los 23 Casos de Uso)
+A continuación se especifica la secuencia temporal de interacciones (Actor → Vista → Controlador → Servicio/Modelo → Base de Datos PostgreSQL) para los 23 Casos de Uso:
+CICLO #1
+   * 6.3.1. CU01 – Iniciar Sesión: Actor → UI_Login: ingresarCredenciales() → AuthController: login() → UsuarioModel: buscarActivoPorUserOCorreo() → AuthController: password_verify() → BitacoraModel: registrarLogin() → UI_Dashboard: redirigirSegunRol().
+   * 6.3.2. CU02 – Cerrar Sesión: Actor → UI_Header: clickCerrarSesion() → AuthController: logout() → SessionManager: destroy() → BitacoraModel: registrarLogout() → UI_Login: mostrarAccesoPublico().
+   * 6.3.3. CU04 – Gestionar Usuarios y Permisos: Administrador → UI_Usuarios: guardarUsuario() → UsuarioController: storeOrUpdate() → UsuarioModel: validarUnicidadYGuardar() → RolPermisoModel: sincronizar() → UI_Usuarios: confirmar().
+   * 6.3.4. CU06 – Registrar Paciente: Recepcionista/Paciente → UI_Paciente: enviarFormulario(ci, datos) → PacienteController: store() → PacienteModel: verificarCIUnico_RN01() → PacienteModel: insert() → AntecedenteModel: crearFichaBase() → UI_Paciente: pacienteRegistrado().
+   * 6.3.5. CU07 – Gestionar Datos de Paciente: Recepcionista/Paciente → UI_Paciente: buscarPorCI(ci) → PacienteController: showByCI() → PacienteModel: obtenerConAntecedentes() → UI_Paciente: autocompletarCampos() → PacienteController: update().
+   * 6.3.6. CU09 – Gestionar Médicos: Administrador → UI_Medicos: guardarMedico(matricula, datos) → MedicoController: store() → MedicoModel: verificarMatriculaUnica() → MedicoModel: insertOrToggleEstado().
+   * 6.3.7. CU10 – Gestionar Especialidades Médicas: Administrador → UI_Especialidades: guardarCatalogo() → EspecialidadController: store() → EspecialidadModel: validarNombreNormalizado() → EspecialidadModel: guardarFichaConPoliticaAmbulatoria().
+   * 6.3.8. CU11 – Asignar Especialidad a Médico: Administrador → UI_Asignacion: vincular(medico_id, especialidades[]) → MedicoEspecialidadController: sync() → MedicoEspecialidadModel: guardarRelaciones().
+   * 6.3.9. CU12 – Configurar Horarios de Atención:Administrador → UI_Horarios: configurar(medico_id, dia, inicio, fin, 15min) → HorarioController: store() → HorarioModel: validarRangoYSolapamiento() → HorarioModel: insert().
+   * 6.3.10. CU13 – Consultar Disponibilidad de Citas:Actor → UI_PedirCita: seleccionar(esp, medico, fecha) → DisponibilidadController: calcular() → PostgreSQL: sp_calcular_bloques_disponibles_15min() → UI_PedirCita: renderizarBloques15MinLibres().
+   * 6.3.11. CU14 – Programar Cita Médica:Recepcionista/Paciente → UI_PedirCita: confirmarReserva(ci, medico_id, fecha, bloque_15min) → CitaController: store() → DB::beginTransaction() → CitaModel: verificarCupoEInsertar() → SecuenciaPG: generarCodigo(CM-0001) → DB::commit() → UI_Comprobante: mostrarComprobanteOficial().
+CICLO #2
+   * 6.3.12. CU03 – Recuperar Contraseña por Correo: Paciente → UI_Recuperar: solicitar(correo) → RecuperacionController: enviarToken() → TokenModel: crearTokenVigencia30Min() → ServidorSMTP: enviarCorreoEnlace() → Paciente: ingresarNuevaClave() → UsuarioModel: actualizarHash().
+   * 6.3.13. CU05 – Consultar Bitácora del Sistema: Administrador → UI_Bitacora: filtrar(fechas, usuario, evento) → BitacoraController: index() → BitacoraModel: consultarInmutables() → UI_Bitacora: mostrarTablaCronologica().
+   * 6.3.14. CU08 – Consultar Historial de Citas del Paciente: Actor → UI_HistorialCitas: consultar(paciente_id) → CitaController: historialPorPaciente() → CitaModel: listarOrdenadoPorFecha() → UI_HistorialCitas: desplegarTrazabilidad().
+   * 6.3.15. CU15 – Confirmar Cita con Pasarela de Pago: Paciente → UI_Pago: pagarCita(cita_id, monto) → PagoController: procesar() → Pasarela de Pago: autorizarTransaccion() → PagoModel: guardarComprobante() → CitaModel: actualizarEstado('Confirmada') → UI_Comprobante: habilitarDescargaPDF(CM-0001).
+   * 6.3.16. CU16 – Reprogramar Cita Médica:Recepcionista → UI_Reprogramar: cambiarTurno(codigo_cita, nueva_fecha, nuevo_bloque) → CitaController: reprogramar() → CitaModel: validarEstadoYActualizarBloque() → BitacoraModel: registrarReprogramacion().
+   * 6.3.17. CU17 – Cancelar Cita Médica: Recepcionista/Paciente → UI_Cancelar: anular(codigo_cita, motivo) → CitaController: cancelar() → CitaModel: cambiarEstado('Cancelada') → BitacoraModel: registrarCancelacion().
+   * 6.3.18. CU18 – Registrar Asistencia del Paciente: Recepcionista → UI_SalaEspera: marcarAsistencia(codigo_cita, estado) → AsistenciaController: update() → CitaModel: actualizarEstado('Confirmada' / 'Inasistencia').
+   * 6.3.19. CU19 – Consultar Agenda Médica:Médico/Recepcionista → UI_Agenda: consultarDia(medico_id, fecha) → AgendaController: index() → CitaModel: obtenerTurnosDia() → UI_Agenda: mostrarCronogramaSalaEspera().
+   * 6.3.20. CU20 – Registrar Consulta en Historial Clínico: Médico → UI_Consulta: guardarAtencion(cita_id, signos, diagnostico, receta) → HistorialController: store() → DB::transaction() → HistorialModel: insertInmutable() → CitaModel: cambiarEstado('Atendida') → BitacoraModel: auditarAtencion().
+   * 6.3.21. CU21 – Consultar Expediente e Historial Clínico: Médico/Paciente → UI_Expediente: abrir(paciente_id) → HistorialController: show() → HistorialModel: obtenerEvolucionesCronologicas() → UI_Expediente: mostrarNotasYRecetas().
+   * 6.3.22. CU22 – Actualizar Antecedentes Médicos del Paciente: Médico/Paciente → UI_Antecedentes: actualizar(paciente_id, alergias, cronicas, sangre) → AntecedenteController: update() → AntecedenteModel: upsertPostgreSQL().
+   * 6.3.23. CU23 – Generar Reportes y Estadísticas de Atención: Administrador/Recepcionista → UI_Reportes: generar(filtros, formato) → ReporteController: exportar() → CitaModel/PagoModel: agregarMetricas() → PDF_CSV_Generator: descargarArchivo().
+________________
+
+
+CAPÍTULO 7. FLUJO DE TRABAJO: IMPLEMENTACIÓN
+7.1. Herramientas de Desarrollo y Stack Tecnológico Principal
+Categoría
+	Tecnología / Herramienta
+	Versión
+	Uso dentro del Proyecto CLÍNICA MEDICAL
+	Backend
+	PHP + Framework Laravel
+	PHP 8.2+ / Laravel 11
+	Lógica de negocio MVC, autenticación password_verify/bcrypt, cálculo de bloques de 15 min y generación de comprobantes CM-XXXX.
+	Frontend
+	HTML5, CSS3, JavaScript, React / Vue.js + TailwindCSS
+	ES6+ / Tailwind 3.x
+	Catálogo interactivo de 22 especialidades y 9 servicios ambulatorios, autocompletado por CI y paneles por rol.
+	Base de Datos
+	PostgreSQL + pgAdmin 4
+	PostgreSQL 16+
+	Persistencia relacional ACID, secuencias CM-0001, funciones PL/pgSQL y triggers de inmutabilidad.
+	Modelado UML
+	StarUML / PlantUML
+	5.x
+	Elaboración de diagramas de casos de uso, actividades, paquetes, comunicación, clases y secuencia.
+	Control de Versiones y Nube
+	Git + GitHub + Render / Railway
+	Git 2.40+
+	Control de código fuente y despliegue continuo en la nube con HTTPS.
+	7.2. Implementación de la Arquitectura por Capas (Estructura de Directorios)
+
+
+clinica-medical-web/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── AuthController.php              # CU01, CU02, CU03
+│   │   ├── UsuarioBitacoraController.php   # CU04, CU05
+│   │   ├── PacienteController.php          # CU06, CU07, CU08 (Autocompletado por CI)
+│   │   ├── MedicoEspecialidadController.php# CU09, CU10 (22 Esp + 9 Serv), CU11, CU12
+│   │   ├── CitaMedicaController.php        # CU13 (Bloques 15m), CU14 (CM-0001), CU16, CU17, CU18, CU19
+│   │   ├── PasarelaPagoController.php      # CU15
+│   │   ├── HistorialClinicoController.php  # CU20, CU21, CU22
+│   │   └── ReporteEstadisticoController.php# CU23 (Exportación PDF/CSV)
+│   ├── Models/
+│   │   ├── Usuario.php, Paciente.php, Medico.php, Especialidad.php,
+│   │   ├── HorarioAtencion.php, CitaMedica.php, PagoCita.php,
+│   │   └── HistorialClinico.php, AntecedenteMedico.php, Bitacora.php
+│   └── Services/
+│       ├── Disponibilidad15MinService.php  # Algoritmo RF05 de bloques de 15 min
+│       ├── ComprobanteSecuencialService.php# Emisión CM-0001 con aviso ambulatorio
+│       └── PasarelaPagoService.php         # Integración de cobro digital
+├── database/migrations/                    # Esquema PostgreSQL de 16 tablas
+└── resources/views/                        # Vistas con aviso obligatorio de corta estancia
+7.3. Comunicación Frontend-Backend (Endpoints API REST Principales)
+Método HTTP
+	Endpoint API REST
+	Caso de Uso Asociado
+	Descripción Funcional
+	POST
+	/api/auth/login
+	CU01
+	Autenticación con password_verify y registro en bitácora.
+	POST
+	/api/auth/logout
+	CU02
+	Destrucción de sesión activa e invalidación de cookie.
+	POST
+	/api/auth/recuperar-password
+	CU03
+	Generación de token temporal (30 min) y envío por SMTP.
+	GET
+	/api/pacientes/buscar-ci/{ci}
+	CU06, CU07, CU14
+	Búsqueda instantánea por CI para autocompletar nombres, teléfono y antecedentes.
+	POST
+	/api/pacientes
+	CU06
+	Registro inmediato de nuevo paciente validando no duplicación de CI (RN01).
+	GET
+	/api/catalogo-asistencial
+	CU10
+	Listado público de las 22 Especialidades Médicas y 9 Servicios Ambulatorios.
+	GET
+	/api/citas/disponibilidad
+	CU13
+	Cálculo dinámico de bloques libres de 15 minutos por médico y fecha (RF05).
+	POST
+	/api/citas/programar
+	CU14
+	Reserva transaccional de cita y generación de código secuencial CM-0001.
+	POST
+	/api/citas/{id}/confirmar-pago
+	CU15
+	Confirmación con Pasarela de Pago y emisión de Comprobante Oficial descargable.
+	PUT
+	/api/citas/{id}/reprogramar
+	CU16
+	Reasignación de fecha/bloque de 30 min liberando el turno anterior.
+	PUT
+	/api/citas/{id}/cancelar
+	CU17
+	Baja lógica a estado Cancelada con motivo obligatorio.
+	PUT
+	/api/citas/{id}/asistencia
+	CU18
+	Registro de llegada en sala (Confirmada) o Inasistencia.
+	GET
+	/api/agenda-medica
+	CU19
+	Cronograma diario del médico ordenado por bloques de 30 minutos.
+	POST
+	/api/historial-clinico
+	CU20
+	Registro inmutable de consulta médica y paso de cita a Atendida.
+	GET
+	/api/expediente/{paciente_id}
+	CU21, CU22
+	Consulta cronológica del expediente clínico y antecedentes permanentes.
+	GET
+	/api/reportes/atenciones
+	CU23
+	Estadísticas de atención e ingresos exportables a PDF y CSV.
+	________________
+
+
+CAPÍTULO 8. CONCLUSIONES
+   28. Se estructuró y documentó integralmente el sistema web CLÍNICA MEDICAL (homónimo a la institución CLÍNICA MEDICAL), alineando las disciplinas del Proceso Unificado de Desarrollo de Software (PUDS) —Requisitos, Análisis, Diseño e Implementación— con los 7 actores y los 23 casos de uso definidos para la clínica.
+   29. La incorporación del catálogo completo de 22 Especialidades Médicas y 9 Servicios Clínicos y Diagnósticos Ambulatorios, junto con el aviso reglamentario visible en toda la plataforma («Atención médica especializada y procedimientos ambulatorios de corta estancia. No contamos con camas ni servicio de internación hospitalaria»), asegura total fidelidad con el modelo asistencial de la institución.
+   30. El diseño del motor de agendamiento resuelve los cuellos de botella operativos mediante tres pilares técnicos verificables: el cálculo dinámico de disponibilidad en bloques fijos de 15 minutos (RF05), la búsqueda y autocompletado automático por CI con validación de unicidad (RN01), y la emisión del Comprobante Oficial secuencial (CM-0001) integrado con pasarela de pago electrónica.
+   31. El diseño físico en PostgreSQL, respaldado por transacciones ACID, funciones almacenadas y triggers de inmutabilidad en historial_clinico y bitacora, garantiza la seguridad clínica, la confidencialidad de los antecedentes médicos y la trazabilidad administrativa exigida en auditorías.
+________________
+
+
+CAPÍTULO 9. RECOMENDACIONES
+   * Respaldo Automatizado de Base de Datos: Configurar copias de seguridad diarias (backups automáticos) del esquema PostgreSQL de CLÍNICA MEDICAL en almacenamiento cloud cifrado, dada la criticidad legal del historial clínico y la bitácora.
+   * Notificaciones Recordatorias: Complementar el Servidor de Correo SMTP (CU03) con recordatorios automáticos 24 horas antes del turno médico (CM-XXXX), recordando requisitos específicos como el reposo auditivo de 14 horas previas para el servicio de Audiometría.
+   * Autenticación Reforzada y Certificados SSL: Mantener activo el cifrado HTTPS/TLS en el servidor de producción y renovar periódicamente las credenciales de integración con la Pasarela de Pago y el servidor SMTP.
+   * Capacitación por Rol: Realizar sesiones prácticas breves con el personal de Recepción y el plantel médico de las 22 especialidades utilizando los prototipos de los Ciclos #1 y #2 para agilizar la atención en ventanilla y consultorio.
+________________
+
+
+CAPÍTULO 10. BIBLIOGRAFÍA
+   * Booch, G., Rumbaugh, J., & Jacobson, I. (2005). El lenguaje unificado de modelado: Guía del usuario (2.ª ed.). Addison-Wesley.
+   * Fowler, M. (2003). UML gota a gota (3.ª ed.). Pearson Educación.
+   * Jacobson, I., Booch, G., & Rumbaugh, J. (1999). El Proceso Unificado de Desarrollo de Software. Addison-Wesley.
+   * Laudon, K. C., & Laudon, J. P. (2020). Sistemas de información gerencial (16.ª ed.). Pearson.
+   * Object Management Group (OMG). (2017). OMG Unified Modeling Language (OMG UML), Version 2.5.1. https://www.omg.org/spec/UML/
+   * Otwell, T. (2024). Laravel: The PHP Framework for Web Artisans. https://laravel.com/docs
+   * PHP Group. (2024). PHP Manual: Function Reference - Password Hashing (password_verify). https://www.php.net
+   * PostgreSQL Global Development Group. (2024). PostgreSQL 16 Documentation. https://www.postgresql.org/docs/
+________________
+
+
+CAPÍTULO 11. ANEXOS
+   * Anexo A: Enlace al Repositorio de Código Fuente en GitHub del Proyecto CLÍNICA MEDICAL y Código QR.
+   * Anexo B: Enlace al Despliegue en Producción en la Nube y Código QR.
+   * Anexo C: Modelo de Comprobante Oficial de Cita Médica (CM-0001 al CM-0009) con detalle de consultorio y aviso reglamentario de atención ambulatoria sin internación hospitalaria.
