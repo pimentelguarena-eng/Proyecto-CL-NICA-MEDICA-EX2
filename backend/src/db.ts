@@ -1,4 +1,7 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   hashPassword,
   assertSingleAdminInvariant,
@@ -7,6 +10,10 @@ import {
   type SessionToken,
   type PasswordResetToken,
 } from './authService.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DB_STORAGE_PATH = path.resolve(__dirname, '../database/local_db.json');
 import {
   INITIAL_SPECIALTIES,
   INITIAL_SERVICES,
@@ -41,7 +48,127 @@ export class ClinicDatabase {
   auditLogs: AuditLogEntry[] = [];
 
   constructor() {
+    this.loadFromDiskOrSeed();
+  }
+
+  public saveToDisk(): void {
+    try {
+      const data = {
+        users: this.users,
+        staffRequests: this.staffRequests,
+        specialties: this.specialties,
+        services: this.services,
+        doctors: this.doctors,
+        schedules: this.schedules,
+        patients: this.patients,
+        appointments: this.appointments,
+        auditLogs: this.auditLogs,
+      };
+      const dir = path.dirname(DB_STORAGE_PATH);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(DB_STORAGE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (err) {
+      console.error('[DB STORAGE] Error al guardar datos en disco:', err);
+    }
+  }
+
+  public loadFromDiskOrSeed(): void {
+    if (fs.existsSync(DB_STORAGE_PATH)) {
+      try {
+        const raw = fs.readFileSync(DB_STORAGE_PATH, 'utf-8');
+        const data = JSON.parse(raw);
+        this.users = data.users || [];
+        this.staffRequests = data.staffRequests || [];
+        this.specialties = data.specialties || [...INITIAL_SPECIALTIES];
+        this.services = data.services || [...INITIAL_SERVICES];
+        this.doctors = data.doctors || [...INITIAL_DOCTORS];
+        this.schedules = data.schedules || [...INITIAL_SCHEDULES];
+        this.patients = data.patients || [...INITIAL_PATIENTS];
+        this.appointments = data.appointments || [...INITIAL_APPOINTMENTS];
+        this.auditLogs = data.auditLogs || [];
+
+        // Synchronize all doctors from INITIAL_DOCTORS so every specialty has an active user login
+        let hasNewDoctors = false;
+        const docPass = hashPassword('Medico123!');
+        for (const doc of this.doctors) {
+          const exists = this.users.some(
+            u => u.doctorId === doc.id || u.email.toLowerCase() === doc.email.toLowerCase()
+          );
+          if (!exists) {
+            this.users.push({
+              id: `usr-${doc.id}`,
+              email: doc.email.toLowerCase(),
+              passwordHash: docPass.hash,
+              salt: docPass.salt,
+              fullName: doc.fullName,
+              role: 'Médico',
+              status: 'ACTIVE',
+              doctorId: doc.id,
+              licenseNumber: doc.licenseNumber,
+              specialtyId: doc.specialtyIds[0],
+              phone: doc.phone,
+              ci: doc.licenseNumber.replace(/\D/g, '') || '3489100',
+              createdAt: '2026-01-05T08:00:00Z',
+              updatedAt: '2026-01-05T08:00:00Z',
+              failedLoginAttempts: 0,
+            });
+            hasNewDoctors = true;
+          }
+        }
+        if (!this.users.some(u => u.email === 'dr.perez@clinicamedical.com')) {
+          this.users.push({
+            id: 'usr-doc',
+            email: 'dr.perez@clinicamedical.com',
+            passwordHash: docPass.hash,
+            salt: docPass.salt,
+            fullName: 'Dr. Juan Pérez Sandoval',
+            role: 'Médico',
+            status: 'ACTIVE',
+            doctorId: 'doc-003',
+            licenseNumber: 'MP-7721-BOL',
+            specialtyId: 'esp-medgen',
+            phone: '71192843',
+            ci: '7721100',
+            createdAt: '2026-01-05T08:00:00Z',
+            updatedAt: '2026-01-05T08:00:00Z',
+            failedLoginAttempts: 0,
+          });
+          hasNewDoctors = true;
+        }
+        if (!this.users.some(u => u.email === 'juan.perez@clinicamedical.com')) {
+          this.users.push({
+            id: 'usr-doc-003-alias',
+            email: 'juan.perez@clinicamedical.com',
+            passwordHash: docPass.hash,
+            salt: docPass.salt,
+            fullName: 'Dr. Juan Pérez Sandoval',
+            role: 'Médico',
+            status: 'ACTIVE',
+            doctorId: 'doc-003',
+            licenseNumber: 'MP-7721-BOL',
+            specialtyId: 'esp-medgen',
+            phone: '71192843',
+            ci: '7721100',
+            createdAt: '2026-01-05T08:00:00Z',
+            updatedAt: '2026-01-05T08:00:00Z',
+            failedLoginAttempts: 0,
+          });
+          hasNewDoctors = true;
+        }
+        if (hasNewDoctors) {
+          this.saveToDisk();
+        }
+
+        console.log(`[DB STORAGE] Base de datos cargada desde ${DB_STORAGE_PATH} (${this.users.length} usuarios, ${this.patients.length} pacientes, ${this.appointments.length} citas).`);
+        return;
+      } catch (err) {
+        console.warn('[DB STORAGE] Error al leer local_db.json desde disco, regenerando semillas:', err);
+      }
+    }
     this.seed();
+    this.saveToDisk();
   }
 
   private seed() {
@@ -70,25 +197,67 @@ export class ClinicDatabase {
       failedLoginAttempts: 0,
     });
 
-    // 2. Doctor user (Dr. Juan Pérez)
+    // 2. Doctor Users for ALL 22 Specialties (19 Initial Medical Specialists)
     const docPass = hashPassword('Medico123!');
-    this.users.push({
-      id: 'usr-doc',
-      email: 'dr.perez@clinicamedical.com',
-      passwordHash: docPass.hash,
-      salt: docPass.salt,
-      fullName: 'Dr. Juan Pérez Sandoval',
-      role: 'Médico',
-      status: 'ACTIVE',
-      doctorId: 'doc-003',
-      licenseNumber: 'MP-7821-BOL',
-      specialtyId: 'esp-medgen',
-      phone: '70011223',
-      ci: '3489102',
-      createdAt: '2026-01-05T08:00:00Z',
-      updatedAt: '2026-01-05T08:00:00Z',
-      failedLoginAttempts: 0,
-    });
+    for (const doc of this.doctors) {
+      this.users.push({
+        id: `usr-${doc.id}`,
+        email: doc.email.toLowerCase(),
+        passwordHash: docPass.hash,
+        salt: docPass.salt,
+        fullName: doc.fullName,
+        role: 'Médico',
+        status: 'ACTIVE',
+        doctorId: doc.id,
+        licenseNumber: doc.licenseNumber,
+        specialtyId: doc.specialtyIds[0],
+        phone: doc.phone,
+        ci: doc.licenseNumber.replace(/\D/g, '') || '3489100',
+        createdAt: '2026-01-05T08:00:00Z',
+        updatedAt: '2026-01-05T08:00:00Z',
+        failedLoginAttempts: 0,
+      });
+    }
+
+    // Support dr.perez@clinicamedical.com as well
+    if (!this.users.some(u => u.email === 'dr.perez@clinicamedical.com')) {
+      this.users.push({
+        id: 'usr-doc',
+        email: 'dr.perez@clinicamedical.com',
+        passwordHash: docPass.hash,
+        salt: docPass.salt,
+        fullName: 'Dr. Juan Pérez Sandoval',
+        role: 'Médico',
+        status: 'ACTIVE',
+        doctorId: 'doc-003',
+        licenseNumber: 'MP-7821-BOL',
+        specialtyId: 'esp-medgen',
+        phone: '71192843',
+        ci: '7721100',
+        createdAt: '2026-01-05T08:00:00Z',
+        updatedAt: '2026-01-05T08:00:00Z',
+        failedLoginAttempts: 0,
+      });
+    }
+    if (!this.users.some(u => u.email === 'juan.perez@clinicamedical.com')) {
+      this.users.push({
+        id: 'usr-doc-003-alias',
+        email: 'juan.perez@clinicamedical.com',
+        passwordHash: docPass.hash,
+        salt: docPass.salt,
+        fullName: 'Dr. Juan Pérez Sandoval',
+        role: 'Médico',
+        status: 'ACTIVE',
+        doctorId: 'doc-003',
+        licenseNumber: 'MP-7721-BOL',
+        specialtyId: 'esp-medgen',
+        phone: '71192843',
+        ci: '7721100',
+        createdAt: '2026-01-05T08:00:00Z',
+        updatedAt: '2026-01-05T08:00:00Z',
+        failedLoginAttempts: 0,
+      });
+    }
 
     // 3. Receptionist user (Lic. Laura Méndez)
     const recepPass = hashPassword('Recep123!');

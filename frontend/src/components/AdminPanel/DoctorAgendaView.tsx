@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Calendar, 
   Clock, 
@@ -39,6 +39,12 @@ export default function DoctorAgendaView({
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>(
     currentDoctorId || doctors[2]?.id || doctors[0]?.id || ''
   );
+
+  useEffect(() => {
+    if (currentDoctorId) {
+      setSelectedDoctorId(currentDoctorId);
+    }
+  }, [currentDoctorId]);
   const [selectedDate, setSelectedDate] = useState<string>('2026-11-16');
   const [statusFilter, setStatusFilter] = useState<string>('TODOS');
 

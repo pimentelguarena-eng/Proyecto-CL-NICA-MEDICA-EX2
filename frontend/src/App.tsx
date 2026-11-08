@@ -535,6 +535,7 @@ export default function App() {
         } : undefined}
         onLoginSuccess={handleLoginSuccess}
         specialties={specialties}
+        doctors={doctors}
       />
 
 

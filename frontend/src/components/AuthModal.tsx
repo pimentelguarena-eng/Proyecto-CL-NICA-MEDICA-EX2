@@ -21,7 +21,7 @@ import {
   LogIn,
 } from 'lucide-react';
 import { apiClient, type AuthUser } from '../utils/apiClient.ts';
-import type { Specialty } from '../types/clinic.ts';
+import type { Specialty, Doctor } from '../types/clinic.ts';
 
 export type AuthModalMode = 'LOGIN' | 'REGISTER_PATIENT' | 'REGISTER_STAFF' | 'FORGOT_PASSWORD';
 
@@ -31,6 +31,7 @@ interface AuthModalProps {
   onClose: () => void;
   onLoginSuccess: (user: AuthUser) => void;
   specialties: Specialty[];
+  doctors?: Doctor[];
   pendingBookingContext?: {
     specialtyName?: string;
     doctorName?: string;
@@ -45,6 +46,7 @@ export default function AuthModal({
   onClose,
   onLoginSuccess,
   specialties,
+  doctors = [],
   pendingBookingContext,
 }: AuthModalProps) {
   const [mode, setMode] = useState<AuthModalMode>(initialMode);
@@ -119,6 +121,12 @@ export default function AuthModal({
 
   const switchMode = (newMode: AuthModalMode) => {
     resetMessages();
+    if (newMode === 'FORGOT_PASSWORD') {
+      setRecoveryStep('REQUEST');
+      setRecoveryToken('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    }
     setMode(newMode);
   };
 
@@ -235,9 +243,7 @@ export default function AuthModal({
     try {
       const res = await apiClient.forgotPassword(recoveryEmail);
       setSuccessMessage(res.message);
-      if (res.debugToken) {
-        setRecoveryToken(res.debugToken);
-      }
+      setRecoveryToken('');
       setRecoveryStep('RESET');
     } catch (err: any) {
       setError(err.message || 'Error al procesar recuperación');
@@ -452,40 +458,68 @@ export default function AuthModal({
               </div>
 
               {/* Evaluation Helper (Fills credentials without bypassing backend authentication) */}
-              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                  Acceso Rápido para Evaluación (Credenciales Reales en Servidor):
-                </span>
-                <div className="grid grid-cols-2 gap-1.5">
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Acceso Rápido para Evaluación (Credenciales Reales en BD):
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">Clave Médicos: Medico123!</span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-1.5">
                   <button
                     type="button"
                     onClick={() => handleFillDemo('admin@clinicamedical.com', 'Admin123!')}
-                    className="p-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-medium transition-colors"
+                    className="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-bold text-slate-800 shadow-xs transition-colors"
                   >
-                    🛡️ <strong>Administrador</strong>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleFillDemo('dr.perez@clinicamedical.com', 'Medico123!')}
-                    className="p-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-medium transition-colors"
-                  >
-                    🩺 <strong>Médico</strong>
+                    🛡️ Administrador
                   </button>
                   <button
                     type="button"
                     onClick={() => handleFillDemo('recepcion@clinicamedical.com', 'Recep123!')}
-                    className="p-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-medium transition-colors"
+                    className="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-bold text-slate-800 shadow-xs transition-colors"
                   >
-                    📋 <strong>Recepcionista</strong>
+                    📋 Recepcionista
                   </button>
                   <button
                     type="button"
                     onClick={() => handleFillDemo('maria.lopez@gmail.com', 'Paciente123!')}
-                    className="p-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-medium transition-colors"
+                    className="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-bold text-slate-800 shadow-xs transition-colors"
                   >
-                    👤 <strong>Paciente</strong>
+                    👤 Paciente
                   </button>
                 </div>
+
+                {/* Specialty Doctors Selector covering all 22 specialties */}
+                {doctors && doctors.length > 0 && (
+                  <div className="pt-2 border-t border-slate-200/80">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-teal-800 mb-1 flex items-center gap-1">
+                      <Stethoscope className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Ingresar como Médico por Especialidad (19 Médicos Activos):</span>
+                    </label>
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          handleFillDemo(e.target.value, 'Medico123!');
+                        }
+                      }}
+                      defaultValue=""
+                      className="w-full p-2 text-xs font-semibold rounded-xl border border-teal-200 bg-white text-slate-800 focus:border-teal-600 outline-hidden"
+                    >
+                      <option value="" disabled>-- Seleccione un médico especialista --</option>
+                      {doctors.map(d => {
+                        const specNames = d.specialtyIds
+                          .map(sId => specialties.find(s => s.id === sId)?.name || sId)
+                          .join(', ');
+                        return (
+                          <option key={d.id} value={d.email}>
+                            {d.fullName} — {specNames} ({d.email})
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -952,16 +986,22 @@ export default function AuthModal({
               <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Código de Recuperación *
+                    Código de Recuperación (PIN de 6 dígitos) *
                   </label>
                   <input
                     type="text"
                     required
+                    maxLength={10}
+                    autoFocus
+                    autoComplete="off"
                     value={recoveryToken}
-                    onChange={(e) => setRecoveryToken(e.target.value)}
-                    placeholder="Código de recuperación emitido"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-teal-600 text-sm font-mono outline-hidden"
+                    onChange={(e) => setRecoveryToken(e.target.value.trim())}
+                    placeholder="Ej. 482910"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-teal-600 text-center font-mono font-black text-xl tracking-widest outline-hidden bg-slate-50 focus:bg-white text-slate-900 shadow-inner"
                   />
+                  <p className="text-[11px] text-slate-400 mt-1 text-center">
+                    Ingrese el código de 6 dígitos que enviamos a su correo electrónico.
+                  </p>
                 </div>
 
                 <div>

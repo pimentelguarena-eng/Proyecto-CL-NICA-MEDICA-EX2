@@ -369,6 +369,8 @@ apiRouter.post('/auth/register-patient', (req: Request, res: Response) => {
     ipAddress: req.ip,
   });
 
+  clinicDb.saveToDisk();
+
   return res.status(201).json({
     success: true,
     message: 'Cuenta de paciente creada exitosamente.',
@@ -489,6 +491,8 @@ apiRouter.post('/auth/register-staff-request', (req: Request, res: Response) => 
     ipAddress: req.ip,
   });
 
+  clinicDb.saveToDisk();
+
   return res.status(201).json({
     success: true,
     message: `Su solicitud de registro como ${type === 'MEDICO' ? 'Médico Especialista' : 'Recepcionista'} ha sido recibida y se encuentra PENDIENTE de revisión por la Administración. Se le notificará tras la revisión de sus credenciales.`,
@@ -516,7 +520,8 @@ apiRouter.post('/auth/forgot-password', async (req: Request, res: Response) => {
     return res.json({ success: true, message: genericMessage });
   }
 
-  const token = crypto.randomBytes(16).toString('hex');
+  // Genera un código numérico seguro de 6 dígitos (ej. 482910) fácil de leer y escribir
+  const token = crypto.randomInt(100000, 1000000).toString();
   clinicDb.passwordResetTokens.set(token, {
     token,
     userId: user.id,
@@ -547,8 +552,6 @@ apiRouter.post('/auth/forgot-password', async (req: Request, res: Response) => {
   return res.json({
     success: true,
     message: genericMessage,
-    // debugToken mantenido para soporte y pruebas inmediatas
-    debugToken: token,
   });
 });
 
@@ -603,6 +606,8 @@ apiRouter.post('/auth/reset-password', (req: Request, res: Response) => {
     actionDescription: `Contraseña restablecida exitosamente para ${user.email}. Sesiones previas invalidadas.`,
     ipAddress: req.ip,
   });
+
+  clinicDb.saveToDisk();
 
   return res.json({
     success: true,
@@ -743,6 +748,8 @@ apiRouter.post(
       ipAddress: req.ip,
     });
 
+    clinicDb.saveToDisk();
+
     return res.json({
       success: true,
       message: `Solicitud aprobada con éxito. La cuenta de ${request.fullName} ha sido activada con rol ${targetRole}.`,
@@ -790,6 +797,8 @@ apiRouter.post(
       actionDescription: `Solicitud de ${request.type} #${request.id} RECHAZADA para ${request.fullName}. Motivo: ${request.rejectionReason}`,
       ipAddress: req.ip,
     });
+
+    clinicDb.saveToDisk();
 
     return res.json({
       success: true,
@@ -977,6 +986,8 @@ apiRouter.post('/appointments/book', authenticateToken, (req: AuthenticatedReque
     ipAddress: req.ip,
   });
 
+  clinicDb.saveToDisk();
+
   return res.status(201).json({
     success: true,
     message: 'Cita médica confirmada exitosamente.',
@@ -1033,6 +1044,8 @@ apiRouter.patch('/appointments/:id/status', authenticateToken, (req: Authenticat
     actionDescription: `Cita ${appt.code} actualizada a ${newStatus} por ${session.fullName} (${session.role}).`,
     ipAddress: req.ip,
   });
+
+  clinicDb.saveToDisk();
 
   return res.json({ success: true, appointment: appt });
 });

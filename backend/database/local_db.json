@@ -1,0 +1,1946 @@
+{
+  "users": [
+    {
+      "id": "usr-admin",
+      "email": "admin@clinicamedical.com",
+      "passwordHash": "a1580be7a1f51a5bbd2700f406c37e33540c03ef74439c1e8f87ef05e2eb6caadd617f10bcc0befcefbd7963da0db525349f4c83637360a6aba1728cf630df57",
+      "salt": "0bee640d962cbe56526c5c5b7932e4ad",
+      "fullName": "Ing. Administrador de Sistemas",
+      "role": "Administrador",
+      "status": "ACTIVE",
+      "phone": "77218900",
+      "ci": "4928170",
+      "createdAt": "2026-01-01T08:00:00Z",
+      "updatedAt": "2026-01-01T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc",
+      "email": "dr.perez@clinicamedical.com",
+      "passwordHash": "b817e0ddaac5381e6b029c3baf380c175da9c0a1616937464e1f301722143a0b9d12498acfc546726567d461c504947a3931b2a295202b76febdf8056078a09e",
+      "salt": "8141a692b3d5674fcce5db9d5e014266",
+      "fullName": "Dr. Juan Pérez Sandoval",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-003",
+      "licenseNumber": "MP-7821-BOL",
+      "specialtyId": "esp-medgen",
+      "phone": "70011223",
+      "ci": "3489102",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-recep",
+      "email": "recepcion@clinicamedical.com",
+      "passwordHash": "9b31ffa5f038a1a02802b1bf94a6aa1e963b8bbe4cacb61d9b9502266d116b8505c8f77c869652e3eaf59de6dadd44e8c5a8d3ad30431ce9e24236c366e8bef1",
+      "salt": "eda2ebc4bdceade84e85b91918d2c3ce",
+      "fullName": "Lic. Laura Méndez",
+      "role": "Recepcionista",
+      "status": "ACTIVE",
+      "phone": "77219001",
+      "ci": "4829103",
+      "createdAt": "2026-01-10T08:00:00Z",
+      "updatedAt": "2026-01-10T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-pac",
+      "email": "maria.lopez@gmail.com",
+      "passwordHash": "3422117dbf1ff9ac3279a1d996a0e035aee63f21b89b70ad5f608b5fe193172268e1135ea9f71b6019d2fb972c392bbc7dcbc70605fb57467c71974cbf72a80d",
+      "salt": "c7dd4fc8a42292ef54344d52fce87bdc",
+      "fullName": "María López Quispe",
+      "role": "Paciente",
+      "status": "ACTIVE",
+      "ci": "5489123",
+      "patientId": "pac-001",
+      "patientCi": "5489123",
+      "phone": "77123456",
+      "createdAt": "2026-01-15T08:00:00Z",
+      "updatedAt": "2026-01-15T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-pimentel",
+      "email": "pimentelcarlos147@gmail.com",
+      "passwordHash": "b12b5c3a97490951cdaad9144cdff29ac9883d3af180d2a9d80537290c939093276d57f2858897d65307d688170da39d97355e6f18a18a00c3713ec89666e778",
+      "salt": "ff8c65dd1322896546292b78409a05d7",
+      "fullName": "Carlos Pimentel",
+      "role": "Paciente",
+      "status": "ACTIVE",
+      "ci": "6190432",
+      "patientId": "pac-002",
+      "patientCi": "6190432",
+      "phone": "70281930",
+      "createdAt": "2026-01-20T08:00:00Z",
+      "updatedAt": "2026-11-08T19:28:34.725Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-001",
+      "email": "carlos.mendoza@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Carlos Mendoza Ramos",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-001",
+      "licenseNumber": "MP-8921-BOL",
+      "specialtyId": "esp-cardio",
+      "phone": "77218944",
+      "ci": "8921",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-002",
+      "email": "elena.vargas@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dra. Elena Vargas Solís",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-002",
+      "licenseNumber": "MP-9104-BOL",
+      "specialtyId": "esp-derma",
+      "phone": "78190012",
+      "ci": "9104",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-004",
+      "email": "gabriela.castro@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dra. Gabriela Castro Medina",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-004",
+      "licenseNumber": "MP-8349-BOL",
+      "specialtyId": "esp-pedia",
+      "phone": "76543210",
+      "ci": "8349",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-005",
+      "email": "sofia.morales@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dra. Sofía Morales Paz",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-005",
+      "licenseNumber": "MP-6523-BOL",
+      "specialtyId": "esp-gineco",
+      "phone": "72349011",
+      "ci": "6523",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-006",
+      "email": "roberto.siles@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Roberto Siles Justiniano",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-006",
+      "licenseNumber": "MP-8812-BOL",
+      "specialtyId": "esp-trauma",
+      "phone": "75432198",
+      "ci": "8812",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-007",
+      "email": "marcelo.ortiz@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Marcelo Ortiz Aguilera",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-007",
+      "licenseNumber": "MP-9943-BOL",
+      "specialtyId": "esp-oftalmo",
+      "phone": "76891234",
+      "ci": "9943",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-008",
+      "email": "fernando.rocha@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Fernando Rocha Claure",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-008",
+      "licenseNumber": "MP-6214-BOL",
+      "specialtyId": "esp-uro",
+      "phone": "79011289",
+      "ci": "6214",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-009",
+      "email": "patricia.arze@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dra. Patricia Arze Salinas",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-009",
+      "licenseNumber": "MP-5432-BOL",
+      "specialtyId": "esp-endo",
+      "phone": "73456789",
+      "ci": "5432",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-010",
+      "email": "andres.beltran@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Andrés Beltrán Guzmán",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-010",
+      "licenseNumber": "MP-8120-BOL",
+      "specialtyId": "esp-gastro",
+      "phone": "71239845",
+      "ci": "8120",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-011",
+      "email": "hugo.cespedes@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Hugo Céspedes Mercado",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-011",
+      "licenseNumber": "MP-7788-BOL",
+      "specialtyId": "esp-neumo",
+      "phone": "78901234",
+      "ci": "7788",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-012",
+      "email": "mariana.suarez@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dra. Mariana Suárez Montero",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-012",
+      "licenseNumber": "MP-9241-BOL",
+      "specialtyId": "esp-neuro",
+      "phone": "74567890",
+      "ci": "9241",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-013",
+      "email": "rodrigo.navia@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Rodrigo Navia Valdivia",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-013",
+      "licenseNumber": "MP-6439-BOL",
+      "specialtyId": "esp-orl",
+      "phone": "72389104",
+      "ci": "6439",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-014",
+      "email": "claudia.torrico@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Lic. Claudia Torrico Ribera",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-014",
+      "licenseNumber": "MP-5120-BOL",
+      "specialtyId": "esp-fisio",
+      "phone": "71123490",
+      "ci": "5120",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-015",
+      "email": "veronica.landivar@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Lic. Verónica Landívar",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-015",
+      "licenseNumber": "MP-4982-BOL",
+      "specialtyId": "esp-fono",
+      "phone": "73490123",
+      "ci": "4982",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-016",
+      "email": "daniela.antelo@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Lic. Daniela Antelo Paz",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-016",
+      "licenseNumber": "MP-7321-BOL",
+      "specialtyId": "esp-psico",
+      "phone": "74123890",
+      "ci": "7321",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-017",
+      "email": "guillermo.hurtado@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Guillermo Hurtado",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-017",
+      "licenseNumber": "MP-8910-BOL",
+      "specialtyId": "esp-psiquia",
+      "phone": "79812345",
+      "ci": "8910",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-018",
+      "email": "roxana.pinto@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dra. Roxana Pinto Vega",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-018",
+      "licenseNumber": "MP-6842-BOL",
+      "specialtyId": "esp-reuma",
+      "phone": "78234190",
+      "ci": "6842",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-019",
+      "email": "alejandro.vaca@clinicamedical.com",
+      "passwordHash": "29c2f127c5ada6ad14ca9ed023cc6e461a3b144ddce488a9856481d821a35cc96d0ac78eb12cacf54ba37d74a0f3fdf59d8da11e29448544578f68bfef9b9d47",
+      "salt": "955c6e5c66b2f8cfd3289dad2d7002f4",
+      "fullName": "Dr. Alejandro Vaca Diez",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-019",
+      "licenseNumber": "MP-7193-BOL",
+      "specialtyId": "esp-medvasc",
+      "phone": "76123456",
+      "ci": "7193",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-doc-003-alias",
+      "email": "juan.perez@clinicamedical.com",
+      "passwordHash": "74389e74722f64599ed6f11ecbfea790430786bc2ce24f62dbcecc6a9e74edf2e750b8ccc71049540feeda4742395350a143ccddbb2956ae01c6e5ff099a7ced",
+      "salt": "383a87b1de6238e5240afa5d7bec4595",
+      "fullName": "Dr. Juan Pérez Sandoval",
+      "role": "Médico",
+      "status": "ACTIVE",
+      "doctorId": "doc-003",
+      "licenseNumber": "MP-7721-BOL",
+      "specialtyId": "esp-medgen",
+      "phone": "71192843",
+      "ci": "7721100",
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-01-05T08:00:00Z",
+      "failedLoginAttempts": 0
+    }
+  ],
+  "staffRequests": [
+    {
+      "id": "req-001",
+      "type": "MEDICO",
+      "fullName": "Dra. Camila Morales Prado",
+      "firstName": "Camila",
+      "lastName": "Morales Prado",
+      "email": "cmorales@medicos.bo",
+      "phone": "71928374",
+      "ci": "6829104",
+      "specialtyId": "esp-cardio",
+      "licenseNumber": "MP-9942-LPZ",
+      "notes": "Cardióloga especialista en ecocardiografía ambulatoria con 8 años de trayectoria hospitalaria.",
+      "status": "PENDING",
+      "passwordHash": "c0eedcaa49f061883ce31c0e92e3c2854892fba08b4d45a694432ed91116cef61314ed8dc4961e4c2b1b4975780142ac0ced5595497cd6fa80e17c9c84d864bd",
+      "salt": "d0f5335fad57988bc2cf30edf78fd334",
+      "createdAt": "2026-10-25T14:30:00Z"
+    },
+    {
+      "id": "req-002",
+      "type": "RECEPCIONISTA",
+      "fullName": "Carlos Fuentes Romero",
+      "firstName": "Carlos",
+      "lastName": "Fuentes Romero",
+      "email": "cfuentes.adm@gmail.com",
+      "phone": "76543210",
+      "ci": "4928172",
+      "notes": "Técnico superior en administración médica con 3 años de experiencia en admisión y triaje inicial.",
+      "status": "PENDING",
+      "passwordHash": "e9f5bdb91d80cf46924c564046dba4bf01fe291688f1115e9b7139b22cace08881062b4130310207c54f96199276c064002015725993f285532abb5b64cdc32d",
+      "salt": "6d5ec6f7626815d27f7ec426d586ffc1",
+      "createdAt": "2026-10-26T09:15:00Z"
+    }
+  ],
+  "specialties": [
+    {
+      "id": "esp-cardio",
+      "name": "CARDIOLOGÍA",
+      "normalizedName": "cardiologia",
+      "category": "Clínica",
+      "description": "Diagnóstico, tratamiento y prevención de patologías del corazón y del sistema circulatorio.",
+      "specificServices": [
+        "Electrocardiograma (ECG) digital de reposo",
+        "Monitoreo ambulatorio de presión arterial (MAPA 24h)",
+        "Holter de ritmo cardíaco 24/48 horas",
+        "Evaluación de riesgo cardiovascular preoperatorio",
+        "Control de hipertensión arterial e insuficiencia cardíaca"
+      ],
+      "commonConditions": [
+        "Hipertensión",
+        "Arritmias",
+        "Dolor torácico",
+        "Insuficiencia cardíaca"
+      ],
+      "iconName": "HeartPulse",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-derma",
+      "name": "DERMATOLOGÍA",
+      "normalizedName": "dermatologia",
+      "category": "Clínica",
+      "description": "Atención integral de enfermedades de la piel, cabello, uñas y mucosas con enfoque clínico y preventivo.",
+      "specificServices": [
+        "Dermatoscopía digital y mapeo de lunares",
+        "Tratamiento de acné juvenil y rosácea severa",
+        "Crioterapia para verrugas y queratosis",
+        "Extirpación menor de lesiones cutáneas ambulatorias",
+        "Dermatitis atópica, psoriasis y alopecias"
+      ],
+      "commonConditions": [
+        "Acné",
+        "Dermatitis",
+        "Psoriasis",
+        "Lunares sospechosos",
+        "Alergias cutáneas"
+      ],
+      "iconName": "Sparkles",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-endo",
+      "name": "ENDOCRINOLOGÍA",
+      "normalizedName": "endocrinologia",
+      "category": "Clínica",
+      "description": "Especialidad dedicada al estudio y tratamiento de glándulas endocrinas, hormonas y trastornos metabólicos.",
+      "specificServices": [
+        "Manejo integral y control de Diabetes Mellitus tipo 1 y 2",
+        "Diagnóstico y tratamiento de hipotiroidismo e hipertiroidismo",
+        "Evaluación de nódulos tiroideos y bocio",
+        "Control de sobrepeso, obesidad y síndrome metabólico",
+        "Trastornos de la hipófisis y glándulas suprarrenales"
+      ],
+      "commonConditions": [
+        "Diabetes",
+        "Tiroides",
+        "Síndrome metabólico",
+        "Osteoporosis hormonal"
+      ],
+      "iconName": "Activity",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-fisio",
+      "name": "FISIOTERAPIA",
+      "normalizedName": "fisioterapia",
+      "category": "Rehabilitación",
+      "description": "Rehabilitación física integral, manejo del dolor neuromuscular y recuperación de la movilidad funcional.",
+      "specificServices": [
+        "Fisioterapia motora traumatológica y postquirúrgica",
+        "Terapia para dolor cervical, lumbar y ciatalgia",
+        "Rehabilitación de lesiones deportivas (esguinces, tendinitis)",
+        "Terapia manual, electroestimulación y ultrasonido terapéutico",
+        "Higiene postural y reeducación biomecánica"
+      ],
+      "commonConditions": [
+        "Lumbalgia",
+        "Contracturas musculares",
+        "Tendinitis",
+        "Recuperación post-fractura"
+      ],
+      "iconName": "Accessibility",
+      "isActive": true,
+      "typicalDurationMinutes": 45
+    },
+    {
+      "id": "esp-fono",
+      "name": "FONOAUDIOLOGÍA",
+      "normalizedName": "fonoaudiologia",
+      "category": "Rehabilitación",
+      "description": "Evaluación y terapia de la audición, el habla, el lenguaje y los trastornos de la deglución en niños y adultos.",
+      "specificServices": [
+        "Terapia del lenguaje y articulación infantil (dislalias, tartamudez)",
+        "Rehabilitación vocal para profesionales de la voz (disfonías)",
+        "Evaluación y rehabilitación de disfagia (deglución difícil)",
+        "Estimulación temprana del lenguaje y la comunicación",
+        "Terapia miofuncional orofacial"
+      ],
+      "commonConditions": [
+        "Retraso del lenguaje",
+        "Disfonía",
+        "Trastornos de deglución",
+        "Tartamudez"
+      ],
+      "iconName": "Mic",
+      "isActive": true,
+      "typicalDurationMinutes": 40
+    },
+    {
+      "id": "esp-gastro",
+      "name": "GASTROENTEROLOGÍA",
+      "normalizedName": "gastroenterologia",
+      "category": "Clínica",
+      "description": "Cuidado y tratamiento del tracto digestivo: esófago, estómago, hígado, vías biliares e intestinos.",
+      "specificServices": [
+        "Consulta para reflujo gastroesofágico y gastritis",
+        "Diagnóstico de Helicobacter pylori y úlcera péptica",
+        "Manejo del síndrome de intestino irritable (colon irritable)",
+        "Evaluación de hígado graso y hepatopatías crónicas",
+        "Orientación para endoscopía y colonoscopía ambulatoria"
+      ],
+      "commonConditions": [
+        "Gastritis",
+        "Reflujo",
+        "Colon irritable",
+        "Hígado graso",
+        "Estreñimiento crónico"
+      ],
+      "iconName": "Utensils",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-gineco",
+      "name": "GINECOLOGÍA",
+      "normalizedName": "ginecologia",
+      "category": "Clínica",
+      "description": "Salud integral de la mujer en todas las etapas de la vida, prevención ginecológica y control hormonal.",
+      "specificServices": [
+        "Control ginecológico anual y citología cervical (Papanicolaou)",
+        "Colposcopía diagnóstica de alta resolución",
+        "Planificación familiar e inserción/retiro de DIU e implantes",
+        "Tratamiento de síndrome de ovario poliquístico (SOP)",
+        "Manejo del climaterio, menopausia y sangrados anormales"
+      ],
+      "commonConditions": [
+        "Ovario poliquístico",
+        "Infecciones ginecológicas",
+        "Menopausia",
+        "Miomas uterinos"
+      ],
+      "iconName": "Flower2",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-masto",
+      "name": "MASTOLOGÍA",
+      "normalizedName": "mastologia",
+      "category": "Quirúrgica",
+      "description": "Especialidad focalizada en la detección temprana, diagnóstico y tratamiento de enfermedades mamarias.",
+      "specificServices": [
+        "Examen clínico mamario y cribado preventivo",
+        "Correlación diagnóstica con mamografía y ecografía mamaria",
+        "Punción con aguja fina (PAAF) y biopsia con aguja gruesa ambulatoria",
+        "Seguimiento de mastopatía fibroquística y dolor mamario (mastalgia)",
+        "Asesoramiento en alto riesgo genético y antecedentes familiares"
+      ],
+      "commonConditions": [
+        "Nódulos mamarios",
+        "Mastalgia",
+        "Fibroadenomas",
+        "Prevención de cáncer de mama"
+      ],
+      "iconName": "ShieldAlert",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-medgen",
+      "name": "MEDICINA GENERAL",
+      "normalizedName": "medicina general",
+      "category": "Clínica",
+      "description": "Puerta de entrada al sistema de salud: atención primaria, chequeos preventivos y derivación oportuna.",
+      "specificServices": [
+        "Consulta médica ambulatoria integral para adultos",
+        "Certificados médicos de salud y chequeos ocupacionales",
+        "Control de enfermedades agudas (infecciones respiratorias, urinarias, virosis)",
+        "Prescripción y renovación de recetas de tratamientos crónicos",
+        "Triaje médico y orientación para interconsultas especializadas"
+      ],
+      "commonConditions": [
+        "Resfrío común",
+        "Gripe",
+        "Infección urinaria",
+        "Chequeo preventivo",
+        "Cefalea tensional"
+      ],
+      "iconName": "Stethoscope",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-medvasc",
+      "name": "MEDICINA VASCULAR",
+      "normalizedName": "medicina vascular",
+      "category": "Clínica",
+      "description": "Prevención, diagnóstico y tratamiento médico no quirúrgico de enfermedades de arterias, venas y linfáticos.",
+      "specificServices": [
+        "Evaluación integral de insuficiencia venosa crónica y várices",
+        "Diagnóstico y manejo del linfedema y edema en extremidades",
+        "Manejo ambulatorio de escleroterapia con microespuma",
+        "Prevención y seguimiento de trombosis venosa profunda (TVP)",
+        "Cuidado y curación especializada de úlceras venosas y arteriales"
+      ],
+      "commonConditions": [
+        "Várices",
+        "Pesadez de piernas",
+        "Trombosis venosa",
+        "Úlceras varicosas"
+      ],
+      "iconName": "GitBranch",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-neumo",
+      "name": "NEUMOLOGÍA",
+      "normalizedName": "neumologia",
+      "category": "Clínica",
+      "description": "Diagnóstico y tratamiento de enfermedades del aparato respiratorio, pulmones y caja torácica.",
+      "specificServices": [
+        "Espirometría forzada simple y con broncodilatador",
+        "Control y tratamiento de asma bronquial y EPOC",
+        "Evaluación de tos crónica persistente y falta de aire (disnea)",
+        "Seguimiento post-infecciones pulmonares y secuelas neumónicas",
+        "Diagnóstico ambulatorio de apnea obstructiva del sueño"
+      ],
+      "commonConditions": [
+        "Asma",
+        "EPOC",
+        "Tos crónica",
+        "Bronquitis",
+        "Apnea del sueño"
+      ],
+      "iconName": "Wind",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-neuro",
+      "name": "NEUROLOGÍA",
+      "normalizedName": "neurologia",
+      "category": "Clínica",
+      "description": "Estudio de trastornos del sistema nervioso central, periférico y autonómico.",
+      "specificServices": [
+        "Diagnóstico y tratamiento de migrañas y cefaleas complejas",
+        "Control y tratamiento de síndromes epilépticos",
+        "Evaluación de temblores, enfermedad de Parkinson y movimientos involuntarios",
+        "Estudio de neuropatías periféricas, adormecimientos y mareos",
+        "Detección precoz del deterioro cognitivo leve y demencias"
+      ],
+      "commonConditions": [
+        "Migraña",
+        "Epilepsia",
+        "Parkinson",
+        "Neuropatía",
+        "Mareos y vértigo"
+      ],
+      "iconName": "Brain",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-nutri",
+      "name": "NUTRIOLOGÍA",
+      "normalizedName": "nutriologia",
+      "category": "Clínica",
+      "description": "Terapia médica nutricional personalizada para optimizar la salud y tratar condiciones clínicas metabólicas.",
+      "specificServices": [
+        "Bioimpedanciometría de composición corporal precisa",
+        "Planes nutricionales clínicos para diabetes, dislipidemias e hipertensión",
+        "Manejo médico del sobrepeso y desnutrición",
+        "Nutrición en etapas vitales: embarazo, lactancia y tercera edad",
+        "Planificación alimentaria para deportistas y pacientes bariátricos"
+      ],
+      "commonConditions": [
+        "Sobrepeso",
+        "Colesterol alto",
+        "Hígado graso nutricional",
+        "Déficit nutricional"
+      ],
+      "iconName": "Apple",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-oftalmo",
+      "name": "OFTALMOLOGÍA",
+      "normalizedName": "oftalmologia",
+      "category": "Quirúrgica",
+      "description": "Salud visual integral: agudeza visual, fondo de ojo, presión intraocular y cirugías ambulatorias.",
+      "specificServices": [
+        "Medición computarizada de la refracción y agudeza visual",
+        "Tonometría de aplanación (tensión ocular para glaucoma)",
+        "Biomicroscopía de polo anterior y fondo de ojo dilatado",
+        "Tratamiento de ojo seco, conjuntivitis y pterigión (carnosidad)",
+        "Valoración prequirúrgica para cataratas y cirugía refractiva ambulatoria"
+      ],
+      "commonConditions": [
+        "Miopía/Astigmatismo",
+        "Glaucoma",
+        "Cataratas",
+        "Ojo seco",
+        "Pterigión"
+      ],
+      "iconName": "Eye",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-orl",
+      "name": "OTORRINOLARINGOLOGÍA",
+      "normalizedName": "otorrinolaringologia",
+      "category": "Quirúrgica",
+      "description": "Atención de oído, nariz, senos paranasales, faringe, laringe y estructuras cervicales.",
+      "specificServices": [
+        "Videootoscopía y extracción de tapones de cerumen por microaspiración",
+        "Endoscopía nasal y nasofaringoscopía diagnóstica",
+        "Manejo de sinusitis crónica, pólipos nasales y rinitis alérgica",
+        "Evaluación de pérdida auditiva, acúfenos (tinnitus) y vértigo",
+        "Tratamiento de laringitis, ronquidos y apnea obstructiva"
+      ],
+      "commonConditions": [
+        "Sinusitis",
+        "Otitis",
+        "Rinitis",
+        "Pérdida auditiva",
+        "Tinnitus"
+      ],
+      "iconName": "Ear",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-pedia",
+      "name": "PEDIATRÍA",
+      "normalizedName": "pediatria",
+      "category": "Clínica",
+      "description": "Atención médica integral desde recién nacidos hasta la adolescencia, enfocada en crecimiento y desarrollo.",
+      "specificServices": [
+        "Control de niño sano: percentiles de peso, talla y neurodesarrollo",
+        "Revisión y aplicación del esquema nacional y complementario de vacunación",
+        "Tratamiento de infecciones respiratorias, digestivas y cutáneas infantiles",
+        "Orientación en lactancia materna y alimentación complementaria",
+        "Atención ambulatoria de urgencias pediátricas menores"
+      ],
+      "commonConditions": [
+        "Fiebre infantil",
+        "Bronquiolitis",
+        "Gastroenteritis",
+        "Alergias pediátricas"
+      ],
+      "iconName": "Baby",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-procto",
+      "name": "PROCTOLOGÍA",
+      "normalizedName": "proctologia",
+      "category": "Quirúrgica",
+      "description": "Diagnóstico y tratamiento ambulatorio de patologías del colon distal, recto y región perianal.",
+      "specificServices": [
+        "Anoscopía y rectoscopía diagnóstica en consultorio",
+        "Tratamiento ambulatorio no invasivo de hemorroides (ligadura con banda)",
+        "Manejo de fisuras anales agudas y crónicas",
+        "Evaluación y curación de fístulas y abscesos perianales",
+        "Prevención y pesquisa de lesiones anales precancerosas"
+      ],
+      "commonConditions": [
+        "Hemorroides",
+        "Fisura anal",
+        "Sangrado rectal",
+        "Prurito anal"
+      ],
+      "iconName": "Crosshair",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-psico",
+      "name": "PSICOLOGÍA",
+      "normalizedName": "psicologia",
+      "category": "Salud Mental",
+      "description": "Psicoterapia individual y de apoyo clínico para el bienestar emocional y la salud mental.",
+      "specificServices": [
+        "Psicoterapia cognitivo-conductual para ansiedad y estrés laboral",
+        "Acompañamiento en procesos de duelo y pérdidas significativas",
+        "Evaluación psicométrica y perfiles de personalidad",
+        "Terapia para manejo de estados depresivos y autoestima",
+        "Técnicas de regulación emocional y mindfulness clínico"
+      ],
+      "commonConditions": [
+        "Ansiedad",
+        "Depresión leve/moderada",
+        "Estrés crónico",
+        "Ataques de pánico"
+      ],
+      "iconName": "Smile",
+      "isActive": true,
+      "typicalDurationMinutes": 45
+    },
+    {
+      "id": "esp-psiquia",
+      "name": "PSIQUIATRÍA",
+      "normalizedName": "psiquiatria",
+      "category": "Salud Mental",
+      "description": "Diagnóstico médico, psicofarmacología y tratamiento biológico integral de trastornos mentales.",
+      "specificServices": [
+        "Evaluación diagnóstica médica y ajuste de psicofármacos",
+        "Tratamiento especializado de depresión mayor y trastorno bipolar",
+        "Manejo farmacológico de trastornos obsesivo-compulsivos (TOC)",
+        "Tratamiento de insomnio grave y desórdenes del ritmo circadiano",
+        "Atención ambulatoria de trastornos por déficit de atención e hiperactividad (TDAH)"
+      ],
+      "commonConditions": [
+        "Depresión mayor",
+        "Insomnio",
+        "TOC",
+        "Trastorno bipolar",
+        "TDAH"
+      ],
+      "iconName": "ShieldPlus",
+      "isActive": true,
+      "typicalDurationMinutes": 40
+    },
+    {
+      "id": "esp-reuma",
+      "name": "REUMATOLOGÍA",
+      "normalizedName": "reumatologia",
+      "category": "Clínica",
+      "description": "Manejo de enfermedades inflamatorias autoinmunes y del aparato locomotor (articulaciones, tendones y huesos).",
+      "specificServices": [
+        "Diagnóstico y control biológico de Artritis Reumatoide",
+        "Evaluación de Lupus Eritematoso Sistémico (LES) y Sjögren",
+        "Tratamiento de gota (hiperuricemia) y artritis microcristalinas",
+        "Infiltraciones articulares analgésicas y antiinflamatorias en consultorio",
+        "Manejo de fibromialgia y artrosis degenerativa articular"
+      ],
+      "commonConditions": [
+        "Artritis reumatoide",
+        "Lupus",
+        "Artrosis severa",
+        "Gota",
+        "Fibromialgia"
+      ],
+      "iconName": "Bone",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-trauma",
+      "name": "TRAUMATOLOGÍA",
+      "normalizedName": "traumatologia",
+      "category": "Quirúrgica",
+      "description": "Atención ambulatoria de lesiones óseas, articulares, ligamentosas y musculares de origen traumático o degenerativo.",
+      "specificServices": [
+        "Inmovilización ortopédica (yesos de fibra de vidrio y férulas)",
+        "Infiltración de ácido hialurónico y corticoides en articulaciones",
+        "Manejo ambulatorio de esguinces, luxaciones y microfracturas",
+        "Evaluación de lesiones meniscales, de manguito rotador y túnel carpiano",
+        "Retiro ambulatorio de puntos de sutura y controles radiográficos post-trauma"
+      ],
+      "commonConditions": [
+        "Esguinces",
+        "Lesión de rodilla",
+        "Manguito rotador",
+        "Fisuras óseas"
+      ],
+      "iconName": "Activity",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    },
+    {
+      "id": "esp-uro",
+      "name": "UROLOGÍA",
+      "normalizedName": "urologia",
+      "category": "Quirúrgica",
+      "description": "Atención médica y quirúrgica ambulatoria del sistema urinario masculino/femenino y aparato genital masculino.",
+      "specificServices": [
+        "Chequeo prostático preventivo (Antígeno Prostático Específico + tacto rectal)",
+        "Diagnóstico y tratamiento de litiasis renal (cálculos en vías urinarias)",
+        "Manejo de infecciones urinarias recurrentes y vejiga hiperactiva",
+        "Tratamiento ambulatorio de disfunción eréctil e infertilidad masculina",
+        "Procedimientos ambulatorios menores (frenuloplastia, dilatación uretral)"
+      ],
+      "commonConditions": [
+        "Hiperplasia prostática",
+        "Cálculos renales",
+        "Infección urinaria",
+        "Disfunción eréctil"
+      ],
+      "iconName": "Shield",
+      "isActive": true,
+      "typicalDurationMinutes": 15
+    }
+  ],
+  "services": [
+    {
+      "id": "srv-audio",
+      "name": "AUDIOMETRÍA",
+      "category": "Diagnóstico Auditivo",
+      "description": "Evaluación electroacústica cuantitativa y cualitativa de la capacidad auditiva en cabina insonorizada certificada.",
+      "requirements": [
+        "Reposo auditivo de al menos 14 horas previas sin exposición a ruidos fuertes",
+        "Conducto auditivo libre de cerumen"
+      ],
+      "durationMinutes": 30,
+      "isOutpatientOnly": true,
+      "iconName": "Ear"
+    },
+    {
+      "id": "srv-biopsias",
+      "name": "BIOPSIAS",
+      "category": "Procedimientos Menores",
+      "description": "Toma ambulatoria de muestras tisulares cutáneas, ganglionares y de partes blandas con anestesia local para análisis histopatológico.",
+      "requirements": [
+        "Ayuno menor si se indica",
+        "Informar medicación anticoagulante previa"
+      ],
+      "durationMinutes": 45,
+      "isOutpatientOnly": true,
+      "iconName": "Scissors"
+    },
+    {
+      "id": "srv-oftal-surg",
+      "name": "CIRUGÍAS OFTALMOLÓGICAS",
+      "category": "Quirófano Ambulatorio",
+      "description": "Cirugías oculares ambulatorias de corta estancia: pterigión, chalazión, blefaroplastia menor y procedimientos láser. Alta el mismo día.",
+      "requirements": [
+        "Acompañante adulto obligatorio para el alta",
+        "Gafas oscuras de protección post-procedimiento"
+      ],
+      "durationMinutes": 60,
+      "isOutpatientOnly": true,
+      "iconName": "Eye"
+    },
+    {
+      "id": "srv-derma-proc",
+      "name": "DERMATOLOGÍA",
+      "category": "Procedimientos Clínicos",
+      "description": "Crioterapia con nitrógeno líquido, electrofulguración de verrugas, cauterización y legrados cutáneos indoloros.",
+      "requirements": [
+        "Zona limpia sin maquillaje ni cremas aplicadas"
+      ],
+      "durationMinutes": 30,
+      "isOutpatientOnly": true,
+      "iconName": "Sparkles"
+    },
+    {
+      "id": "srv-electro",
+      "name": "ELECTROMEDICINA",
+      "category": "Diagnóstico Bioeléctrico",
+      "description": "Estudios de conducción eléctrica corporal: Electrocardiogramas continuos, Holter 24h, espirometría digital y electrodiagnóstico.",
+      "requirements": [
+        "Ropa cómoda de dos piezas",
+        "Evitar cremas corporales el día del estudio"
+      ],
+      "durationMinutes": 30,
+      "isOutpatientOnly": true,
+      "iconName": "Zap"
+    },
+    {
+      "id": "srv-enferm",
+      "name": "ENFERMERÍA",
+      "category": "Atención Continua",
+      "description": "Servicio ambulatorio de inyectables intramusculares y endovenosos, curaciones avanzadas de heridas, toma de signos vitales y retiro de puntos.",
+      "requirements": [
+        "Presentar receta médica vigente para administración de fármacos"
+      ],
+      "durationMinutes": 20,
+      "isOutpatientOnly": true,
+      "iconName": "HeartHandshake"
+    },
+    {
+      "id": "srv-fono-serv",
+      "name": "FONOAUDIOLOGÍA",
+      "category": "Rehabilitación y Terapia",
+      "description": "Sesiones ambulatorias programadas de rehabilitación acústica, entrenamiento foniátrico y deglutorio supervisado.",
+      "requirements": [
+        "Estudio audiológico reciente si aplica"
+      ],
+      "durationMinutes": 45,
+      "isOutpatientOnly": true,
+      "iconName": "Mic"
+    },
+    {
+      "id": "srv-imagen",
+      "name": "IMAGENOLOGÍA",
+      "category": "Diagnóstico por Imágenes",
+      "description": "Radiografías digitales de alta definición (Rayos X) y ecografía doppler general y vascular con entrega rápida de informes digitales.",
+      "requirements": [
+        "Orden médica indicando región anatómica",
+        "Ayuno o vejiga llena según tipo de ecografía"
+      ],
+      "durationMinutes": 30,
+      "isOutpatientOnly": true,
+      "iconName": "ScanLine"
+    },
+    {
+      "id": "srv-pap-lab",
+      "name": "PAPANICOLAOU-COLPOSCOPIA Y LABORATORIO CLÍNICO",
+      "category": "Pesquisa y Laboratorio",
+      "description": "Toma de citología cervical convencional y en base líquida, colposcopía con videocámara HD, más toma de muestras de sangre, orina y cultivos.",
+      "requirements": [
+        "Papanicolaou: abstinencia sexual de 48h y sin menstruación activa",
+        "Laboratorio: 8 a 12 horas de ayuno para perfil bioquímico"
+      ],
+      "durationMinutes": 30,
+      "isOutpatientOnly": true,
+      "iconName": "FlaskConical"
+    }
+  ],
+  "doctors": [
+    {
+      "id": "doc-001",
+      "code": "MED-001",
+      "licenseNumber": "MP-8921-BOL",
+      "fullName": "Dr. Carlos Mendoza Ramos",
+      "specialtyIds": [
+        "esp-cardio"
+      ],
+      "phone": "77218944",
+      "email": "carlos.mendoza@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 101"
+    },
+    {
+      "id": "doc-002",
+      "code": "MED-002",
+      "licenseNumber": "MP-9104-BOL",
+      "fullName": "Dra. Elena Vargas Solís",
+      "specialtyIds": [
+        "esp-derma"
+      ],
+      "phone": "78190012",
+      "email": "elena.vargas@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 102"
+    },
+    {
+      "id": "doc-003",
+      "code": "MED-003",
+      "licenseNumber": "MP-7721-BOL",
+      "fullName": "Dr. Juan Pérez Sandoval",
+      "specialtyIds": [
+        "esp-medgen"
+      ],
+      "phone": "71192843",
+      "email": "juan.perez@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 103"
+    },
+    {
+      "id": "doc-004",
+      "code": "MED-004",
+      "licenseNumber": "MP-8349-BOL",
+      "fullName": "Dra. Gabriela Castro Medina",
+      "specialtyIds": [
+        "esp-pedia"
+      ],
+      "phone": "76543210",
+      "email": "gabriela.castro@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 104"
+    },
+    {
+      "id": "doc-005",
+      "code": "MED-005",
+      "licenseNumber": "MP-6523-BOL",
+      "fullName": "Dra. Sofía Morales Paz",
+      "specialtyIds": [
+        "esp-gineco",
+        "esp-masto"
+      ],
+      "phone": "72349011",
+      "email": "sofia.morales@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 105"
+    },
+    {
+      "id": "doc-006",
+      "code": "MED-006",
+      "licenseNumber": "MP-8812-BOL",
+      "fullName": "Dr. Roberto Siles Justiniano",
+      "specialtyIds": [
+        "esp-trauma"
+      ],
+      "phone": "75432198",
+      "email": "roberto.siles@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 201"
+    },
+    {
+      "id": "doc-007",
+      "code": "MED-007",
+      "licenseNumber": "MP-9943-BOL",
+      "fullName": "Dr. Marcelo Ortiz Aguilera",
+      "specialtyIds": [
+        "esp-oftalmo"
+      ],
+      "phone": "76891234",
+      "email": "marcelo.ortiz@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 202"
+    },
+    {
+      "id": "doc-008",
+      "code": "MED-008",
+      "licenseNumber": "MP-6214-BOL",
+      "fullName": "Dr. Fernando Rocha Claure",
+      "specialtyIds": [
+        "esp-uro"
+      ],
+      "phone": "79011289",
+      "email": "fernando.rocha@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 203"
+    },
+    {
+      "id": "doc-009",
+      "code": "MED-009",
+      "licenseNumber": "MP-5432-BOL",
+      "fullName": "Dra. Patricia Arze Salinas",
+      "specialtyIds": [
+        "esp-endo",
+        "esp-nutri"
+      ],
+      "phone": "73456789",
+      "email": "patricia.arze@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 204"
+    },
+    {
+      "id": "doc-010",
+      "code": "MED-010",
+      "licenseNumber": "MP-8120-BOL",
+      "fullName": "Dr. Andrés Beltrán Guzmán",
+      "specialtyIds": [
+        "esp-gastro",
+        "esp-procto"
+      ],
+      "phone": "71239845",
+      "email": "andres.beltran@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 205"
+    },
+    {
+      "id": "doc-011",
+      "code": "MED-011",
+      "licenseNumber": "MP-7788-BOL",
+      "fullName": "Dr. Hugo Céspedes Mercado",
+      "specialtyIds": [
+        "esp-neumo"
+      ],
+      "phone": "78901234",
+      "email": "hugo.cespedes@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 206"
+    },
+    {
+      "id": "doc-012",
+      "code": "MED-012",
+      "licenseNumber": "MP-9241-BOL",
+      "fullName": "Dra. Mariana Suárez Montero",
+      "specialtyIds": [
+        "esp-neuro"
+      ],
+      "phone": "74567890",
+      "email": "mariana.suarez@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 207"
+    },
+    {
+      "id": "doc-013",
+      "code": "MED-013",
+      "licenseNumber": "MP-6439-BOL",
+      "fullName": "Dr. Rodrigo Navia Valdivia",
+      "specialtyIds": [
+        "esp-orl"
+      ],
+      "phone": "72389104",
+      "email": "rodrigo.navia@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 208"
+    },
+    {
+      "id": "doc-014",
+      "code": "MED-014",
+      "licenseNumber": "MP-5120-BOL",
+      "fullName": "Lic. Claudia Torrico Ribera",
+      "specialtyIds": [
+        "esp-fisio"
+      ],
+      "phone": "71123490",
+      "email": "claudia.torrico@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Sala de Fisioterapia A"
+    },
+    {
+      "id": "doc-015",
+      "code": "MED-015",
+      "licenseNumber": "MP-4982-BOL",
+      "fullName": "Lic. Verónica Landívar",
+      "specialtyIds": [
+        "esp-fono"
+      ],
+      "phone": "73490123",
+      "email": "veronica.landivar@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Gabinete Foniátrico"
+    },
+    {
+      "id": "doc-016",
+      "code": "MED-016",
+      "licenseNumber": "MP-7321-BOL",
+      "fullName": "Lic. Daniela Antelo Paz",
+      "specialtyIds": [
+        "esp-psico"
+      ],
+      "phone": "74123890",
+      "email": "daniela.antelo@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 301"
+    },
+    {
+      "id": "doc-017",
+      "code": "MED-017",
+      "licenseNumber": "MP-8910-BOL",
+      "fullName": "Dr. Guillermo Hurtado",
+      "specialtyIds": [
+        "esp-psiquia"
+      ],
+      "phone": "79812345",
+      "email": "guillermo.hurtado@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 302"
+    },
+    {
+      "id": "doc-018",
+      "code": "MED-018",
+      "licenseNumber": "MP-6842-BOL",
+      "fullName": "Dra. Roxana Pinto Vega",
+      "specialtyIds": [
+        "esp-reuma"
+      ],
+      "phone": "78234190",
+      "email": "roxana.pinto@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 303"
+    },
+    {
+      "id": "doc-019",
+      "code": "MED-019",
+      "licenseNumber": "MP-7193-BOL",
+      "fullName": "Dr. Alejandro Vaca Diez",
+      "specialtyIds": [
+        "esp-medvasc"
+      ],
+      "phone": "76123456",
+      "email": "alejandro.vaca@clinicamedical.com",
+      "isActive": true,
+      "roomNumber": "Consultorio 304"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "sch-1",
+      "doctorId": "doc-001",
+      "dayOfWeek": "Lunes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-2",
+      "doctorId": "doc-001",
+      "dayOfWeek": "Miércoles",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-3",
+      "doctorId": "doc-001",
+      "dayOfWeek": "Viernes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-4",
+      "doctorId": "doc-002",
+      "dayOfWeek": "Martes",
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-5",
+      "doctorId": "doc-002",
+      "dayOfWeek": "Jueves",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-6",
+      "doctorId": "doc-003",
+      "dayOfWeek": "Lunes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-7",
+      "doctorId": "doc-003",
+      "dayOfWeek": "Martes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-8",
+      "doctorId": "doc-003",
+      "dayOfWeek": "Miércoles",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-9",
+      "doctorId": "doc-003",
+      "dayOfWeek": "Jueves",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-10",
+      "doctorId": "doc-003",
+      "dayOfWeek": "Viernes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-11",
+      "doctorId": "doc-003",
+      "dayOfWeek": "Sábado",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-12",
+      "doctorId": "doc-004",
+      "dayOfWeek": "Lunes",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-13",
+      "doctorId": "doc-004",
+      "dayOfWeek": "Miércoles",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-14",
+      "doctorId": "doc-004",
+      "dayOfWeek": "Viernes",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-15",
+      "doctorId": "doc-005",
+      "dayOfWeek": "Martes",
+      "startTime": "08:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-16",
+      "doctorId": "doc-005",
+      "dayOfWeek": "Jueves",
+      "startTime": "08:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-17",
+      "doctorId": "doc-006",
+      "dayOfWeek": "Lunes",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-18",
+      "doctorId": "doc-006",
+      "dayOfWeek": "Jueves",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-19",
+      "doctorId": "doc-007",
+      "dayOfWeek": "Martes",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-20",
+      "doctorId": "doc-007",
+      "dayOfWeek": "Viernes",
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-21",
+      "doctorId": "doc-008",
+      "dayOfWeek": "Miércoles",
+      "startTime": "15:00",
+      "endTime": "19:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-22",
+      "doctorId": "doc-008",
+      "dayOfWeek": "Sábado",
+      "startTime": "08:30",
+      "endTime": "12:30",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-23",
+      "doctorId": "doc-009",
+      "dayOfWeek": "Lunes",
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-24",
+      "doctorId": "doc-009",
+      "dayOfWeek": "Jueves",
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-25",
+      "doctorId": "doc-010",
+      "dayOfWeek": "Martes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-26",
+      "doctorId": "doc-010",
+      "dayOfWeek": "Viernes",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-27",
+      "doctorId": "doc-011",
+      "dayOfWeek": "Miércoles",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-28",
+      "doctorId": "doc-012",
+      "dayOfWeek": "Lunes",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-29",
+      "doctorId": "doc-012",
+      "dayOfWeek": "Jueves",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-30",
+      "doctorId": "doc-013",
+      "dayOfWeek": "Martes",
+      "startTime": "15:00",
+      "endTime": "19:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-31",
+      "doctorId": "doc-014",
+      "dayOfWeek": "Lunes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-32",
+      "doctorId": "doc-014",
+      "dayOfWeek": "Miércoles",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-33",
+      "doctorId": "doc-015",
+      "dayOfWeek": "Martes",
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-34",
+      "doctorId": "doc-016",
+      "dayOfWeek": "Lunes",
+      "startTime": "15:00",
+      "endTime": "19:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-35",
+      "doctorId": "doc-016",
+      "dayOfWeek": "Miércoles",
+      "startTime": "15:00",
+      "endTime": "19:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-36",
+      "doctorId": "doc-017",
+      "dayOfWeek": "Jueves",
+      "startTime": "15:00",
+      "endTime": "19:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-37",
+      "doctorId": "doc-018",
+      "dayOfWeek": "Viernes",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 15
+    },
+    {
+      "id": "sch-38",
+      "doctorId": "doc-019",
+      "dayOfWeek": "Martes",
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 15
+    }
+  ],
+  "patients": [
+    {
+      "id": "pac-001",
+      "code": "PAC-001",
+      "ci": "5489123",
+      "firstName": "María",
+      "lastName": "López Quispe",
+      "birthDate": "1992-04-15",
+      "gender": "Femenino",
+      "phone": "77341829",
+      "email": "maria.lopez@gmail.com",
+      "address": "Av. Las Américas #450, Barrio Central",
+      "isActive": true,
+      "bloodType": "O Positivo (O+)",
+      "allergies": "Penicilina y derivados beta-lactámicos",
+      "chronicDiseases": "Rinitis alérgica estacional",
+      "currentMedications": "Loratadina 10mg condicional",
+      "medicalHistory": "Apendicectomía a los 16 años",
+      "emergencyContactName": "Jorge López",
+      "emergencyContactPhone": "76118920",
+      "emergencyContactRelationship": "Hermano"
+    },
+    {
+      "id": "pac-002",
+      "code": "PAC-002",
+      "ci": "6190432",
+      "firstName": "Carlos",
+      "lastName": "Fernández Rios",
+      "birthDate": "1985-09-22",
+      "gender": "Masculino",
+      "phone": "70281930",
+      "email": "carlos.fernandez@hotmail.com",
+      "address": "Calle Sucre #120, Edificio Los Robles",
+      "isActive": true,
+      "bloodType": "A Positivo (A+)",
+      "allergies": "Ninguna conocida",
+      "chronicDiseases": "Hipertensión arterial estadio 1",
+      "currentMedications": "Losartán 50mg / día",
+      "medicalHistory": "Sin cirugías previas",
+      "emergencyContactName": "Lucía Rios",
+      "emergencyContactPhone": "71904421",
+      "emergencyContactRelationship": "Esposa"
+    },
+    {
+      "id": "pac-003",
+      "code": "PAC-003",
+      "ci": "7823901",
+      "firstName": "Andrea",
+      "lastName": "Montaño Suárez",
+      "birthDate": "1998-11-03",
+      "gender": "Femenino",
+      "phone": "75412903",
+      "email": "andrea.montano@outlook.com",
+      "address": "Av. Circunvalación #89",
+      "isActive": true,
+      "bloodType": "B Positivo (B+)",
+      "allergies": "Aines (Ibuprofeno)",
+      "chronicDiseases": "Migraña con aura",
+      "currentMedications": "Sumatriptán SOS",
+      "emergencyContactName": "Carmen Suárez",
+      "emergencyContactPhone": "73901244",
+      "emergencyContactRelationship": "Madre"
+    },
+    {
+      "id": "pac-004",
+      "code": "PAC-004",
+      "ci": "8912450",
+      "firstName": "Mateo",
+      "lastName": "Gutiérrez Aguilera",
+      "birthDate": "2019-06-14",
+      "gender": "Masculino",
+      "phone": "76991024",
+      "email": "familia.gutierrez@gmail.com",
+      "address": "Urb. Las Palmas, Manzana 4, Lote 12",
+      "isActive": true,
+      "bloodType": "O Positivo (O+)",
+      "allergies": "Ninguna",
+      "chronicDiseases": "Dermatitis atópica infantil",
+      "emergencyContactName": "René Gutiérrez",
+      "emergencyContactPhone": "76991024",
+      "emergencyContactRelationship": "Padre"
+    },
+    {
+      "id": "pac-005",
+      "code": "PAC-005",
+      "ci": "4920183",
+      "firstName": "Roberto",
+      "lastName": "Villarroel Paz",
+      "birthDate": "1970-02-18",
+      "gender": "Masculino",
+      "phone": "72819034",
+      "email": "roberto.villarroel@gmail.com",
+      "address": "Calle Bolívar #340",
+      "isActive": true,
+      "bloodType": "AB Positivo (AB+)",
+      "allergies": "Sulfas",
+      "chronicDiseases": "Diabetes Mellitus tipo 2, Dislipidemia",
+      "currentMedications": "Metformina 850mg, Atorvastatina 20mg",
+      "emergencyContactName": "Marta Villarroel",
+      "emergencyContactPhone": "71994320",
+      "emergencyContactRelationship": "Hija"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "appt-001",
+      "code": "CM-0001",
+      "patientId": "pac-001",
+      "doctorId": "doc-003",
+      "specialtyId": "esp-medgen",
+      "date": "2026-11-16",
+      "timeSlot": "09:00 - 09:15",
+      "startTime": "09:00",
+      "endTime": "09:15",
+      "reason": "Consulta general y control de rutina",
+      "status": "Programada",
+      "createdAt": "2026-10-20T08:00:00Z",
+      "updatedAt": "2026-10-20T08:00:00Z"
+    },
+    {
+      "id": "appt-002",
+      "code": "CM-0002",
+      "patientId": "pac-002",
+      "doctorId": "doc-001",
+      "specialtyId": "esp-cardio",
+      "date": "2026-11-16",
+      "timeSlot": "08:30 - 08:45",
+      "startTime": "08:30",
+      "endTime": "08:45",
+      "reason": "Control de hipertensión y valoración de nuevo tratamiento",
+      "status": "Confirmada",
+      "createdAt": "2026-10-20T08:15:00Z",
+      "updatedAt": "2026-10-20T08:20:00Z"
+    },
+    {
+      "id": "appt-003",
+      "code": "CM-0003",
+      "patientId": "pac-003",
+      "doctorId": "doc-002",
+      "specialtyId": "esp-derma",
+      "date": "2026-11-17",
+      "timeSlot": "09:30 - 09:45",
+      "startTime": "09:30",
+      "endTime": "09:45",
+      "reason": "Revisión dermatoscópica de lunares en espalda",
+      "status": "Programada",
+      "createdAt": "2026-10-20T08:30:00Z",
+      "updatedAt": "2026-10-20T08:30:00Z"
+    },
+    {
+      "id": "appt-004",
+      "code": "CM-0004",
+      "patientId": "pac-004",
+      "doctorId": "doc-004",
+      "specialtyId": "esp-pedia",
+      "date": "2026-11-16",
+      "timeSlot": "14:30 - 14:45",
+      "startTime": "14:30",
+      "endTime": "14:45",
+      "reason": "Control de crecimiento pediátrico y brote atópico",
+      "status": "Confirmada",
+      "createdAt": "2026-10-20T08:45:00Z",
+      "updatedAt": "2026-10-20T08:45:00Z"
+    },
+    {
+      "id": "appt-005",
+      "code": "CM-0005",
+      "patientId": "pac-005",
+      "doctorId": "doc-009",
+      "specialtyId": "esp-endo",
+      "date": "2026-11-16",
+      "timeSlot": "09:30 - 09:45",
+      "startTime": "09:30",
+      "endTime": "09:45",
+      "reason": "Ajuste de dosis de hipoglucemiantes y perfil tiroideo",
+      "status": "Programada",
+      "createdAt": "2026-10-20T09:00:00Z",
+      "updatedAt": "2026-10-20T09:00:00Z"
+    },
+    {
+      "id": "appt-006",
+      "code": "CM-0006",
+      "patientId": "pac-001",
+      "doctorId": "doc-005",
+      "specialtyId": "esp-gineco",
+      "date": "2026-10-15",
+      "timeSlot": "09:00 - 09:15",
+      "startTime": "09:00",
+      "endTime": "09:15",
+      "reason": "Control ginecológico anual y toma de PAP",
+      "status": "Atendida",
+      "vitalSigns": {
+        "bloodPressure": "115/75",
+        "temperatureC": 36.4,
+        "heartRate": 68,
+        "weightKg": 58,
+        "heightCm": 162
+      },
+      "clinicalNotes": "Diagnóstico: Control ginecológico preventivo y citología cervical de rutina.\nReceta / Tratamiento:\n1. Ácido fólico 5mg: 1 comprimido al día por 30 días.\n2. Vitamina D3 2000 UI diarias.\n3. Papanicolaou tomado satisfactoriamente, sin lesiones visibles. Se indica control de resultados en 10 días.",
+      "createdAt": "2026-10-01T10:00:00Z",
+      "updatedAt": "2026-10-15T09:35:00Z"
+    },
+    {
+      "id": "appt-007",
+      "code": "CM-0007",
+      "patientId": "pac-002",
+      "doctorId": "doc-003",
+      "specialtyId": "esp-medgen",
+      "date": "2026-10-10",
+      "timeSlot": "10:00 - 10:15",
+      "startTime": "10:00",
+      "endTime": "10:15",
+      "reason": "Cuadro respiratorio agudo y cefalea pulsátil",
+      "status": "Atendida",
+      "vitalSigns": {
+        "bloodPressure": "145/95",
+        "temperatureC": 37.8,
+        "heartRate": 86,
+        "weightKg": 82.5,
+        "heightCm": 174
+      },
+      "clinicalNotes": "Diagnóstico: Faringitis viral aguda + Cifras tensionales elevadas (Presunta HTA).\nReceta / Tratamiento:\n1. Paracetamol 500mg: 1 comprimido cada 8 horas por 4 días si hay fiebre o dolor.\n2. Losartán 50mg: Iniciar 1 comprimido cada mañana en ayunas.\n3. Reposo relativo por 48 horas y registro ambulatorio de presión arterial por 7 días.\n4. DERIVACIÓN PRIORITARIA A CARDIOLOGÍA para valoración de hipertensión y MAPA 24h.",
+      "createdAt": "2026-10-08T11:00:00Z",
+      "updatedAt": "2026-10-10T10:25:00Z"
+    },
+    {
+      "id": "appt-009",
+      "code": "CM-0009",
+      "patientId": "pac-002",
+      "doctorId": "doc-009",
+      "specialtyId": "esp-endo",
+      "date": "2026-10-24",
+      "timeSlot": "11:00 - 11:15",
+      "startTime": "11:00",
+      "endTime": "11:15",
+      "reason": "Evaluación metabólica por glucemia elevada y sobrepeso",
+      "status": "Atendida",
+      "vitalSigns": {
+        "bloodPressure": "138/88",
+        "temperatureC": 36.6,
+        "heartRate": 74,
+        "weightKg": 82,
+        "heightCm": 174
+      },
+      "clinicalNotes": "Diagnóstico: Prediabetes (Glucemia en ayunas 116 mg/dL) y Dislipidemia mixta.\nReceta / Tratamiento:\n1. Metformina 850mg: Tomar 1 comprimido diario junto al almuerzo.\n2. Atorvastatina 10mg: 1 comprimido por la noche antes de dormir.\n3. Plan alimentario hipocalórico bajo en hidratos refinados y sodio.\n4. Mantener tratamiento antihipertensivo pautado y control conjunto con CARDIOLOGÍA.",
+      "createdAt": "2026-10-20T09:00:00Z",
+      "updatedAt": "2026-10-24T11:30:00Z"
+    },
+    {
+      "id": "appt-008",
+      "code": "CM-0008",
+      "patientId": "pac-005",
+      "doctorId": "doc-008",
+      "specialtyId": "esp-uro",
+      "date": "2026-10-14",
+      "timeSlot": "16:00 - 16:15",
+      "startTime": "16:00",
+      "endTime": "16:15",
+      "reason": "Evaluación de cólico renal",
+      "status": "Cancelada",
+      "cancellationReason": "El paciente requirió acudir a otro centro por incompatibilidad de horario laboral.",
+      "createdAt": "2026-10-12T09:00:00Z",
+      "updatedAt": "2026-10-13T14:00:00Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "log-1794166114725-361",
+      "userName": "Carlos Pimentel",
+      "userRole": "Paciente",
+      "moduleAffected": "Seguridad y Autenticación",
+      "eventType": "RESTABLECIMIENTO_CLAVE",
+      "actionDescription": "Contraseña restablecida exitosamente para pimentelcarlos147@gmail.com. Sesiones previas invalidadas.",
+      "ipAddress": "127.0.0.1",
+      "timestamp": "2026-11-08T19:28:34.725Z"
+    },
+    {
+      "id": "log-1794166014251-528",
+      "userName": "Carlos Pimentel",
+      "userRole": "Paciente",
+      "moduleAffected": "Seguridad y Autenticación",
+      "eventType": "SOLICITUD_RECUPERACION_CLAVE",
+      "actionDescription": "Solicitud de recuperación de contraseña para pimentelcarlos147@gmail.com. Código despachado por correo electrónico.",
+      "ipAddress": "127.0.0.1",
+      "timestamp": "2026-11-08T19:26:54.251Z"
+    },
+    {
+      "id": "log-1794165418003-413",
+      "userName": "Carlos Pimentel",
+      "userRole": "Paciente",
+      "moduleAffected": "Seguridad y Autenticación",
+      "eventType": "RESTABLECIMIENTO_CLAVE",
+      "actionDescription": "Contraseña restablecida exitosamente para pimentelcarlos147@gmail.com. Sesiones previas invalidadas.",
+      "ipAddress": "127.0.0.1",
+      "timestamp": "2026-11-08T19:16:58.004Z"
+    },
+    {
+      "id": "log-1794165232292-14",
+      "userName": "Carlos Pimentel",
+      "userRole": "Paciente",
+      "moduleAffected": "Seguridad y Autenticación",
+      "eventType": "SOLICITUD_RECUPERACION_CLAVE",
+      "actionDescription": "Solicitud de recuperación de contraseña para pimentelcarlos147@gmail.com. Código despachado por correo electrónico.",
+      "ipAddress": "127.0.0.1",
+      "timestamp": "2026-11-08T19:13:52.292Z"
+    },
+    {
+      "id": "log-seed-1",
+      "userName": "Sistema Automático",
+      "userRole": "Administrador",
+      "moduleAffected": "Seguridad y Autenticación",
+      "eventType": "SISTEMA_INICIALIZADO",
+      "actionDescription": "Módulo de autenticación RBAC inicializado con Administrador único y políticas de seguridad.",
+      "ipAddress": "127.0.0.1",
+      "timestamp": "2026-11-08T17:42:52.624Z"
+    }
+  ]
+}

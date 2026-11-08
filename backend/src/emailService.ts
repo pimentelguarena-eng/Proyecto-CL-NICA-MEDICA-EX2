@@ -80,13 +80,13 @@ export async function sendPasswordResetEmail(
       <!-- Token Box -->
       <div style="background-color: #f8fafc; border: 2px dashed #0d9488; border-radius: 14px; padding: 20px; text-align: center; margin: 24px 0;">
         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #0f766e; display: block; margin-bottom: 8px;">
-          Su Código de Recuperación Temporal
+          Su Código de Recuperación de 6 Dígitos
         </span>
-        <div style="font-family: 'Courier New', Courier, monospace; font-size: 26px; font-weight: 800; letter-spacing: 4px; color: #042f2e; background-color: #ffffff; padding: 10px 18px; border-radius: 8px; display: inline-block; border: 1px solid #cbd5e1;">
+        <div style="font-family: 'Courier New', Courier, monospace; font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #0f766e; background-color: #ffffff; padding: 12px 28px; border-radius: 12px; display: inline-block; border: 2px solid #0d9488;">
           ${resetToken}
         </div>
         <p style="font-size: 12px; color: #64748b; margin: 10px 0 0 0;">
-          Copie este código e ingréselo en el formulario de la aplicación.
+          Copie o escriba este código de 6 dígitos en la aplicación.
         </p>
       </div>
 

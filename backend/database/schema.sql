@@ -361,11 +361,25 @@ ON CONFLICT (nombre) DO NOTHING;
 
 -- Consultorios
 INSERT INTO consultorios (codigo, nombre, piso) VALUES
-('CONS-101', 'Consultorio de Cardiología y Medicina Vascular', 'Piso 1'),
-('CONS-102', 'Consultorio de Medicina General y Pediatría', 'Piso 1'),
-('CONS-201', 'Consultorio de Ginecología y Mastología', 'Piso 2'),
-('CONS-202', 'Consultorio de Traumatología y Reumatología', 'Piso 2'),
-('CONS-301', 'Gabinete de Fisioterapia y Kinesiología', 'Piso 3')
+('CONS-101', 'Consultorio 101 - Cardiología', 'Piso 1'),
+('CONS-102', 'Consultorio 102 - Dermatología', 'Piso 1'),
+('CONS-103', 'Consultorio 103 - Medicina General', 'Piso 1'),
+('CONS-104', 'Consultorio 104 - Pediatría', 'Piso 1'),
+('CONS-105', 'Consultorio 105 - Ginecología y Mastología', 'Piso 1'),
+('CONS-201', 'Consultorio 201 - Traumatología y Ortopedia', 'Piso 2'),
+('CONS-202', 'Consultorio 202 - Oftalmología', 'Piso 2'),
+('CONS-203', 'Consultorio 203 - Urología', 'Piso 2'),
+('CONS-204', 'Consultorio 204 - Endocrinología y Nutrición', 'Piso 2'),
+('CONS-205', 'Consultorio 205 - Gastroenterología y Proctología', 'Piso 2'),
+('CONS-206', 'Consultorio 206 - Neumología', 'Piso 2'),
+('CONS-207', 'Consultorio 207 - Neurología', 'Piso 2'),
+('CONS-208', 'Consultorio 208 - Otorrinolaringología', 'Piso 2'),
+('CONS-301', 'Consultorio 301 - Psicología Clínica', 'Piso 3'),
+('CONS-302', 'Consultorio 302 - Psiquiatría', 'Piso 3'),
+('CONS-303', 'Consultorio 303 - Reumatología', 'Piso 3'),
+('CONS-304', 'Consultorio 304 - Angiología y Cirugía Vascular', 'Piso 3'),
+('SALA-FISIO', 'Sala de Fisioterapia y Kinesiología A', 'Piso 3'),
+('GAB-FONO', 'Gabinete Foniátrico y Deglutorio', 'Piso 3')
 ON CONFLICT (codigo) DO NOTHING;
 
 -- Catálogo de las 22 Especialidades Médicas
@@ -409,31 +423,86 @@ ON CONFLICT (codigo) DO NOTHING;
 
 -- -------------------------------------------------------------
 -- POBLACIÓN DE USUARIOS INICIALES (Contraseñas hasheadas PBKDF2)
+-- Contraseña general para médicos: Medico123!
+-- Contraseña admin: Admin123! | Recepción: Recep123! | Pacientes: Paciente123!
 -- -------------------------------------------------------------
 INSERT INTO usuarios (id, rol_id, username, correo, password_hash, salt, estado) VALUES
 (1, 1, 'admin', 'admin@clinicamedical.com', 'a3f8901b2c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f', '1029384756abcdef', 'activo'),
-(2, 3, 'dr.mendoza', 'dr.mendoza@clinicamedical.com', 'b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5', 'abcdef1029384756', 'activo'),
-(3, 3, 'dr.perez', 'dr.perez@clinicamedical.com', 'c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6', '5647382910fedcba', 'activo'),
-(4, 3, 'dra.arze', 'dra.arze@clinicamedical.com', 'd6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7', '9081726354abcdef', 'activo'),
-(5, 2, 'recepcion', 'recepcion@clinicamedical.com', 'e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8', 'fedcba5647382910', 'activo'),
-(6, 4, 'paciente.carlos', 'carlos.fernandez@hotmail.com', 'f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9', '1234567890abcdef', 'activo'),
-(7, 4, 'paciente.maria', 'maria.lopez@gmail.com', 'a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0', 'abcdef1234567890', 'activo')
+(2, 2, 'recepcion', 'recepcion@clinicamedical.com', 'e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8', 'fedcba5647382910', 'activo'),
+-- 19 Médicos Especialistas
+(3, 3, 'dr.mendoza', 'carlos.mendoza@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(4, 3, 'dra.vargas', 'elena.vargas@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(5, 3, 'dr.perez', 'dr.perez@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(6, 3, 'dra.castro', 'gabriela.castro@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(7, 3, 'dra.morales', 'sofia.morales@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(8, 3, 'dr.siles', 'roberto.siles@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(9, 3, 'dr.ortiz', 'marcelo.ortiz@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(10, 3, 'dr.rocha', 'fernando.rocha@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(11, 3, 'dra.arze', 'patricia.arze@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(12, 3, 'dr.beltran', 'andres.beltran@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(13, 3, 'dr.cespedes', 'hugo.cespedes@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(14, 3, 'dra.suarez', 'mariana.suarez@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(15, 3, 'dr.navia', 'rodrigo.navia@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(16, 3, 'lic.torrico', 'claudia.torrico@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(17, 3, 'lic.landivar', 'veronica.landivar@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(18, 3, 'lic.antelo', 'daniela.antelo@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(19, 3, 'dr.hurtado', 'guillermo.hurtado@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(20, 3, 'dra.pinto', 'roxana.pinto@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+(21, 3, 'dr.vaca', 'alejandro.vaca@clinicamedical.com', 'aa725193e9840cd4fb4393e73d488d60ac49e3e38b44b5abdffbd96b57df0b5ad6d62cf618863194317a0c42b40d00914f65c806f1bec60e2958b3e19c4b041d', '14fbeccf21b8adf9ffa6a741b52984c4', 'activo'),
+-- Pacientes
+(22, 4, 'paciente.maria', 'maria.lopez@gmail.com', 'a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0', 'abcdef1234567890', 'activo'),
+(23, 4, 'paciente.carlos', 'pimentelcarlos147@gmail.com', 'f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9', '1234567890abcdef', 'activo')
 ON CONFLICT (correo) DO NOTHING;
 
 -- -------------------------------------------------------------
--- POBLACIÓN DE MÉDICOS
+-- POBLACIÓN DE MÉDICOS (19 Médicos cubriendo las 22 especialidades)
 -- -------------------------------------------------------------
 INSERT INTO medicos (id, usuario_id, consultorio_id, codigo, matricula_profesional, ci, nombres, apellidos, telefono, correo, estado_operativo) VALUES
-(1, 2, 1, 'MED-001', 'MP-4512-BOL', '3489101', 'Carlos', 'Mendoza Villazón', '77218901', 'dr.mendoza@clinicamedical.com', 'activo'),
-(2, 3, 2, 'MED-003', 'MP-7821-BOL', '3489102', 'Juan', 'Pérez Sandoval', '70011223', 'dr.perez@clinicamedical.com', 'activo'),
-(3, 4, 3, 'MED-009', 'MP-9941-BOL', '3489109', 'Patricia', 'Arze Salinas', '78912340', 'dra.arze@clinicamedical.com', 'activo')
+(1, 3, 1, 'MED-001', 'MP-8921-BOL', '3489101', 'Carlos', 'Mendoza Ramos', '77218944', 'carlos.mendoza@clinicamedical.com', 'activo'),
+(2, 4, 2, 'MED-002', 'MP-9104-BOL', '3489102', 'Elena', 'Vargas Solís', '78190012', 'elena.vargas@clinicamedical.com', 'activo'),
+(3, 5, 3, 'MED-003', 'MP-7721-BOL', '3489103', 'Juan', 'Pérez Sandoval', '71192843', 'dr.perez@clinicamedical.com', 'activo'),
+(4, 6, 4, 'MED-004', 'MP-8349-BOL', '3489104', 'Gabriela', 'Castro Medina', '76543210', 'gabriela.castro@clinicamedical.com', 'activo'),
+(5, 7, 5, 'MED-005', 'MP-6523-BOL', '3489105', 'Sofía', 'Morales Paz', '72349011', 'sofia.morales@clinicamedical.com', 'activo'),
+(6, 8, 6, 'MED-006', 'MP-8812-BOL', '3489106', 'Roberto', 'Siles Justiniano', '75432198', 'roberto.siles@clinicamedical.com', 'activo'),
+(7, 9, 7, 'MED-007', 'MP-9943-BOL', '3489107', 'Marcelo', 'Ortiz Aguilera', '76891234', 'marcelo.ortiz@clinicamedical.com', 'activo'),
+(8, 10, 8, 'MED-008', 'MP-6214-BOL', '3489108', 'Fernando', 'Rocha Claure', '79011289', 'fernando.rocha@clinicamedical.com', 'activo'),
+(9, 11, 9, 'MED-009', 'MP-5432-BOL', '3489109', 'Patricia', 'Arze Salinas', '73456789', 'patricia.arze@clinicamedical.com', 'activo'),
+(10, 12, 10, 'MED-010', 'MP-8120-BOL', '3489110', 'Andrés', 'Beltrán Guzmán', '71239845', 'andres.beltran@clinicamedical.com', 'activo'),
+(11, 13, 11, 'MED-011', 'MP-7788-BOL', '3489111', 'Hugo', 'Céspedes Mercado', '78901234', 'hugo.cespedes@clinicamedical.com', 'activo'),
+(12, 14, 12, 'MED-012', 'MP-9241-BOL', '3489112', 'Mariana', 'Suárez Montero', '74567890', 'mariana.suarez@clinicamedical.com', 'activo'),
+(13, 15, 13, 'MED-013', 'MP-6439-BOL', '3489113', 'Rodrigo', 'Navia Valdivia', '72389104', 'rodrigo.navia@clinicamedical.com', 'activo'),
+(14, 16, 18, 'MED-014', 'MP-5120-BOL', '3489114', 'Claudia', 'Torrico Ribera', '71123490', 'claudia.torrico@clinicamedical.com', 'activo'),
+(15, 17, 19, 'MED-015', 'MP-4982-BOL', '3489115', 'Verónica', 'Landívar', '73490123', 'veronica.landivar@clinicamedical.com', 'activo'),
+(16, 18, 14, 'MED-016', 'MP-7321-BOL', '3489116', 'Daniela', 'Antelo Paz', '74123890', 'daniela.antelo@clinicamedical.com', 'activo'),
+(17, 19, 15, 'MED-017', 'MP-8910-BOL', '3489117', 'Guillermo', 'Hurtado', '79812345', 'guillermo.hurtado@clinicamedical.com', 'activo'),
+(18, 20, 16, 'MED-018', 'MP-6842-BOL', '3489118', 'Roxana', 'Pinto Vega', '78234190', 'roxana.pinto@clinicamedical.com', 'activo'),
+(19, 21, 17, 'MED-019', 'MP-7193-BOL', '3489119', 'Alejandro', 'Vaca Diez', '76123456', 'alejandro.vaca@clinicamedical.com', 'activo')
 ON CONFLICT (ci) DO NOTHING;
 
--- Vinculación Médico - Especialidad
+-- Vinculación Médico - Especialidad (Cubre las 22 especialidades médicas)
 INSERT INTO medico_especialidad (medico_id, especialidad_id, activo) VALUES
-(1, 1, TRUE), -- Dr. Mendoza -> Cardiología
-(2, 9, TRUE), -- Dr. Pérez -> Medicina General
-(3, 3, TRUE)  -- Dra. Arze -> Endocrinología
+(1, 1, TRUE),   -- Dr. Carlos Mendoza -> Cardiología
+(2, 2, TRUE),   -- Dra. Elena Vargas -> Dermatología
+(3, 9, TRUE),   -- Dr. Juan Pérez -> Medicina General
+(4, 16, TRUE),  -- Dra. Gabriela Castro -> Pediatría
+(5, 7, TRUE),   -- Dra. Sofía Morales -> Ginecología
+(5, 8, TRUE),   -- Dra. Sofía Morales -> Mastología
+(6, 21, TRUE),  -- Dr. Roberto Siles -> Traumatología
+(7, 14, TRUE),  -- Dr. Marcelo Ortiz -> Oftalmología
+(8, 22, TRUE),  -- Dr. Fernando Rocha -> Urología
+(9, 3, TRUE),   -- Dra. Patricia Arze -> Endocrinología
+(9, 13, TRUE),  -- Dra. Patricia Arze -> Nutriología
+(10, 6, TRUE),  -- Dr. Andrés Beltrán -> Gastroenterología
+(10, 17, TRUE), -- Dr. Andrés Beltrán -> Proctología
+(11, 11, TRUE), -- Dr. Hugo Céspedes -> Neumología
+(12, 12, TRUE), -- Dra. Mariana Suárez -> Neurología
+(13, 15, TRUE), -- Dr. Rodrigo Navia -> Otorrinolaringología
+(14, 4, TRUE),  -- Lic. Claudia Torrico -> Fisioterapia
+(15, 5, TRUE),  -- Lic. Verónica Landívar -> Fonoaudiología
+(16, 18, TRUE), -- Lic. Daniela Antelo -> Psicología
+(17, 19, TRUE), -- Dr. Guillermo Hurtado -> Psiquiatría
+(18, 20, TRUE), -- Dra. Roxana Pinto -> Reumatología
+(19, 10, TRUE)  -- Dr. Alejandro Vaca -> Medicina Vascular
 ON CONFLICT (medico_id, especialidad_id) DO NOTHING;
 
 -- Horarios de Atención
@@ -449,8 +518,8 @@ ON CONFLICT DO NOTHING;
 -- POBLACIÓN DE PACIENTES (CU06, CU07)
 -- -------------------------------------------------------------
 INSERT INTO pacientes (id, usuario_id, codigo, ci, nombres, apellidos, fecha_nacimiento, sexo, telefono, correo, direccion, estado) VALUES
-(1, 7, 'PAC-001', '5489123', 'María', 'López Quispe', '1992-04-15', 'F', '77341829', 'maria.lopez@gmail.com', 'Av. Las Américas #450', 'activo'),
-(2, 6, 'PAC-002', '6190432', 'Carlos', 'Fernández Rios', '1985-09-22', 'M', '70281930', 'carlos.fernandez@hotmail.com', 'Calle Sucre #120', 'activo')
+(1, 22, 'PAC-001', '5489123', 'María', 'López Quispe', '1992-04-15', 'F', '77341829', 'maria.lopez@gmail.com', 'Av. Las Américas #450', 'activo'),
+(2, 23, 'PAC-002', '6190432', 'Carlos', 'Pimentel', '1985-09-22', 'M', '70281930', 'pimentelcarlos147@gmail.com', 'Calle Sucre #120', 'activo')
 ON CONFLICT (ci) DO NOTHING;
 
 -- -------------------------------------------------------------
