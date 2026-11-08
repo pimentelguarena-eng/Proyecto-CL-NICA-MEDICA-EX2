@@ -126,6 +126,25 @@ export class ClinicDatabase {
       failedLoginAttempts: 0,
     });
 
+    // 5. Patient user Carlos Pimentel (Linked to pimentelcarlos147@gmail.com for real SMTP testing)
+    const pimentelPass = hashPassword('Paciente123!');
+    this.users.push({
+      id: 'usr-pimentel',
+      email: 'pimentelcarlos147@gmail.com',
+      passwordHash: pimentelPass.hash,
+      salt: pimentelPass.salt,
+      fullName: 'Carlos Pimentel',
+      role: 'Paciente',
+      status: 'ACTIVE',
+      ci: '6190432',
+      patientId: 'pac-002',
+      patientCi: '6190432',
+      phone: '70281930',
+      createdAt: '2026-01-20T08:00:00Z',
+      updatedAt: '2026-01-20T08:00:00Z',
+      failedLoginAttempts: 0,
+    });
+
     // Seed sample Staff Registration Requests for testing the approval workflow
     const sampleDocPass = hashPassword('Doctor2026!');
     this.staffRequests.push({

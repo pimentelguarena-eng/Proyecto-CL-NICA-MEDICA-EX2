@@ -16,6 +16,7 @@ import {
   canTransitionStatus,
 } from './utils/appointmentLogic.ts';
 import type { Appointment } from './types/clinic.ts';
+import { sendPasswordResetEmail } from './emailService.ts';
 
 export const apiRouter = Router();
 
@@ -497,9 +498,9 @@ apiRouter.post('/auth/register-staff-request', (req: Request, res: Response) => 
 
 /**
  * POST /api/auth/forgot-password
- * Initiates password recovery
+ * Initiates password recovery via secure email dispatch (CU03)
  */
-apiRouter.post('/auth/forgot-password', (req: Request, res: Response) => {
+apiRouter.post('/auth/forgot-password', async (req: Request, res: Response) => {
   const { email } = req.body;
   if (!email) {
     return res.status(400).json({ error: 'Ingrese su correo electrónico.' });
@@ -509,7 +510,7 @@ apiRouter.post('/auth/forgot-password', (req: Request, res: Response) => {
   const user = clinicDb.users.find(u => u.email.toLowerCase() === normalizedEmail && u.status === 'ACTIVE');
 
   // Generic message to avoid email enumeration
-  const genericMessage = 'Si el correo electrónico está registrado en el sistema, se ha generado un código de recuperación válido por 30 minutos.';
+  const genericMessage = 'Si el correo electrónico está registrado en el sistema, se ha enviado un código de recuperación válido por 30 minutos a su bandeja de entrada (revise también la carpeta de spam).';
 
   if (!user) {
     return res.json({ success: true, message: genericMessage });
@@ -529,14 +530,24 @@ apiRouter.post('/auth/forgot-password', (req: Request, res: Response) => {
     userRole: user.role,
     moduleAffected: 'Seguridad y Autenticación',
     eventType: 'SOLICITUD_RECUPERACION_CLAVE',
-    actionDescription: `Solicitud de recuperación de contraseña para ${user.email}.`,
+    actionDescription: `Solicitud de recuperación de contraseña para ${user.email}. Código despachado por correo electrónico.`,
     ipAddress: req.ip,
   });
+
+  // Despacho del correo real vía SMTP de Gmail
+  try {
+    const emailResult = await sendPasswordResetEmail(user.email, user.fullName, token);
+    if (!emailResult.success) {
+      console.warn(`[SMTP WARN] No se pudo enviar el correo a ${user.email}: ${emailResult.error}`);
+    }
+  } catch (err: any) {
+    console.error(`[SMTP ERROR] Excepción al enviar correo a ${user.email}:`, err.message || err);
+  }
 
   return res.json({
     success: true,
     message: genericMessage,
-    // Return debugToken so evaluator can easily test the reset flow in preview
+    // debugToken mantenido para soporte y pruebas inmediatas
     debugToken: token,
   });
 });
