@@ -1,4 +1,4 @@
-import type { Appointment, Doctor, DoctorSchedule, Patient, AppointmentStatus } from '../types/clinic.ts';
+import type { Appointment, Doctor, DoctorSchedule, DoctorAbsence, Patient, AppointmentStatus } from '../types/clinic.ts';
 
 /**
  * Returns the day of the week in Spanish matching DoctorSchedule['dayOfWeek']
@@ -120,12 +120,24 @@ export function isWithinDoctorSchedule(
 
 export interface AvailabilityCheckResult {
   isValid: boolean;
-  errorCode?: 'DOCTOR_INACTIVE' | 'PAST_DATE' | 'OUTSIDE_HOURS' | 'SLOT_OCCUPIED' | 'INVALID_TIME';
+  errorCode?: 'DOCTOR_INACTIVE' | 'DOCTOR_ABSENT' | 'PAST_DATE' | 'OUTSIDE_HOURS' | 'SLOT_OCCUPIED' | 'INVALID_TIME';
   errorMessage?: string;
+  absence?: DoctorAbsence;
 }
 
 /**
- * RN04, RN05, RN06, RN07, RN09 Validation
+ * Checks whether a doctor has a registered absence or vacation covering a specific date
+ */
+export function getDoctorAbsenceForDate(
+  doctorId: string,
+  dateStr: string,
+  absences: DoctorAbsence[] = []
+): DoctorAbsence | undefined {
+  return absences.find(a => a.doctorId === doctorId && dateStr >= a.startDate && dateStr <= a.endDate);
+}
+
+/**
+ * RN04, RN05, RN06, RN07, RN09, CU12b Validation
  * Checks if a proposed appointment is valid for doctor, date, and time slot.
  */
 export function validateAppointmentSlot(params: {
@@ -136,10 +148,11 @@ export function validateAppointmentSlot(params: {
   endTime: string;
   schedules: DoctorSchedule[];
   existingAppointments: Appointment[];
+  absences?: DoctorAbsence[];
   excludeAppointmentId?: string; // used when rescheduling
   todayStr?: string;
 }): AvailabilityCheckResult {
-  const { doctor, date, startTime, endTime, schedules, existingAppointments, excludeAppointmentId, todayStr } = params;
+  const { doctor, date, startTime, endTime, schedules, existingAppointments, absences, excludeAppointmentId, todayStr } = params;
 
   // RN04: Doctor must be active
   if (!doctor.isActive) {
@@ -148,6 +161,27 @@ export function validateAppointmentSlot(params: {
       errorCode: 'DOCTOR_INACTIVE',
       errorMessage: `El médico ${doctor.fullName} se encuentra inactivo y no puede recibir nuevas citas.`,
     };
+  }
+
+  // CU12b: Doctor absence / vacation check
+  if (absences && absences.length > 0) {
+    const activeAbsence = getDoctorAbsenceForDate(doctor.id, date, absences);
+    if (activeAbsence) {
+      const typeLabels: Record<string, string> = {
+        VACACIONES: 'Vacaciones programadas',
+        PERMISO: 'Permiso institucional',
+        CONGRESO: 'Participación en Congreso Médico',
+        LICENCIA: 'Licencia médica / personal',
+        OTRO: 'Ausencia justificada',
+      };
+      const label = typeLabels[activeAbsence.type] || 'Ausencia';
+      return {
+        isValid: false,
+        errorCode: 'DOCTOR_ABSENT',
+        errorMessage: `El médico no atenderá en esta fecha por ${label} (${activeAbsence.reason}). Período: del ${activeAbsence.startDate} al ${activeAbsence.endDate}.`,
+        absence: activeAbsence,
+      };
+    }
   }
 
   // RN06: Not in the past
@@ -211,6 +245,7 @@ export function getAvailableSlotsForDoctorAndDate(
   date: string,
   schedules: DoctorSchedule[],
   existingAppointments: Appointment[],
+  absences?: DoctorAbsence[],
   todayStr?: string
 ): { startTime: string; endTime: string; slotLabel: string; isAvailable: boolean; conflictReason?: string }[] {
   if (!doctor.isActive || isPastDate(date, todayStr)) {
@@ -226,7 +261,7 @@ export function getAvailableSlotsForDoctorAndDate(
     allPossibleSlots.push(...slots);
   }
 
-  // Check each slot against existing appointments
+  // Check each slot against existing appointments and absences
   return allPossibleSlots.map(slot => {
     const check = validateAppointmentSlot({
       doctorId: doctor.id,
@@ -236,6 +271,7 @@ export function getAvailableSlotsForDoctorAndDate(
       endTime: slot.endTime,
       schedules,
       existingAppointments,
+      absences,
       todayStr,
     });
 
@@ -286,8 +322,8 @@ export function canTransitionStatus(
     };
   }
 
-  // Cancelada cannot directly become Atendida
-  if (currentStatus === 'Cancelada') {
+  // Cancelada cannot directly become Atendida without a valid reprogramming
+  if (currentStatus === 'Cancelada' && targetStatus === 'Atendida') {
     return {
       allowed: false,
       reason: 'Una cita cancelada no puede reactivarse directamente sin una nueva programación.',

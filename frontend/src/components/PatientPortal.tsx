@@ -20,7 +20,8 @@ import {
   Stethoscope,
   Info
 } from 'lucide-react';
-import type { Patient, Appointment, Doctor, Specialty } from '../types/clinic.ts';
+import { getAvailableSlotsForDoctorAndDate, getSpanishDayOfWeek, getDoctorAbsenceForDate } from '../utils/appointmentLogic.ts';
+import type { Patient, Appointment, Doctor, Specialty, DoctorSchedule, DoctorAbsence } from '../types/clinic.ts';
 
 interface PatientPortalProps {
   currentPatient: Patient | null;
@@ -30,7 +31,14 @@ interface PatientPortalProps {
   appointments: Appointment[];
   doctors: Doctor[];
   specialties: Specialty[];
+  schedules?: DoctorSchedule[];
+  absences?: DoctorAbsence[];
   onCancelAppointment: (appointmentId: string, reason: string) => void;
+  onRescheduleAppointment?: (
+    appointmentId: string,
+    newDate: string,
+    newSlot: { startTime: string; endTime: string; slotLabel: string }
+  ) => { success: boolean; error?: string };
   onOpenBooking: () => void;
 }
 
@@ -42,7 +50,10 @@ export default function PatientPortal({
   appointments,
   doctors,
   specialties,
+  schedules = [],
+  absences = [],
   onCancelAppointment,
+  onRescheduleAppointment,
   onOpenBooking,
 }: PatientPortalProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -50,6 +61,13 @@ export default function PatientPortal({
   const [activeTab, setActiveTab] = useState<'profile' | 'appointments'>('appointments');
   const [cancelModalAppt, setCancelModalAppt] = useState<Appointment | null>(null);
   const [cancelReason, setCancelReason] = useState('');
+
+  // Reschedule Modal State (Permite al paciente elegir nuevo día tras emergencia o cambio)
+  const [rescheduleModalAppt, setRescheduleModalAppt] = useState<Appointment | null>(null);
+  const [rescheduleDate, setRescheduleDate] = useState<string>('2026-11-18');
+  const [rescheduleSlot, setRescheduleSlot] = useState<{ startTime: string; endTime: string; slotLabel: string } | null>(null);
+  const [rescheduleError, setRescheduleError] = useState<string | null>(null);
+  const [rescheduleSuccess, setRescheduleSuccess] = useState<string | null>(null);
 
   // Editable fields state
   const [editFormData, setEditFormData] = useState<Partial<Patient>>({});
@@ -86,9 +104,68 @@ export default function PatientPortal({
   const upcomingAppointments = patientAppointments.filter(
     a => a.status === 'Programada' || a.status === 'Confirmada'
   );
-  const pastOrCancelledAppointments = patientAppointments.filter(
-    a => a.status === 'Atendida' || a.status === 'Cancelada' || a.status === 'Inasistencia'
+  // Appointments cancelled (due to doctor emergency or normal cancellation, preserving ficha validity)
+  const cancelledAppointmentsToReschedule = patientAppointments.filter(
+    a => a.status === 'Cancelada'
   );
+  const pastOrAttendedAppointments = patientAppointments.filter(
+    a => a.status === 'Atendida' || a.status === 'Inasistencia'
+  );
+
+  // Doctor and slots for active reschedule modal
+  const currentRescheduleDoctor = rescheduleModalAppt
+    ? doctors.find(d => d.id === rescheduleModalAppt.doctorId)
+    : null;
+
+  const currentRescheduleSpecialty = rescheduleModalAppt
+    ? specialties.find(s => s.id === rescheduleModalAppt.specialtyId)
+    : null;
+
+  const currentRescheduleDoctorAbsence = currentRescheduleDoctor && rescheduleDate
+    ? getDoctorAbsenceForDate(currentRescheduleDoctor.id, rescheduleDate, absences)
+    : undefined;
+
+  const rescheduleAvailableSlots = currentRescheduleDoctor && rescheduleDate && schedules.length > 0
+    ? getAvailableSlotsForDoctorAndDate(
+        currentRescheduleDoctor,
+        rescheduleDate,
+        schedules,
+        appointments.filter(a => a.id !== rescheduleModalAppt?.id),
+        absences
+      )
+    : [];
+
+  const handleOpenPatientReschedule = (appt: Appointment) => {
+    setRescheduleModalAppt(appt);
+    setRescheduleSlot(null);
+    setRescheduleError(null);
+    setRescheduleDate(appt.date || '2026-11-18');
+  };
+
+  const handleExecutePatientReschedule = () => {
+    if (currentRescheduleDoctorAbsence) {
+      setRescheduleError(`El médico no atenderá en esta fecha por ${currentRescheduleDoctorAbsence.type === 'VACACIONES' ? 'vacaciones' : currentRescheduleDoctorAbsence.type.toLowerCase()} (${currentRescheduleDoctorAbsence.reason}). Por favor elija otra fecha.`);
+      return;
+    }
+    if (!rescheduleModalAppt || !rescheduleSlot) {
+      setRescheduleError('Seleccione un horario de atención disponible.');
+      return;
+    }
+    if (!onRescheduleAppointment) {
+      setRescheduleError('La función de reprogramación no se encuentra disponible.');
+      return;
+    }
+    const result = onRescheduleAppointment(rescheduleModalAppt.id, rescheduleDate, rescheduleSlot);
+    if (result.success) {
+      setRescheduleSuccess(`¡Cita ${rescheduleModalAppt.code} reprogramada exitosamente para el ${rescheduleDate} a las ${rescheduleSlot.slotLabel}!`);
+      setRescheduleModalAppt(null);
+      setRescheduleSlot(null);
+      setRescheduleError(null);
+      setTimeout(() => setRescheduleSuccess(null), 6000);
+    } else {
+      setRescheduleError(result.error || 'Conflicto de horario al reprogramar.');
+    }
+  };
 
   return (
     <div className="py-10 bg-slate-50 min-h-[80vh]">
@@ -176,6 +253,104 @@ export default function PatientPortal({
         {/* Tab 1: Appointments List */}
         {activeTab === 'appointments' && (
           <div className="space-y-6">
+
+            {/* Reschedule Success Alert */}
+            {rescheduleSuccess && (
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between gap-3 animate-in fade-in">
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <strong className="font-bold">{rescheduleSuccess}</strong>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRescheduleSuccess(null)}
+                  className="text-emerald-700 hover:text-emerald-900 font-bold text-sm cursor-pointer"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+
+            {/* Emergency Contingency Alert & Free Rescheduling (RF08) */}
+            {cancelledAppointmentsToReschedule.length > 0 && (
+              <div className="bg-gradient-to-r from-amber-500/10 via-amber-50 to-orange-50 rounded-3xl p-6 sm:p-8 border-2 border-amber-300 shadow-sm space-y-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="p-2.5 rounded-2xl bg-amber-500 text-white shrink-0 mt-0.5 shadow-xs">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-base font-black text-amber-950">
+                        Citas Afectadas por Emergencia Médica ({cancelledAppointmentsToReschedule.length})
+                      </h2>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
+                        Ficha Válida
+                      </span>
+                    </div>
+                    <p className="text-xs text-amber-900 mt-1 leading-relaxed">
+                      El médico especialista no podrá brindar atención en la fecha originalmente programada debido a una emergencia médica. 
+                      <strong> Su ficha médica y derecho de atención se conservan 100% válidos.</strong> Por favor elija un nuevo día de atención a continuación sin ningún costo adicional:
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {cancelledAppointmentsToReschedule.map((appt) => {
+                    const doc = doctors.find(d => d.id === appt.doctorId);
+                    const spec = specialties.find(s => s.id === appt.specialtyId);
+
+                    return (
+                      <div
+                        key={appt.id}
+                        className="p-5 rounded-2xl border-2 border-amber-200 bg-white shadow-xs flex flex-col justify-between gap-4"
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between pb-2.5 border-b border-amber-100">
+                            <span className="text-xs font-mono font-bold text-teal-800">
+                              Ficha: {appt.code}
+                            </span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">
+                              Suspendida por Emergencia
+                            </span>
+                          </div>
+
+                          <div className="text-xs space-y-1.5">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">Especialidad</span>
+                              <strong className="text-sm text-slate-900 font-extrabold">{spec?.name}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">Médico Especialista</span>
+                              <span className="font-semibold text-slate-800">{doc?.fullName} ({doc?.roomNumber || 'Consultorio'})</span>
+                            </div>
+                            <div className="text-slate-600 text-[11px]">
+                              Fecha anterior: <strong className="text-slate-800">{appt.date}</strong> a las <strong>{appt.timeSlot}</strong>
+                            </div>
+
+                            {appt.cancellationReason && (
+                              <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-[11px] leading-relaxed">
+                                <strong>Motivo médico:</strong> {appt.cancellationReason}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-amber-100">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenPatientReschedule(appt)}
+                            className="w-full py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                          >
+                            <CalendarPlus className="w-4 h-4" />
+                            <span>Elegir Otro Día de Atención (Reprogramar)</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             
             {/* Upcoming Appointments */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs">
@@ -250,21 +425,31 @@ export default function PatientPortal({
                           </div>
                         </div>
 
-                        <div className="pt-3 border-t border-teal-100/60 flex items-center justify-between">
+                        <div className="pt-3 border-t border-teal-100/60 flex items-center justify-between gap-2">
                           <span className="text-[11px] text-slate-400">
                             Presentarse 10 min antes
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCancelModalAppt(appt);
-                              setCancelReason('');
-                            }}
-                            className="text-xs font-bold text-rose-600 hover:text-rose-800 hover:underline flex items-center gap-1 cursor-pointer"
-                          >
-                            <Ban className="w-3.5 h-3.5" />
-                            <span>Cancelar Cita</span>
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenPatientReschedule(appt)}
+                              className="text-xs font-bold text-teal-700 hover:text-teal-900 hover:underline flex items-center gap-1 cursor-pointer"
+                            >
+                              <Calendar className="w-3.5 h-3.5" />
+                              <span>Reprogramar</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCancelModalAppt(appt);
+                                setCancelReason('');
+                              }}
+                              className="text-xs font-bold text-rose-600 hover:text-rose-800 hover:underline flex items-center gap-1 cursor-pointer"
+                            >
+                              <Ban className="w-3.5 h-3.5" />
+                              <span>Cancelar</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );
@@ -294,7 +479,7 @@ export default function PatientPortal({
                 </h2>
               </div>
 
-              {pastOrCancelledAppointments.length > 0 ? (
+              {pastOrAttendedAppointments.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs text-slate-700">
                     <thead className="bg-slate-50 text-[11px] uppercase font-bold text-slate-500 border-b border-slate-200">
@@ -308,7 +493,7 @@ export default function PatientPortal({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {pastOrCancelledAppointments.map((appt) => {
+                      {pastOrAttendedAppointments.map((appt) => {
                         const doc = doctors.find(d => d.id === appt.doctorId);
                         const spec = specialties.find(s => s.id === appt.specialtyId);
 
@@ -701,6 +886,147 @@ export default function PatientPortal({
                 className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
               >
                 Confirmar Cancelación
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Patient Reschedule Modal (Elegir Nuevo Día y Horario tras Emergencia Médica) */}
+      {rescheduleModalAppt && currentRescheduleDoctor && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 space-y-4 text-slate-800 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 rounded-xl bg-teal-100 text-teal-700">
+                  <CalendarPlus className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-base">
+                    Elegir Nuevo Día de Atención
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Ficha Médica: <strong>{rescheduleModalAppt.code}</strong> • {currentRescheduleSpecialty?.name || 'Consulta'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRescheduleModalAppt(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="p-3.5 bg-teal-50/80 rounded-2xl border border-teal-200 text-xs space-y-1">
+              <div className="font-bold text-teal-950 text-sm">
+                {currentRescheduleDoctor.fullName}
+              </div>
+              <p className="text-teal-800 text-xs">
+                {currentRescheduleDoctor.roomNumber || 'Consultorio Asignado'} • Matrícula: <strong>{currentRescheduleDoctor.licenseNumber}</strong>
+              </p>
+              <div className="p-2 rounded-xl bg-white/80 border border-teal-200/80 text-[11px] text-teal-900 font-medium">
+                ✓ <strong>Su ficha médica y derecho de atención se conservan 100% válidos.</strong> Elija una fecha y horario disponible sin ningún cobro adicional.
+              </div>
+            </div>
+
+            {rescheduleError && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+                {rescheduleError}
+              </div>
+            )}
+
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  Seleccionar Nueva Fecha *
+                </label>
+                <input
+                  type="date"
+                  value={rescheduleDate}
+                  onChange={(e) => {
+                    setRescheduleDate(e.target.value);
+                    setRescheduleSlot(null);
+                  }}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 focus:border-teal-600 font-bold text-slate-800 bg-white"
+                />
+                <span className="text-[11px] text-teal-700 mt-1 block">
+                  Día seleccionado: <strong>{getSpanishDayOfWeek(rescheduleDate)}</strong>
+                </span>
+              </div>
+
+              {/* Absence warning banner in reschedule modal */}
+              {currentRescheduleDoctorAbsence && (
+                <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 text-xs space-y-1.5 animate-in fade-in">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>Médico en Período de {currentRescheduleDoctorAbsence.type === 'VACACIONES' ? 'Vacaciones' : currentRescheduleDoctorAbsence.type}</span>
+                  </div>
+                  <p className="text-[11px] text-amber-900">
+                    El médico no atenderá del <strong>{currentRescheduleDoctorAbsence.startDate}</strong> al <strong>{currentRescheduleDoctorAbsence.endDate}</strong> ({currentRescheduleDoctorAbsence.reason}).
+                  </p>
+                  <p className="text-[11px] font-bold text-amber-800">
+                    Por favor elija otra fecha para poder seleccionar un turno disponible.
+                  </p>
+                </div>
+              )}
+
+              <div>
+                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  Horarios de Consulta Disponibles:
+                </label>
+
+                {currentRescheduleDoctorAbsence ? (
+                  <div className="p-3 text-center rounded-xl bg-amber-100 text-amber-900 text-xs font-bold">
+                    Turnos no disponibles por ausencia / vacaciones del médico.
+                  </div>
+                ) : rescheduleAvailableSlots.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2 max-h-48 overflow-y-auto p-1">
+                    {rescheduleAvailableSlots.map((slot, idx) => {
+                      const isSelected = rescheduleSlot?.slotLabel === slot.slotLabel;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          disabled={!slot.isAvailable}
+                          onClick={() => setRescheduleSlot(slot)}
+                          className={`p-2.5 rounded-xl text-xs font-bold transition-all text-center cursor-pointer ${
+                            isSelected
+                              ? 'bg-teal-600 text-white shadow-md'
+                              : slot.isAvailable
+                              ? 'bg-teal-50 border border-teal-200 text-teal-900 hover:bg-teal-100'
+                              : 'bg-slate-100 text-slate-400 line-through cursor-not-allowed opacity-50'
+                          }`}
+                        >
+                          {slot.slotLabel}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-xs">
+                    El médico no tiene bloques de atención configurados para este día de la semana. Por favor elija otra fecha.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setRescheduleModalAppt(null)}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                Volver
+              </button>
+              <button
+                type="button"
+                disabled={!rescheduleSlot}
+                onClick={handleExecutePatientReschedule}
+                className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold disabled:opacity-50 shadow-md shadow-teal-600/20 cursor-pointer"
+              >
+                Confirmar Nuevo Día y Horario
               </button>
             </div>
           </div>

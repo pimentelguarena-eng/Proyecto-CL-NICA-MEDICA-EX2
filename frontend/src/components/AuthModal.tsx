@@ -130,12 +130,6 @@ export default function AuthModal({
     setMode(newMode);
   };
 
-  // Helper: fill demo credentials for reviewer evaluation
-  const handleFillDemo = (email: string, pass: string) => {
-    setLoginEmail(email);
-    setLoginPassword(pass);
-    resetMessages();
-  };
 
   // 1. Submit Login
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -455,71 +449,6 @@ export default function AuthModal({
                   <Stethoscope className="w-4 h-4 text-slate-500" />
                   <span>Personal: Solicitar Registro</span>
                 </button>
-              </div>
-
-              {/* Evaluation Helper (Fills credentials without bypassing backend authentication) */}
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                    Acceso Rápido para Evaluación (Credenciales Reales en BD):
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">Clave Médicos: Medico123!</span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleFillDemo('admin@clinicamedical.com', 'Admin123!')}
-                    className="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-bold text-slate-800 shadow-xs transition-colors"
-                  >
-                    🛡️ Administrador
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleFillDemo('recepcion@clinicamedical.com', 'Recep123!')}
-                    className="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-bold text-slate-800 shadow-xs transition-colors"
-                  >
-                    📋 Recepcionista
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleFillDemo('maria.lopez@gmail.com', 'Paciente123!')}
-                    className="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-left text-[11px] font-bold text-slate-800 shadow-xs transition-colors"
-                  >
-                    👤 Paciente
-                  </button>
-                </div>
-
-                {/* Specialty Doctors Selector covering all 22 specialties */}
-                {doctors && doctors.length > 0 && (
-                  <div className="pt-2 border-t border-slate-200/80">
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-teal-800 mb-1 flex items-center gap-1">
-                      <Stethoscope className="w-3.5 h-3.5 text-teal-600" />
-                      <span>Ingresar como Médico por Especialidad (19 Médicos Activos):</span>
-                    </label>
-                    <select
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          handleFillDemo(e.target.value, 'Medico123!');
-                        }
-                      }}
-                      defaultValue=""
-                      className="w-full p-2 text-xs font-semibold rounded-xl border border-teal-200 bg-white text-slate-800 focus:border-teal-600 outline-hidden"
-                    >
-                      <option value="" disabled>-- Seleccione un médico especialista --</option>
-                      {doctors.map(d => {
-                        const specNames = d.specialtyIds
-                          .map(sId => specialties.find(s => s.id === sId)?.name || sId)
-                          .join(', ');
-                        return (
-                          <option key={d.id} value={d.email}>
-                            {d.fullName} — {specNames} ({d.email})
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                )}
               </div>
             </div>
           </div>

@@ -20,6 +20,7 @@ import type {
   Patient, 
   Specialty, 
   DoctorSchedule,
+  DoctorAbsence,
   AuditLogEntry
 } from '../../types/clinic.ts';
 import ReceptionView from './ReceptionView.tsx';
@@ -38,9 +39,11 @@ interface AdminPanelProps {
   doctors: Doctor[];
   specialties: Specialty[];
   schedules: DoctorSchedule[];
+  absences?: DoctorAbsence[];
   auditLogs: AuditLogEntry[];
   staffRequests?: StaffRequestItem[];
   onRefreshStaffRequests?: () => void;
+  onRefreshLogs?: () => void;
   onUpdateAppointmentStatus: (
     appointmentId: string, 
     newStatus: Appointment['status'], 
@@ -60,6 +63,19 @@ interface AdminPanelProps {
   onDeleteSchedule: (scheduleId: string) => void;
   onOpenNewBooking: (specialtyId?: string) => void;
   onOpenExamTests?: () => void;
+  onEmergencyCancelDay?: (
+    doctorId: string,
+    date: string,
+    reason: string
+  ) => Promise<{ success: boolean; count: number; message: string }>;
+  onAddAbsence?: (absence: {
+    doctorId: string;
+    startDate: string;
+    endDate: string;
+    type: DoctorAbsence['type'];
+    reason: string;
+  }) => Promise<{ success: boolean; message: string; affectedAppointmentsCount?: number }>;
+  onDeleteAbsence?: (id: string) => Promise<{ success: boolean; message: string }>;
 }
 
 export default function AdminPanel({
@@ -69,9 +85,11 @@ export default function AdminPanel({
   doctors,
   specialties,
   schedules,
+  absences = [],
   auditLogs,
   staffRequests = [],
   onRefreshStaffRequests = () => {},
+  onRefreshLogs,
   onUpdateAppointmentStatus,
   onRescheduleAppointment,
   onRegisterPatient,
@@ -83,6 +101,9 @@ export default function AdminPanel({
   onDeleteSchedule,
   onOpenNewBooking,
   onOpenExamTests: _onOpenExamTests,
+  onEmergencyCancelDay,
+  onAddAbsence,
+  onDeleteAbsence,
 }: AdminPanelProps) {
   // Gate: Unauthenticated or Patient role
   if (!currentSession) {
@@ -286,6 +307,7 @@ export default function AdminPanel({
               doctors={doctors}
               specialties={specialties}
               schedules={schedules}
+              absences={absences}
               onUpdateAppointmentStatus={onUpdateAppointmentStatus}
               onRescheduleAppointment={onRescheduleAppointment}
               onRegisterPatient={onRegisterPatient}
@@ -301,9 +323,13 @@ export default function AdminPanel({
               appointments={appointments}
               patients={patients}
               specialties={specialties}
+              absences={absences}
               onMarkAttended={(apptId, notes, vitals) => 
                 onUpdateAppointmentStatus(apptId, 'Atendida', { clinicalNotes: notes })
               }
+              onEmergencyCancelDay={onEmergencyCancelDay}
+              onAddAbsence={onAddAbsence}
+              onDeleteAbsence={onDeleteAbsence}
             />
           )}
 
@@ -330,7 +356,7 @@ export default function AdminPanel({
           )}
 
           {activeTab === 'audit' && canAccessTab('audit') && (
-            <AuditLogView logs={auditLogs} />
+            <AuditLogView logs={auditLogs} onRefresh={onRefreshLogs} />
           )}
 
           {activeTab === 'staffRequests' && canAccessTab('staffRequests') && (

@@ -17,6 +17,17 @@ export interface DoctorSchedule {
   slotDurationMinutes: number; // default 15 or 30
 }
 
+export interface DoctorAbsence {
+  id: string;
+  doctorId: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+  type: 'VACACIONES' | 'PERMISO' | 'CONGRESO' | 'LICENCIA' | 'OTRO';
+  reason: string;
+  createdAt: string;
+  createdBy?: string;
+}
+
 export interface Doctor {
   id: string;
   code: string; // e.g. "MED-001"

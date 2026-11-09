@@ -14,9 +14,14 @@ import {
   Activity,
   Thermometer,
   FileText,
-  ClipboardList
+  ClipboardList,
+  Ban,
+  AlertCircle,
+  Trash2,
+  Plus
 } from 'lucide-react';
-import type { Appointment, Doctor, Patient, Specialty, VitalSigns } from '../../types/clinic.ts';
+import type { Appointment, Doctor, Patient, Specialty, VitalSigns, DoctorAbsence } from '../../types/clinic.ts';
+import { getDoctorAbsenceForDate } from '../../utils/appointmentLogic.ts';
 import PatientHistoryModal from './PatientHistoryModal.tsx';
 
 interface DoctorAgendaViewProps {
@@ -25,7 +30,21 @@ interface DoctorAgendaViewProps {
   appointments: Appointment[];
   patients: Patient[];
   specialties: Specialty[];
+  absences?: DoctorAbsence[];
   onMarkAttended: (appointmentId: string, clinicalNotes: string, vitalSigns?: VitalSigns) => void;
+  onEmergencyCancelDay?: (
+    doctorId: string,
+    date: string,
+    reason: string
+  ) => Promise<{ success: boolean; count: number; message: string }>;
+  onAddAbsence?: (absence: {
+    doctorId: string;
+    startDate: string;
+    endDate: string;
+    type: DoctorAbsence['type'];
+    reason: string;
+  }) => Promise<{ success: boolean; message: string; affectedAppointmentsCount?: number }>;
+  onDeleteAbsence?: (id: string) => Promise<{ success: boolean; message: string }>;
 }
 
 export default function DoctorAgendaView({
@@ -34,7 +53,11 @@ export default function DoctorAgendaView({
   appointments,
   patients,
   specialties,
+  absences = [],
   onMarkAttended,
+  onEmergencyCancelDay,
+  onAddAbsence,
+  onDeleteAbsence,
 }: DoctorAgendaViewProps) {
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>(
     currentDoctorId || doctors[2]?.id || doctors[0]?.id || ''
@@ -62,7 +85,24 @@ export default function DoctorAgendaView({
   const [weightKg, setWeightKg] = useState('68');
   const [heightCm, setHeightCm] = useState('170');
 
+  // Emergency Cancellation Modal State
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+  const [emergencyReason, setEmergencyReason] = useState('');
+  const [emergencyLoading, setEmergencyLoading] = useState(false);
+  const [emergencyNotice, setEmergencyNotice] = useState<string | null>(null);
+
+  // Doctor Absences and Vacations Modal State (CU12b)
+  const [showAbsenceModal, setShowAbsenceModal] = useState(false);
+  const [absenceStartDate, setAbsenceStartDate] = useState('2026-11-20');
+  const [absenceEndDate, setAbsenceEndDate] = useState('2026-11-27');
+  const [absenceType, setAbsenceType] = useState<DoctorAbsence['type']>('VACACIONES');
+  const [absenceReason, setAbsenceReason] = useState('Período vacacional anual');
+  const [absenceLoading, setAbsenceLoading] = useState(false);
+  const [absenceFeedback, setAbsenceFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   const activeDoctor = doctors.find(d => d.id === selectedDoctorId);
+  const doctorAbsences = absences.filter(a => a.doctorId === selectedDoctorId);
+  const currentDayAbsence = selectedDate ? getDoctorAbsenceForDate(selectedDoctorId, selectedDate, absences) : undefined;
 
   // Filter appointments for this doctor & date
   const doctorAppointments = appointments.filter(a => {
@@ -158,17 +198,93 @@ export default function DoctorAgendaView({
 
       {/* Doctor Summary Banner */}
       {activeDoctor && (
-        <div className="p-4 rounded-2xl bg-teal-50 border border-teal-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="p-4 rounded-2xl bg-teal-50 border border-teal-100 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
           <div>
             <span className="font-extrabold text-teal-950 text-sm">{activeDoctor.fullName}</span>
             <span className="text-teal-700 block">
               Registro Médico: <strong>{activeDoctor.licenseNumber}</strong> • {activeDoctor.roomNumber || 'Consultorio Asignado'}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-teal-900 font-semibold">
-            <span>Citas en agenda: <strong>{doctorAppointments.length}</strong></span>
-            <span>Atendidas hoy: <strong>{doctorAppointments.filter(a => a.status === 'Atendida').length}</strong></span>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-3 text-teal-900 font-semibold text-xs bg-white/80 px-3 py-1.5 rounded-xl border border-teal-200/60">
+              <span>Citas en agenda: <strong>{doctorAppointments.length}</strong></span>
+              <span>•</span>
+              <span>Atendidas: <strong>{doctorAppointments.filter(a => a.status === 'Atendida').length}</strong></span>
+            </div>
+
+            {/* Absence & Vacation Management Trigger (CU12b) */}
+            <button
+              type="button"
+              onClick={() => {
+                setAbsenceStartDate(selectedDate || '2026-11-20');
+                setAbsenceEndDate(selectedDate || '2026-11-27');
+                setAbsenceType('VACACIONES');
+                setAbsenceReason('Período vacacional anual programado');
+                setAbsenceFeedback(null);
+                setShowAbsenceModal(true);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Gestionar Ausencias / Vacaciones</span>
+              {doctorAbsences.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full bg-amber-700 text-white text-[10px] font-black">
+                  {doctorAbsences.length}
+                </span>
+              )}
+            </button>
+
+            {/* Emergency Cancellation Trigger */}
+            <button
+              type="button"
+              onClick={() => {
+                setEmergencyReason(
+                  `Emergencia médica del especialista (${activeDoctor.fullName}). No se brindará atención en la fecha ${selectedDate}. Su ficha médica y pago se conservan 100% válidos para reprogramación sin costo en el portal.`
+                );
+                setShowEmergencyModal(true);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+            >
+              <AlertTriangle className="w-4 h-4" />
+              <span>Declarar Emergencia del Día</span>
+            </button>
           </div>
+        </div>
+      )}
+
+      {/* Active Absence Alert for Selected Date (CU12b) */}
+      {currentDayAbsence && (
+        <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs flex items-start gap-3 shadow-xs animate-in fade-in">
+          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <div className="font-extrabold text-amber-900 text-sm">
+              Período de {currentDayAbsence.type === 'VACACIONES' ? 'Vacaciones' : currentDayAbsence.type} Activo en Esta Fecha
+            </div>
+            <p className="text-amber-900 leading-relaxed">
+              El médico especialista se encuentra ausente desde el <strong>{currentDayAbsence.startDate}</strong> hasta el <strong>{currentDayAbsence.endDate}</strong> por <strong>{currentDayAbsence.type}</strong> (<em>"{currentDayAbsence.reason}"</em>).
+            </p>
+            <p className="text-[11px] text-amber-800 font-bold">
+              ℹ️ Los pacientes que ingresen a la plataforma verán este estado y no podrán sacar ficha médica para este día.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Emergency Notification Alert */}
+      {emergencyNotice && (
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-start justify-between gap-3 animate-in fade-in">
+          <div className="flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <span className="font-medium">{emergencyNotice}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setEmergencyNotice(null)}
+            className="text-emerald-700 hover:text-emerald-900 font-bold text-sm cursor-pointer"
+          >
+            &times;
+          </button>
         </div>
       )}
 
@@ -466,6 +582,340 @@ export default function DoctorAgendaView({
                 className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
               >
                 Guardar y Marcar Atendida
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Emergency Cancellation Modal */}
+      {showEmergencyModal && activeDoctor && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-rose-100 space-y-4 text-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 rounded-xl bg-rose-100 text-rose-700">
+                  <AlertTriangle className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-base">
+                    Declarar Emergencia Médica del Día
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {activeDoctor.fullName} • Fecha: <strong>{selectedDate}</strong>
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowEmergencyModal(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900 space-y-1.5">
+              <div className="font-bold flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-rose-600" />
+                <span>Impacto en la Agenda de Consultas:</span>
+              </div>
+              <p>
+                Se suspenderán <strong>{doctorAppointments.filter(a => a.status === 'Programada' || a.status === 'Confirmada').length} citas médicas activas</strong> programadas para el <strong>{selectedDate}</strong>.
+              </p>
+              <p className="text-[11px] text-rose-700 leading-relaxed">
+                ✓ Se notificará a los pacientes automáticamente por correo electrónico.<br />
+                ✓ Las fichas médicas pagadas se conservarán 100% válidas para que los pacientes elijan otro día de atención en el portal sin costo adicional.
+              </p>
+            </div>
+
+            <div className="space-y-1.5 text-xs">
+              <label className="block font-bold text-slate-700 uppercase tracking-wider">
+                Motivo de la Emergencia / Contingencia *
+              </label>
+              <textarea
+                rows={3}
+                required
+                value={emergencyReason}
+                onChange={(e) => setEmergencyReason(e.target.value)}
+                placeholder="Describa el motivo de la emergencia..."
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 text-xs text-slate-800"
+              />
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                disabled={emergencyLoading}
+                onClick={() => setShowEmergencyModal(false)}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                Volver
+              </button>
+              <button
+                type="button"
+                disabled={emergencyLoading || doctorAppointments.filter(a => a.status === 'Programada' || a.status === 'Confirmada').length === 0 || !emergencyReason.trim()}
+                onClick={async () => {
+                  if (!onEmergencyCancelDay) return;
+                  setEmergencyLoading(true);
+                  try {
+                    const res = await onEmergencyCancelDay(selectedDoctorId, selectedDate, emergencyReason);
+                    setEmergencyNotice(res.message);
+                    setShowEmergencyModal(false);
+                  } catch (err: any) {
+                    alert(err.message || 'Error al procesar la cancelación por emergencia.');
+                  } finally {
+                    setEmergencyLoading(false);
+                  }
+                }}
+                className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-2 cursor-pointer disabled:opacity-50 shadow-md shadow-rose-600/20"
+              >
+                {emergencyLoading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Ban className="w-4 h-4" />
+                    <span>Confirmar y Notificar a Pacientes</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Doctor Absences and Vacations Modal (CU12b) */}
+      {showAbsenceModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-slate-100 space-y-5 text-slate-800 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <span className="p-2.5 rounded-2xl bg-amber-100 text-amber-700">
+                  <Calendar className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-base">
+                    Gestión de Ausencias y Vacaciones
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {activeDoctor?.fullName} • Matrícula: {activeDoctor?.licenseNumber}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAbsenceModal(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer text-lg leading-none"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Absence Feedback Message */}
+            {absenceFeedback && (
+              <div
+                className={`p-3.5 rounded-2xl text-xs font-semibold flex items-center justify-between gap-2 ${
+                  absenceFeedback.type === 'success'
+                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-900'
+                    : 'bg-rose-50 border border-rose-200 text-rose-900'
+                }`}
+              >
+                <span>{absenceFeedback.message}</span>
+                <button
+                  type="button"
+                  onClick={() => setAbsenceFeedback(null)}
+                  className="font-bold cursor-pointer"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+
+            {/* Currently registered absences list */}
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                Períodos Registrados ({doctorAbsences.length})
+              </h4>
+              {doctorAbsences.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {doctorAbsences.map(abs => (
+                    <div
+                      key={abs.id}
+                      className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                            {abs.type}
+                          </span>
+                          <span className="font-bold text-slate-800">
+                            Del {abs.startDate} al {abs.endDate}
+                          </span>
+                        </div>
+                        <p className="text-slate-600 text-[11px] italic">
+                          "{abs.reason}"
+                        </p>
+                        <span className="text-[10px] text-slate-400 block">
+                          Registrado por: {abs.createdBy}
+                        </span>
+                      </div>
+
+                      {onDeleteAbsence && (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (window.confirm('¿Está seguro de eliminar este período de ausencia?')) {
+                              try {
+                                const res = await onDeleteAbsence(abs.id);
+                                setAbsenceFeedback({ type: 'success', message: res.message });
+                              } catch (err: any) {
+                                setAbsenceFeedback({ type: 'error', message: err.message || 'Error al eliminar ausencia.' });
+                              }
+                            }
+                          }}
+                          className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 hover:text-rose-700 cursor-pointer shrink-0 transition-all"
+                          title="Eliminar período de ausencia"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-slate-500 text-xs text-center">
+                  No hay ausencias ni vacaciones programadas actualmente para este médico.
+                </div>
+              )}
+            </div>
+
+            {/* Form to register a new absence */}
+            <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-3.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
+                <Plus className="w-4 h-4 text-amber-600" />
+                <span>Programar Nueva Ausencia / Vacación</span>
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Fecha de Inicio *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={absenceStartDate}
+                    onChange={(e) => setAbsenceStartDate(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Fecha de Fin *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={absenceEndDate}
+                    onChange={(e) => setAbsenceEndDate(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="text-xs">
+                <label className="block font-bold text-slate-700 mb-1">
+                  Tipo de Ausencia *
+                </label>
+                <select
+                  value={absenceType}
+                  onChange={(e) => setAbsenceType(e.target.value as DoctorAbsence['type'])}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-800"
+                >
+                  <option value="VACACIONES">Vacaciones programadas</option>
+                  <option value="PERMISO">Permiso institucional</option>
+                  <option value="CONGRESO">Congreso médico / Académico</option>
+                  <option value="LICENCIA">Licencia médica o personal</option>
+                  <option value="OTRO">Otro motivo justificado</option>
+                </select>
+              </div>
+
+              <div className="text-xs">
+                <label className="block font-bold text-slate-700 mb-1">
+                  Motivo o Justificación *
+                </label>
+                <textarea
+                  rows={2}
+                  required
+                  value={absenceReason}
+                  onChange={(e) => setAbsenceReason(e.target.value)}
+                  placeholder="Ej: Período de vacaciones aprobado por jefatura..."
+                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-xs"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-white/90 border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+                ℹ️ <strong>Efecto en el Sistema:</strong> Durante este período los pacientes verán al médico como <em>"No Disponible por Vacaciones / Ausencia"</em> y no podrán sacar fichas médicas. Si existen citas activas ya agendadas en ese rango, serán suspendidas automáticamente y los pacientes podrán reprogramar gratuitamente desde su portal.
+              </div>
+
+              <div className="flex justify-end pt-1">
+                <button
+                  type="button"
+                  disabled={absenceLoading || !absenceStartDate || !absenceEndDate || !absenceReason.trim()}
+                  onClick={async () => {
+                    if (!onAddAbsence) return;
+                    if (absenceStartDate > absenceEndDate) {
+                      setAbsenceFeedback({ type: 'error', message: 'La fecha de inicio no puede ser posterior a la fecha de fin.' });
+                      return;
+                    }
+                    setAbsenceLoading(true);
+                    setAbsenceFeedback(null);
+                    try {
+                      const res = await onAddAbsence({
+                        doctorId: selectedDoctorId,
+                        startDate: absenceStartDate,
+                        endDate: absenceEndDate,
+                        type: absenceType,
+                        reason: absenceReason,
+                      });
+                      setAbsenceFeedback({
+                        type: 'success',
+                        message: res.message || 'Ausencia registrada correctamente.',
+                      });
+                      setAbsenceReason('');
+                    } catch (err: any) {
+                      setAbsenceFeedback({
+                        type: 'error',
+                        message: err.message || 'Error al registrar la ausencia.',
+                      });
+                    } finally {
+                      setAbsenceLoading(false);
+                    }
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-2 cursor-pointer shadow-md shadow-amber-600/20 disabled:opacity-50"
+                >
+                  {absenceLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4" />
+                      <span>Guardar Período de Ausencia</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="pt-3 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowAbsenceModal(false)}
+                className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
+              >
+                Cerrar Ventana
               </button>
             </div>
           </div>

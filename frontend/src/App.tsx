@@ -9,6 +9,7 @@ import type {
   ClinicalService, 
   Doctor, 
   DoctorSchedule, 
+  DoctorAbsence,
   Patient, 
   Appointment, 
   UserSession,
@@ -20,7 +21,8 @@ import {
   INITIAL_DOCTORS, 
   INITIAL_SCHEDULES, 
   INITIAL_PATIENTS, 
-  INITIAL_APPOINTMENTS
+  INITIAL_APPOINTMENTS,
+  INITIAL_ABSENCES
 } from './data/initialData.ts';
 import { INITIAL_AUDIT_LOGS } from './data/useCasesData.ts';
 import Navbar from './components/Navbar.tsx';
@@ -51,6 +53,7 @@ export default function App() {
   const [services] = useState<ClinicalService[]>(INITIAL_SERVICES);
   const [doctors, setDoctors] = useState<Doctor[]>(INITIAL_DOCTORS);
   const [schedules, setSchedules] = useState<DoctorSchedule[]>(INITIAL_SCHEDULES);
+  const [absences, setAbsences] = useState<DoctorAbsence[]>(INITIAL_ABSENCES);
   const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
   const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(INITIAL_AUDIT_LOGS);
@@ -92,7 +95,6 @@ export default function App() {
   }, [currentSession]);
 
   // Load Staff Requests (for Admin)
-  // Load Staff Requests (for Admin)
   const loadStaffRequests = useCallback(async () => {
     try {
       const res = await apiClient.getStaffRequests();
@@ -102,6 +104,29 @@ export default function App() {
     } catch {
       // ignore
     }
+  }, []);
+
+  // Load Real-time Audit Logs from Backend (RN04)
+  const loadAuditLogs = useCallback(async () => {
+    try {
+      const res = await apiClient.getAuditLogs();
+      if (res && res.logs) {
+        setAuditLogs(res.logs);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Fetch Public Data and Doctor Absences
+  useEffect(() => {
+    apiClient.getPublicData().then(res => {
+      if (res && res.absences) {
+        setAbsences(res.absences);
+      }
+    }).catch(() => {
+      // ignore, fallback to initial seed
+    });
   }, []);
 
   // Check initial authentication from saved token
@@ -133,6 +158,7 @@ export default function App() {
 
           if (session.role === 'Administrador') {
             loadStaffRequests();
+            loadAuditLogs();
           }
         }
       } catch {
@@ -141,7 +167,16 @@ export default function App() {
     };
 
     checkAuth();
-  }, [patients, loadStaffRequests]);
+  }, [patients, loadStaffRequests, loadAuditLogs]);
+
+  // Real-time Live Polling of Bitácora for Administrator
+  useEffect(() => {
+    if (currentSession?.role === 'Administrador' && currentView === 'admin') {
+      loadAuditLogs();
+      const interval = setInterval(loadAuditLogs, 3000); // 3-second live heartbeat
+      return () => clearInterval(interval);
+    }
+  }, [currentSession, currentView, loadAuditLogs]);
 
   // Handler: Open Booking Modal
   const handleOpenBooking = (specialtyId?: string) => {
@@ -342,6 +377,7 @@ export default function App() {
       endTime: newSlot.endTime,
       schedules,
       existingAppointments: appointments,
+      absences,
       excludeAppointmentId: appointmentId,
     });
 
@@ -355,6 +391,11 @@ export default function App() {
       actionDescription: `Cita ${existing.code} reprogramada con éxito al ${newDate} (${newSlot.slotLabel}) con ${doc.fullName}.`,
     });
 
+    if (apiClient.hasToken()) {
+      apiClient.rescheduleAppointment(appointmentId, newDate, newSlot.startTime, newSlot.endTime, newSlot.slotLabel)
+        .catch(err => console.warn('Reschedule API sync warning:', err));
+    }
+
     setAppointments(prev =>
       prev.map(a => {
         if (a.id !== appointmentId) return a;
@@ -365,12 +406,167 @@ export default function App() {
           endTime: newSlot.endTime,
           timeSlot: newSlot.slotLabel,
           status: 'Programada',
+          cancellationReason: undefined,
           updatedAt: new Date().toISOString(),
         };
       })
     );
 
     return { success: true };
+  };
+
+  // Handlers: Doctor Absences and Vacations (CU12b)
+  const handleAddDoctorAbsence = async (data: {
+    doctorId: string;
+    startDate: string;
+    endDate: string;
+    type: DoctorAbsence['type'];
+    reason: string;
+  }): Promise<{ success: boolean; message: string; affectedAppointmentsCount?: number }> => {
+    try {
+      const res = await apiClient.createDoctorAbsence(data);
+      if (res.success && res.absence) {
+        setAbsences(prev => [res.absence, ...prev]);
+        // Cancel conflicting appointments locally
+        setAppointments(prev =>
+          prev.map(a => {
+            if (
+              a.doctorId === data.doctorId &&
+              a.date >= data.startDate &&
+              a.date <= data.endDate &&
+              a.status !== 'Cancelada' &&
+              a.status !== 'Atendida'
+            ) {
+              return {
+                ...a,
+                status: 'Cancelada',
+                cancellationReason: `Cancelada por ausencia médica (${data.type}: ${data.reason}). Reagendamiento gratuito disponible.`,
+                updatedAt: new Date().toISOString(),
+              };
+            }
+            return a;
+          })
+        );
+        logAuditEvent({
+          moduleAffected: 'Gestión de Ausencias',
+          eventType: 'AUSENCIA_MEDICA_REGISTRADA',
+          actionDescription: `Ausencia programada (${data.type}) registrada para médico ${data.doctorId} del ${data.startDate} al ${data.endDate}.`,
+        });
+        return {
+          success: true,
+          message: res.message,
+          affectedAppointmentsCount: res.affectedAppointmentsCount,
+        };
+      }
+      return { success: false, message: 'No se pudo registrar la ausencia.' };
+    } catch {
+      // Local fallback
+      const newAbsence: DoctorAbsence = {
+        id: `abs-${Date.now()}`,
+        doctorId: data.doctorId,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        type: data.type,
+        reason: data.reason,
+        createdAt: new Date().toISOString(),
+        createdBy: currentSession?.fullName || 'Médico',
+      };
+      setAbsences(prev => [newAbsence, ...prev]);
+      setAppointments(prev =>
+        prev.map(a => {
+          if (
+            a.doctorId === data.doctorId &&
+            a.date >= data.startDate &&
+            a.date <= data.endDate &&
+            a.status !== 'Cancelada' &&
+            a.status !== 'Atendida'
+          ) {
+            return {
+              ...a,
+              status: 'Cancelada',
+              cancellationReason: `Cancelada por ausencia médica (${data.type}: ${data.reason}). Reagendamiento gratuito disponible.`,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          return a;
+        })
+      );
+      return {
+        success: true,
+        message: `Ausencia registrada del ${data.startDate} al ${data.endDate}.`,
+      };
+    }
+  };
+
+  const handleDeleteDoctorAbsence = async (id: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      await apiClient.deleteDoctorAbsence(id);
+    } catch {
+      // ignore
+    }
+    setAbsences(prev => prev.filter(a => a.id !== id));
+    logAuditEvent({
+      moduleAffected: 'Gestión de Ausencias',
+      eventType: 'AUSENCIA_MEDICA_ELIMINADA',
+      actionDescription: `Ausencia médica eliminada (ID: ${id}).`,
+    });
+    return { success: true, message: 'Registro de ausencia eliminado con éxito.' };
+  };
+
+  // Handler: Doctor Emergency Day Cancellation
+  const handleDoctorEmergencyCancel = async (
+    doctorId: string,
+    date: string,
+    reason: string
+  ): Promise<{ success: boolean; count: number; message: string }> => {
+    try {
+      const res = await apiClient.doctorEmergencyCancel(doctorId, date, reason);
+      if (res.success) {
+        setAppointments(prev =>
+          prev.map(a => {
+            if (a.doctorId === doctorId && a.date === date && a.status !== 'Atendida') {
+              return {
+                ...a,
+                status: 'Cancelada',
+                cancellationReason: reason,
+                updatedAt: new Date().toISOString(),
+              };
+            }
+            return a;
+          })
+        );
+        logAuditEvent({
+          moduleAffected: 'Gestión de Citas',
+          eventType: 'EMERGENCIA_MEDICA_CANCELACION_DIARIA',
+          actionDescription: `Emergencia médica declarada para el médico ${doctorId} el ${date}. ${res.count} citas canceladas y habilitadas para reprogramación.`,
+        });
+        return { success: true, count: res.count, message: res.message };
+      }
+      return { success: false, count: 0, message: 'No se pudo procesar la cancelación.' };
+    } catch {
+      // Local fallback in case server was unreachable
+      const targetCount = appointments.filter(
+        a => a.doctorId === doctorId && a.date === date && a.status !== 'Atendida' && a.status !== 'Cancelada'
+      ).length;
+      setAppointments(prev =>
+        prev.map(a => {
+          if (a.doctorId === doctorId && a.date === date && a.status !== 'Atendida') {
+            return {
+              ...a,
+              status: 'Cancelada',
+              cancellationReason: reason,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          return a;
+        })
+      );
+      return {
+        success: true,
+        count: targetCount,
+        message: `Se cancelaron ${targetCount} citas por emergencia médica y se habilitó la reprogramación.`,
+      };
+    }
   };
 
   // Admin and Staff Handlers
@@ -464,9 +660,12 @@ export default function App() {
             appointments={appointments}
             doctors={doctors}
             specialties={specialties}
+            schedules={schedules}
+            absences={absences}
             onCancelAppointment={(id, reason) =>
               handleUpdateAppointmentStatus(id, 'Cancelada', { cancellationReason: reason })
             }
+            onRescheduleAppointment={handleRescheduleAppointment}
             onOpenBooking={() => handleOpenBooking()}
           />
         )}
@@ -479,11 +678,16 @@ export default function App() {
             doctors={doctors}
             specialties={specialties}
             schedules={schedules}
+            absences={absences}
             auditLogs={auditLogs}
             staffRequests={staffRequests}
             onRefreshStaffRequests={loadStaffRequests}
+            onRefreshLogs={loadAuditLogs}
             onUpdateAppointmentStatus={handleUpdateAppointmentStatus}
             onRescheduleAppointment={handleRescheduleAppointment}
+            onEmergencyCancelDay={handleDoctorEmergencyCancel}
+            onAddAbsence={handleAddDoctorAbsence}
+            onDeleteAbsence={handleDeleteDoctorAbsence}
             onRegisterPatient={handleRegisterPatient}
             onTogglePatientStatus={handleTogglePatientStatus}
             onAddDoctor={handleAddDoctor}
@@ -517,6 +721,7 @@ export default function App() {
         specialties={specialties}
         doctors={doctors}
         schedules={schedules}
+        absences={absences}
         patients={patients}
         appointments={appointments}
         onSaveAppointment={handleSaveAppointment}

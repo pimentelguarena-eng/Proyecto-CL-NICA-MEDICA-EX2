@@ -1,4 +1,4 @@
-import type { Appointment, UserSession, Specialty, ClinicalService, Doctor, DoctorSchedule } from '../types/clinic.ts';
+import type { Appointment, UserSession, Specialty, ClinicalService, Doctor, DoctorSchedule, DoctorAbsence, AuditLogEntry } from '../types/clinic.ts';
 
 const TOKEN_KEY = 'clinica_medical_auth_token';
 const REMEMBER_KEY = 'clinica_medical_remember';
@@ -194,6 +194,7 @@ export const apiClient = {
       services: ClinicalService[];
       doctors: Doctor[];
       schedules: DoctorSchedule[];
+      absences: DoctorAbsence[];
     }>('/api/public/data');
   },
 
@@ -265,5 +266,71 @@ export const apiClient = {
         body: JSON.stringify({ newStatus, ...extra }),
       }
     );
+  },
+
+  async doctorEmergencyCancel(doctorId: string, date: string, reason?: string) {
+    return this.request<{
+      success: boolean;
+      count: number;
+      message: string;
+      cancelledAppointments: Appointment[];
+    }>('/api/appointments/doctor-emergency-cancel', {
+      method: 'POST',
+      body: JSON.stringify({ doctorId, date, reason }),
+    });
+  },
+
+  async rescheduleAppointment(
+    id: string,
+    newDate: string,
+    newStartTime: string,
+    newEndTime: string,
+    newTimeSlot?: string
+  ) {
+    return this.request<{ success: boolean; message: string; appointment: Appointment }>(
+      `/api/appointments/${id}/reschedule`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ newDate, newStartTime, newEndTime, newTimeSlot }),
+      }
+    );
+  },
+
+  // Doctor Absences and Vacations (CU12b)
+  async getDoctorAbsences(doctorId?: string) {
+    const query = doctorId ? `?doctorId=${encodeURIComponent(doctorId)}` : '';
+    return this.request<{ absences: DoctorAbsence[] }>(`/api/doctor-absences${query}`);
+  },
+
+  async createDoctorAbsence(data: {
+    doctorId: string;
+    startDate: string;
+    endDate: string;
+    type: DoctorAbsence['type'];
+    reason: string;
+  }) {
+    return this.request<{
+      success: boolean;
+      message: string;
+      absence: DoctorAbsence;
+      affectedAppointmentsCount: number;
+    }>('/api/doctor-absences', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deleteDoctorAbsence(id: string) {
+    return this.request<{ success: boolean; message: string }>(
+      `/api/doctor-absences/${id}`,
+      {
+        method: 'DELETE',
+      }
+    );
+  },
+
+  // Immutable Audit Log & Real-time Live Bitácora (RN04)
+  async getAuditLogs() {
+    return this.request<{ logs: AuditLogEntry[] }>('/api/audit-logs');
   },
 };

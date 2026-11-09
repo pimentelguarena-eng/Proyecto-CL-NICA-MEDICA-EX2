@@ -8,8 +8,10 @@ import {
   canTransitionStatus,
   generateAppointmentCode,
   timeToMinutes,
+  getDoctorAbsenceForDate,
+  getAvailableSlotsForDoctorAndDate,
 } from './appointmentLogic.ts';
-import type { Doctor, DoctorSchedule, Appointment, Patient } from '../types/clinic.ts';
+import type { Doctor, DoctorSchedule, Appointment, Patient, DoctorAbsence } from '../types/clinic.ts';
 
 test('timeToMinutes converts HH:mm accurately', () => {
   assert.equal(timeToMinutes('00:00'), 0);
@@ -195,4 +197,92 @@ test('generateAppointmentCode increments sequentially', () => {
   assert.equal(generateAppointmentCode([]), 'CM-0001');
   const existing = [{ id: '1' }, { id: '2' }] as Appointment[];
   assert.equal(generateAppointmentCode(existing), 'CM-0003');
+});
+
+test('DoctorAbsence validation blocks appointments during vacations or scheduled absence (CU12b)', () => {
+  const doctor: Doctor = {
+    id: 'doc-002',
+    code: 'MED-002',
+    licenseNumber: 'MP-6621-SC',
+    fullName: 'Dra. Elena Vargas',
+    specialtyIds: ['esp-dermato'],
+    phone: '71029384',
+    email: 'elena.vargas@clinicamedical.com',
+    isActive: true,
+  };
+
+  const schedule: DoctorSchedule = {
+    id: 's-derm-1',
+    doctorId: 'doc-002',
+    dayOfWeek: 'Viernes',
+    startTime: '08:30',
+    endTime: '12:30',
+    slotDurationMinutes: 15,
+  };
+
+  const absences: DoctorAbsence[] = [
+    {
+      id: 'abs-1',
+      doctorId: 'doc-002',
+      startDate: '2026-11-20',
+      endDate: '2026-11-27',
+      type: 'VACACIONES',
+      reason: 'Período vacacional anual programado por jefatura médica',
+      createdAt: '2026-11-01T08:00:00Z',
+      createdBy: 'Admin',
+    },
+  ];
+
+  // 1. Helper function correctly finds active absence on range dates
+  assert.ok(getDoctorAbsenceForDate('doc-002', '2026-11-20', absences));
+  assert.ok(getDoctorAbsenceForDate('doc-002', '2026-11-24', absences));
+  assert.ok(getDoctorAbsenceForDate('doc-002', '2026-11-27', absences));
+  assert.equal(getDoctorAbsenceForDate('doc-002', '2026-11-28', absences), undefined);
+  assert.equal(getDoctorAbsenceForDate('doc-other', '2026-11-24', absences), undefined);
+
+  // 2. validateAppointmentSlot blocks date inside absence
+  const blockedCheck = validateAppointmentSlot({
+    doctorId: 'doc-002',
+    doctor,
+    date: '2026-11-20', // Viernes inside vacation
+    startTime: '08:30',
+    endTime: '08:45',
+    schedules: [schedule],
+    existingAppointments: [],
+    absences,
+    todayStr: '2026-11-01',
+  });
+
+  assert.equal(blockedCheck.isValid, false);
+  assert.equal(blockedCheck.errorCode, 'DOCTOR_ABSENT');
+  assert.ok(blockedCheck.errorMessage?.includes('Vacaciones programadas'));
+  assert.ok(blockedCheck.errorMessage?.includes('Período vacacional anual'));
+
+  // 3. validateAppointmentSlot allows dates outside vacation
+  const allowedCheck = validateAppointmentSlot({
+    doctorId: 'doc-002',
+    doctor,
+    date: '2026-12-04', // Viernes after vacation
+    startTime: '08:30',
+    endTime: '08:45',
+    schedules: [schedule],
+    existingAppointments: [],
+    absences,
+    todayStr: '2026-11-01',
+  });
+
+  assert.equal(allowedCheck.isValid, true);
+
+  // 4. getAvailableSlotsForDoctorAndDate flags slots unavailable during absence
+  const slotsDuringAbsence = getAvailableSlotsForDoctorAndDate(
+    doctor,
+    '2026-11-20',
+    [schedule],
+    [],
+    absences,
+    '2026-11-01'
+  );
+  assert.ok(slotsDuringAbsence.length > 0);
+  assert.ok(slotsDuringAbsence.every(s => !s.isAvailable));
+  assert.ok(slotsDuringAbsence[0].conflictReason?.includes('Vacaciones programadas'));
 });

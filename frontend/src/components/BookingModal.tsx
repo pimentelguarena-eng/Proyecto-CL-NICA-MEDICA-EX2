@@ -22,14 +22,15 @@ import {
   LogIn,
   UserPlus
 } from 'lucide-react';
-import type { Specialty, Doctor, DoctorSchedule, Patient, Appointment, UserSession } from '../types/clinic.ts';
+import type { Specialty, Doctor, DoctorSchedule, DoctorAbsence, Patient, Appointment, UserSession } from '../types/clinic.ts';
 import type { AuthModalMode } from './AuthModal.tsx';
 import { 
   getAvailableSlotsForDoctorAndDate, 
   validateAppointmentSlot, 
   generateAppointmentCode, 
   isDuplicateCI,
-  getSpanishDayOfWeek
+  getSpanishDayOfWeek,
+  getDoctorAbsenceForDate
 } from '../utils/appointmentLogic.ts';
 
 interface BookingModalProps {
@@ -54,6 +55,7 @@ interface BookingModalProps {
   specialties: Specialty[];
   doctors: Doctor[];
   schedules: DoctorSchedule[];
+  absences?: DoctorAbsence[];
   patients: Patient[];
   appointments: Appointment[];
   onSaveAppointment: (appointment: Appointment, newPatient?: Patient) => void;
@@ -71,6 +73,7 @@ export default function BookingModal({
   specialties,
   doctors,
   schedules,
+  absences = [],
   patients,
   appointments,
   onSaveAppointment,
@@ -206,9 +209,14 @@ export default function BookingModal({
   const eligibleDoctors = doctors.filter(d => d.specialtyIds.includes(selectedSpecialtyId) && d.isActive);
   const currentDoctor = doctors.find(d => d.id === selectedDoctorId);
 
+  // Check if doctor has scheduled absence/vacation on selectedDate
+  const currentDoctorAbsence = currentDoctor && selectedDate
+    ? getDoctorAbsenceForDate(currentDoctor.id, selectedDate, absences)
+    : undefined;
+
   // Calculate available slots
   const availableSlots = currentDoctor && selectedDate
-    ? getAvailableSlotsForDoctorAndDate(currentDoctor, selectedDate, schedules, appointments)
+    ? getAvailableSlotsForDoctorAndDate(currentDoctor, selectedDate, schedules, appointments, absences)
     : [];
 
   const dayOfWeek = selectedDate ? getSpanishDayOfWeek(selectedDate) : 'Lunes';
@@ -228,6 +236,21 @@ export default function BookingModal({
       setValidationError('Por favor seleccione la fecha de la consulta.');
       return;
     }
+
+    // CU12b Check: Doctor absence
+    if (currentDoctorAbsence) {
+      const typeLabels: Record<string, string> = {
+        VACACIONES: 'vacaciones programadas',
+        PERMISO: 'permiso institucional',
+        CONGRESO: 'participación en congreso médico',
+        LICENCIA: 'licencia médica',
+        OTRO: 'ausencia justificada',
+      };
+      const label = typeLabels[currentDoctorAbsence.type] || 'ausencia';
+      setValidationError(`El médico ${currentDoctor.fullName} no atenderá consultas en esta fecha por ${label} (${currentDoctorAbsence.reason}). Del ${currentDoctorAbsence.startDate} al ${currentDoctorAbsence.endDate}. Por favor seleccione otra fecha.`);
+      return;
+    }
+
     if (!selectedSlot) {
       setValidationError('Por favor seleccione un horario disponible.');
       return;
@@ -260,6 +283,7 @@ export default function BookingModal({
       endTime: selectedSlot.endTime,
       schedules,
       existingAppointments: appointments,
+      absences,
     });
 
     if (!verification.isValid) {
@@ -531,6 +555,32 @@ export default function BookingModal({
 
               {/* Step 2: Date & Available Time Slot */}
               <div className="p-4 rounded-2xl bg-teal-50/50 border border-teal-100/80 space-y-4">
+                {/* Doctor Absence / Vacation Prominent Warning Banner (CU12b) */}
+                {currentDoctorAbsence && (
+                  <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs shadow-sm space-y-2.5 animate-in fade-in">
+                    <div className="flex items-center gap-2 font-black text-amber-900 text-sm">
+                      <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                      <span>Médico No Disponible por Vacaciones / Ausencia Programada</span>
+                    </div>
+                    <p className="text-xs text-amber-900 leading-relaxed">
+                      El especialista <strong>{currentDoctor?.fullName}</strong> no atenderá consultas en la fecha seleccionada (<strong>{selectedDate}</strong>) debido a{' '}
+                      <strong className="underline decoration-amber-500 font-bold">
+                        {currentDoctorAbsence.type === 'VACACIONES' ? 'Vacaciones Programadas' :
+                         currentDoctorAbsence.type === 'CONGRESO' ? 'Participación en Congreso Médico' :
+                         currentDoctorAbsence.type === 'PERMISO' ? 'Permiso Institucional' :
+                         currentDoctorAbsence.type === 'LICENCIA' ? 'Licencia Médica' : 'Ausencia Autorizada'}
+                      </strong>.
+                    </p>
+                    <div className="bg-white/90 p-3 rounded-xl border border-amber-200 text-[11px] text-amber-900 space-y-1">
+                      <div><span className="font-bold text-amber-800">Período de Ausencia:</span> Del <strong>{currentDoctorAbsence.startDate}</strong> al <strong>{currentDoctorAbsence.endDate}</strong></div>
+                      <div><span className="font-bold text-amber-800">Motivo informado:</span> <em>"{currentDoctorAbsence.reason}"</em></div>
+                    </div>
+                    <p className="text-[11px] text-amber-900 font-bold bg-amber-100/70 p-2 rounded-lg border border-amber-300/60">
+                      ⚠️ No es posible sacar ficha médica en estas fechas. Por favor elija otra fecha en el calendario o seleccione otro especialista de la misma especialidad.
+                    </p>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-teal-950 uppercase tracking-wider mb-1.5">
@@ -552,7 +602,9 @@ export default function BookingModal({
                       Horarios de Disponibilidad (Bloques 15 min) *
                     </label>
                     <p className="text-[11px] text-slate-500">
-                      {availableSlots.length > 0
+                      {currentDoctorAbsence
+                        ? 'Turnos bloqueados por ausencia programada del especialista'
+                        : availableSlots.length > 0
                         ? `Seleccione uno de los ${availableSlots.filter(s => s.isAvailable).length} horarios disponibles`
                         : 'El médico no tiene horario disponible para este día'}
                     </p>
@@ -561,7 +613,11 @@ export default function BookingModal({
 
                 {/* Slots buttons */}
                 <div>
-                  {availableSlots.length > 0 ? (
+                  {currentDoctorAbsence ? (
+                    <div className="p-3 rounded-xl bg-amber-100/80 border border-amber-300 text-amber-900 text-xs text-center font-bold">
+                      Bloques deshabilitados: El especialista se encuentra en período de ausencia médica.
+                    </div>
+                  ) : availableSlots.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
                       {availableSlots.map((slot, idx) => {
                         const isSelected = selectedSlot?.slotLabel === slot.slotLabel;
@@ -858,7 +914,16 @@ export default function BookingModal({
                   >
                     Cancelar
                   </button>
-                  {!currentSession ? (
+                  {currentDoctorAbsence ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="px-6 py-2.5 rounded-xl bg-amber-200 text-amber-900 font-bold text-xs uppercase tracking-wider cursor-not-allowed flex items-center gap-1.5"
+                    >
+                      <AlertCircle className="w-4 h-4 text-amber-700" />
+                      <span>Médico No Disponible (Ausencia / Vacaciones)</span>
+                    </button>
+                  ) : !currentSession ? (
                     <button
                       type="button"
                       onClick={handleConfirmBooking}

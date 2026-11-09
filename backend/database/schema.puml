@@ -1,0 +1,285 @@
+@startuml clinica_medical_db
+!theme plain
+hide circle
+skinparam linetype ortho
+skinparam roundcorner 8
+skinparam shadowing false
+skinparam handwritten false
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    ArrowColor #0F766E
+    BorderColor #1E293B
+    HeaderBackgroundColor #0F766E
+}
+
+skinparam entity {
+    BorderColor #0F766E
+    BackgroundColor #F8FAFC
+}
+
+title Base de Datos Relacional - Clínica Medical (PostgreSQL Oficial)
+
+' =============================================================
+' 1. MÓDULO DE SEGURIDAD, AUTENTICACIÓN Y ROLES (RBAC)
+' =============================================================
+package "Módulo de Seguridad y RBAC" #E6FFFA {
+    entity "roles" as roles {
+        * id : SERIAL <<PK>>
+        --
+        * nombre : VARCHAR(50) <<UNIQUE>>
+        * descripcion : VARCHAR(255)
+    }
+
+    entity "permisos" as permisos {
+        * id : SERIAL <<PK>>
+        --
+        * nombre : VARCHAR(80) <<UNIQUE>>
+        * modulo : VARCHAR(80)
+        descripcion : VARCHAR(255)
+    }
+
+    entity "rol_permiso" as rol_permiso {
+        * id : SERIAL <<PK>>
+        --
+        * rol_id : INTEGER <<FK>>
+        * permiso_id : INTEGER <<FK>>
+    }
+
+    entity "usuarios" as usuarios {
+        * id : SERIAL <<PK>>
+        --
+        * rol_id : INTEGER <<FK>>
+        * username : VARCHAR(80) <<UNIQUE>>
+        * correo : VARCHAR(150) <<UNIQUE>>
+        * password_hash : VARCHAR(255)
+        salt : VARCHAR(64)
+        * estado : VARCHAR(20)
+        ultimo_acceso : TIMESTAMP
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+
+    entity "tokens_recuperacion" as tokens_recuperacion {
+        * id : SERIAL <<PK>>
+        --
+        * usuario_id : INTEGER <<FK>>
+        * token_hash : VARCHAR(255) <<UNIQUE>>
+        * expira_en : TIMESTAMP
+        * usado : BOOLEAN
+        * created_at : TIMESTAMP
+    }
+
+    entity "bitacora" as bitacora {
+        * id : SERIAL <<PK>>
+        --
+        usuario_id : INTEGER <<FK>>
+        * rol_ejecutor : VARCHAR(50)
+        * modulo_afectado : VARCHAR(80)
+        * tipo_evento : VARCHAR(60)
+        * descripcion_accion : TEXT
+        * ip_direccion : VARCHAR(45)
+        * fecha_hora : TIMESTAMP
+    }
+}
+
+' =============================================================
+' 2. MÓDULO DE PACIENTES Y ANTECEDENTES MÉDICOS
+' =============================================================
+package "Módulo de Pacientes" #F0FDF4 {
+    entity "pacientes" as pacientes {
+        * id : SERIAL <<PK>>
+        --
+        usuario_id : INTEGER <<FK, UNIQUE>>
+        * codigo : VARCHAR(20) <<UNIQUE>>
+        * ci : VARCHAR(20) <<UNIQUE>>
+        * nombres : VARCHAR(100)
+        * apellidos : VARCHAR(100)
+        * fecha_nacimiento : DATE
+        * sexo : CHAR(1)
+        * telefono : VARCHAR(30)
+        correo : VARCHAR(150) <<UNIQUE>>
+        direccion : TEXT
+        * estado : VARCHAR(20)
+        * created_at : TIMESTAMP
+    }
+
+    entity "antecedentes_medicos" as antecedentes_medicos {
+        * id : SERIAL <<PK>>
+        --
+        * paciente_id : INTEGER <<FK, UNIQUE>>
+        * grupo_sanguineo : VARCHAR(20)
+        * alergias : TEXT
+        patologias_cronicas : TEXT
+        cirugias_previas : TEXT
+        medicacion_habitual : TEXT
+        contacto_emergencia_nombre : VARCHAR(100)
+        contacto_emergencia_telefono : VARCHAR(30)
+        * updated_at : TIMESTAMP
+    }
+}
+
+' =============================================================
+' 3. MÓDULO MÉDICO, INFRAESTRUCTURA Y HORARIOS
+' =============================================================
+package "Módulo Médico y Especialidades" #FEF3C7 {
+    entity "especialidades" as especialidades {
+        * id : SERIAL <<PK>>
+        --
+        * codigo : VARCHAR(20) <<UNIQUE>>
+        * nombre : VARCHAR(100) <<UNIQUE>>
+        * categoria : VARCHAR(50)
+        descripcion : TEXT
+        * arancel_consulta : NUMERIC(10,2)
+        * estado : VARCHAR(20)
+    }
+
+    entity "consultorios" as consultorios {
+        * id : SERIAL <<PK>>
+        --
+        * numero : VARCHAR(20) <<UNIQUE>>
+        * piso : VARCHAR(20)
+        descripcion : VARCHAR(150)
+        equipamiento_especial : TEXT
+        * estado : VARCHAR(20)
+    }
+
+    entity "medicos" as medicos {
+        * id : SERIAL <<PK>>
+        --
+        usuario_id : INTEGER <<FK, UNIQUE>>
+        * codigo : VARCHAR(20) <<UNIQUE>>
+        * matricula_profesional : VARCHAR(50) <<UNIQUE>>
+        * nombres : VARCHAR(100)
+        * apellidos : VARCHAR(100)
+        * telefono : VARCHAR(30)
+        * correo : VARCHAR(150) <<UNIQUE>>
+        * estado_operativo : VARCHAR(20)
+    }
+
+    entity "medico_especialidad" as medico_especialidad {
+        * id : SERIAL <<PK>>
+        --
+        * medico_id : INTEGER <<FK>>
+        * especialidad_id : INTEGER <<FK>>
+        * activo : BOOLEAN
+    }
+
+    entity "horarios_atencion" as horarios_atencion {
+        * id : SERIAL <<PK>>
+        --
+        * medico_id : INTEGER <<FK>>
+        * especialidad_id : INTEGER <<FK>>
+        * consultorio_id : INTEGER <<FK>>
+        * dia_semana : VARCHAR(15)
+        * hora_inicio : TIME
+        * hora_fin : TIME
+        * duracion_bloque_min : INTEGER
+        * estado : VARCHAR(20)
+    }
+
+    entity "ausencias_medicos" as ausencias_medicos {
+        * id : SERIAL <<PK>>
+        --
+        codigo_ausencia : VARCHAR(30) <<UNIQUE>>
+        * medico_id : INTEGER <<FK>>
+        * fecha_inicio : DATE
+        * fecha_fin : DATE
+        * tipo : VARCHAR(30)
+        * motivo : TEXT
+        creado_por : VARCHAR(100)
+        * created_at : TIMESTAMP
+    }
+}
+
+' =============================================================
+' 4. MÓDULO TRANSACCIONAL: CITAS, PAGOS E HISTORIAL CLÍNICO
+' =============================================================
+package "Módulo Transaccional y Clínico" #EFF6FF {
+    entity "citas_medicas" as citas_medicas {
+        * id : SERIAL <<PK>>
+        --
+        * codigo_cita : VARCHAR(20) <<UNIQUE>>
+        * paciente_id : INTEGER <<FK>>
+        * medico_id : INTEGER <<FK>>
+        * especialidad_id : INTEGER <<FK>>
+        consultorio_id : INTEGER <<FK>>
+        * fecha_cita : DATE
+        * hora_inicio_bloque : TIME
+        * hora_fin_bloque : TIME
+        motivo_consulta : TEXT
+        * estado_cita : VARCHAR(25)
+        motivo_cancelacion : TEXT
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+
+    entity "pagos_citas" as pagos_citas {
+        * id : SERIAL <<PK>>
+        --
+        * cita_id : INTEGER <<FK, UNIQUE>>
+        * monto : NUMERIC(10,2)
+        * metodo_pago : VARCHAR(40)
+        transaccion_pasarela_id : VARCHAR(100) <<UNIQUE>>
+        * estado_pago : VARCHAR(25)
+        * comprobante_oficial_nro : VARCHAR(30) <<UNIQUE>>
+        * fecha_pago : TIMESTAMP
+    }
+
+    entity "historial_clinico" as historial_clinico {
+        * id : SERIAL <<PK>>
+        --
+        * cita_id : INTEGER <<FK, UNIQUE>>
+        * paciente_id : INTEGER <<FK>>
+        * medico_id : INTEGER <<FK>>
+        presion_arterial : VARCHAR(20)
+        temperatura_c : NUMERIC(4,1)
+        frecuencia_cardiaca : INTEGER
+        peso_kg : NUMERIC(5,2)
+        talla_cm : NUMERIC(5,2)
+        * sintomas : TEXT
+        * anamnesis : TEXT
+        * diagnostico_principal : TEXT
+        * tratamiento_receta : TEXT
+        observaciones : TEXT
+        * fecha_atencion : TIMESTAMP
+    }
+}
+
+' =============================================================
+' DEFINICIÓN DE RELACIONES Y CARDINALIDADES (CROW'S FOOT NOTATION)
+' =============================================================
+
+' Seguridad y Usuarios
+roles ||--o{ rol_permiso : "1:N"
+permisos ||--o{ rol_permiso : "1:N"
+roles ||--o{ usuarios : "1:N"
+usuarios ||--o{ tokens_recuperacion : "1:N"
+usuarios ||--o| pacientes : "1:0..1"
+usuarios ||--o| medicos : "1:0..1"
+usuarios ||--o{ bitacora : "1:N"
+
+' Pacientes
+pacientes ||--|| antecedentes_medicos : "1:1"
+
+' Médicos y Especialidades
+medicos ||--o{ medico_especialidad : "1:N"
+especialidades ||--o{ medico_especialidad : "1:N"
+medicos ||--o{ ausencias_medicos : "1:N"
+medicos ||--o{ horarios_atencion : "1:N"
+especialidades ||--o{ horarios_atencion : "1:N"
+consultorios ||--o{ horarios_atencion : "1:N"
+
+' Citas Médicas
+pacientes ||--o{ citas_medicas : "1:N"
+medicos ||--o{ citas_medicas : "1:N"
+especialidades ||--o{ citas_medicas : "1:N"
+consultorios |o--o{ citas_medicas : "0..1:N"
+
+' Pagos e Historial Clínico
+citas_medicas ||--|| pagos_citas : "1:1"
+citas_medicas ||--|| historial_clinico : "1:1"
+pacientes ||--o{ historial_clinico : "1:N"
+medicos ||--o{ historial_clinico : "1:N"
+
+@enduml

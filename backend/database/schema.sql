@@ -256,6 +256,22 @@ CREATE TABLE IF NOT EXISTS bitacora (
     fecha_hora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- -------------------------------------------------------------
+-- 17. TABLA AUSENCIAS_MEDICOS (CU12b - Ausencias y Vacaciones)
+-- -------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ausencias_medicos (
+    id SERIAL PRIMARY KEY,
+    codigo_ausencia VARCHAR(30) UNIQUE,
+    medico_id INTEGER NOT NULL REFERENCES medicos(id) ON DELETE CASCADE,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    tipo VARCHAR(30) NOT NULL CHECK (tipo IN ('VACACIONES', 'PERMISO', 'CONGRESO', 'LICENCIA', 'OTRO')),
+    motivo TEXT NOT NULL,
+    creado_por VARCHAR(100),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_rango_ausencia CHECK (fecha_fin >= fecha_inicio)
+);
+
 -- =============================================================
 -- PROCEDIMIENTOS ALMACENADOS (PL/pgSQL) Y TRIGGERS
 -- =============================================================
@@ -274,6 +290,15 @@ RETURNS TABLE (
     estado_cupo VARCHAR
 ) AS $$
 BEGIN
+    -- Validar si el médico se encuentra en período de ausencia o vacaciones
+    IF EXISTS (
+        SELECT 1 FROM ausencias_medicos am
+        WHERE am.medico_id = p_medico_id
+          AND p_fecha BETWEEN am.fecha_inicio AND am.fecha_fin
+    ) THEN
+        RETURN;
+    END IF;
+
     RETURN QUERY
     WITH bloques_generados AS (
         SELECT
@@ -308,12 +333,23 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 2. Trigger para Evitar Solapamiento de Citas Médicas (RN07)
+-- 2. Trigger para Evitar Solapamiento de Citas Médicas (RN07) y Ausencias
 CREATE OR REPLACE FUNCTION fn_validar_colision_cita()
 RETURNS TRIGGER AS $$
 DECLARE
     v_ocupado INTEGER;
+    v_ausente INTEGER;
 BEGIN
+    -- Validar si el médico tiene ausencia o vacación programada en esa fecha
+    SELECT COUNT(*) INTO v_ausente
+    FROM ausencias_medicos
+    WHERE medico_id = NEW.medico_id
+      AND NEW.fecha_cita BETWEEN fecha_inicio AND fecha_fin;
+
+    IF v_ausente > 0 THEN
+        RAISE EXCEPTION 'MÉDICO NO DISPONIBLE (CU12b): El médico se encuentra ausente o en período de vacaciones en la fecha %.', NEW.fecha_cita;
+    END IF;
+
     SELECT COUNT(*) INTO v_ocupado
     FROM citas_medicas
     WHERE medico_id = NEW.medico_id
@@ -580,3 +616,11 @@ INSERT INTO historial_clinico (
 4. Mantener Losartán pautado y control conjunto con CARDIOLOGÍA.',
     '2026-10-24 11:30:00'
 ) ON CONFLICT (cita_id) DO NOTHING;
+
+-- -------------------------------------------------------------
+-- AUSENCIAS Y VACACIONES DE MÉDICOS (CU12b)
+-- -------------------------------------------------------------
+INSERT INTO ausencias_medicos (codigo_ausencia, medico_id, fecha_inicio, fecha_fin, tipo, motivo, creado_por) VALUES
+('AUS-001', 2, '2026-11-20', '2026-11-27', 'VACACIONES', 'Período vacacional anual programado por jefatura médica', 'Admin'),
+('AUS-002', 6, '2026-11-18', '2026-11-19', 'CONGRESO', 'Participación en el Congreso Nacional de Traumatología y Ortopedia', 'Dr. Roberto Siles')
+ON CONFLICT (codigo_ausencia) DO NOTHING;

@@ -139,3 +139,282 @@ Si no realizó esta solicitud, ignore este correo.
     return { success: false, error: error.message || 'Error en servidor de correo' };
   }
 }
+
+/**
+ * Sends notification when a doctor declares an emergency and cancels scheduled appointments
+ */
+export async function sendDoctorEmergencyNoticeEmail(params: {
+  toEmail: string;
+  recipientName: string;
+  doctorName: string;
+  specialtyName: string;
+  date: string;
+  timeSlot: string;
+  apptCode: string;
+  reason: string;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const transporter = createEmailTransporter();
+  const from = process.env.SMTP_FROM || `"Clínica Medical" <${process.env.SMTP_USER}>`;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Aviso Importante: Suspensión de Consulta por Emergencia Médica</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b;">
+  <div style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%); padding: 28px 24px; text-align: center; color: #ffffff;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px;">CLÍNICA MEDICAL</h1>
+      <p style="margin: 6px 0 0 0; font-size: 13px; color: #fecaca; font-weight: 500;">
+        Aviso Urgente de Contingencia Médica
+      </p>
+    </div>
+
+    <!-- Body -->
+    <div style="padding: 32px 28px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #991b1b; margin-top: 0; margin-bottom: 12px;">
+        Estimado(a) ${params.recipientName},
+      </h2>
+      
+      <p style="font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 16px;">
+        Le informamos que debido a una <strong>emergencia médica imprevista</strong>, el especialista <strong>${params.doctorName}</strong> (${params.specialtyName}) no podrá brindar atención presencial programada para el día <strong>${params.date}</strong> a las <strong>${params.timeSlot}</strong> (Cita <code>${params.apptCode}</code>).
+      </p>
+
+      <!-- Reason Box -->
+      <div style="background-color: #fff1f2; border-left: 4px solid #e11d48; padding: 14px 18px; border-radius: 8px; margin: 20px 0;">
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #be123c; display: block; margin-bottom: 4px;">
+          Motivo Notificado por el Médico
+        </span>
+        <p style="margin: 0; font-size: 13px; color: #881337; font-style: italic;">
+          "${params.reason}"
+        </p>
+      </div>
+
+      <!-- Reschedule Guarantee Box -->
+      <div style="background-color: #f0fdf4; border: 2px dashed #16a34a; border-radius: 14px; padding: 20px; text-align: center; margin: 24px 0;">
+        <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #15803d; display: block; margin-bottom: 6px;">
+          ✓ SU FICHA MÉDICA SIGUE SIENDO 100% VÁLIDA
+        </span>
+        <p style="font-size: 13px; color: #166534; line-height: 1.5; margin: 0 0 12px 0;">
+          Su pago y su derecho de atención médica se encuentran plenamente garantizados. Puede ingresar ahora mismo al sistema y <strong>elegir un nuevo día y horario de atención sin ningún costo adicional</strong>.
+        </p>
+      </div>
+
+      <p style="font-size: 13px; color: #64748b; line-height: 1.5;">
+        Para reprogramar, inicie sesión en la plataforma web, diríjase a <strong>"Mis Citas Médicas"</strong> y presione el botón <strong>"Elegir Otro Día de Atención"</strong>.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background-color: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 11px; color: #94a3b8;">
+      CLÍNICA MEDICAL • Departamento de Admisión y Atención al Paciente • Teléfono de Emergencias: 70011223
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  if (!transporter) {
+    console.log(`[EMAIL SIMULADO] Aviso de emergencia médica enviado a ${params.toEmail} para cita ${params.apptCode}`);
+    return { success: true };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from,
+      to: params.toEmail,
+      subject: `Aviso Importante: Suspensión de Consulta por Emergencia - Cita ${params.apptCode}`,
+      html: htmlContent,
+      text: `Estimado(a) ${params.recipientName}: Por emergencia médica del ${params.doctorName}, su cita ${params.apptCode} del ${params.date} (${params.timeSlot}) ha sido suspendida. Su ficha médica sigue 100% válida. Ingrese a la plataforma para reprogramarla sin costo.`,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error(`[ERROR EMAIL] Error al enviar aviso de emergencia a ${params.toEmail}:`, error.message || error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Sends notification when an appointment is successfully rescheduled
+ */
+export async function sendAppointmentRescheduledEmail(params: {
+  toEmail: string;
+  recipientName: string;
+  doctorName: string;
+  specialtyName: string;
+  newDate: string;
+  newTimeSlot: string;
+  apptCode: string;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const transporter = createEmailTransporter();
+  const from = process.env.SMTP_FROM || `"Clínica Medical" <${process.env.SMTP_USER}>`;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Confirmación de Reprogramación de Cita Médica</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b;">
+  <div style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+    
+    <div style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); padding: 28px 24px; text-align: center; color: #ffffff;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 800;">CLÍNICA MEDICAL</h1>
+      <p style="margin: 6px 0 0 0; font-size: 13px; color: #ccfbf1;">
+        Confirmación de Reprogramación de Cita Médica
+      </p>
+    </div>
+
+    <div style="padding: 32px 28px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #0f766e; margin-top: 0;">
+        ¡Cita Reprogramada con Éxito, ${params.recipientName}!
+      </h2>
+      
+      <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+        Su cita médica código <strong>${params.apptCode}</strong> ha sido reprogramada satisfactoriamente con los siguientes datos confirmados:
+      </p>
+
+      <div style="background-color: #f1f5f9; border-radius: 12px; padding: 18px; margin: 20px 0; font-size: 13px; line-height: 1.8;">
+        <div><strong>Especialidad:</strong> ${params.specialtyName}</div>
+        <div><strong>Médico Especialista:</strong> ${params.doctorName}</div>
+        <div><strong>Nueva Fecha:</strong> <span style="color: #0f766e; font-weight: 800;">${params.newDate}</span></div>
+        <div><strong>Nuevo Horario:</strong> <span style="color: #0f766e; font-weight: 800;">${params.newTimeSlot}</span></div>
+        <div><strong>Código de Ficha:</strong> <code>${params.apptCode}</code></div>
+      </div>
+
+      <p style="font-size: 12px; color: #64748b;">
+        Por favor recuerde presentarse en recepción 10 minutos antes de su horario programado con su Cédula de Identidad.
+      </p>
+    </div>
+
+    <div style="background-color: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 11px; color: #94a3b8;">
+      CLÍNICA MEDICAL • Cuidado Profesional a su Servicio
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  if (!transporter) {
+    console.log(`[EMAIL SIMULADO] Confirmación de reprogramación enviada a ${params.toEmail} para cita ${params.apptCode}`);
+    return { success: true };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from,
+      to: params.toEmail,
+      subject: `Cita Médica Reprogramada con Éxito - ${params.apptCode} - Clínica Medical`,
+      html: htmlContent,
+      text: `Estimado(a) ${params.recipientName}: Su cita ${params.apptCode} ha sido reprogramada para el ${params.newDate} a las ${params.newTimeSlot} con el ${params.doctorName}.`,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error(`[ERROR EMAIL] Error al enviar confirmación de reprogramación a ${params.toEmail}:`, error.message || error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Sends notification when an appointment is suspended due to scheduled doctor absence / vacation
+ */
+export async function sendDoctorAbsenceNoticeEmail(params: {
+  toEmail: string;
+  recipientName: string;
+  doctorName: string;
+  specialtyName: string;
+  date: string;
+  timeSlot: string;
+  apptCode: string;
+  absenceType: string;
+  absenceReason: string;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const transporter = createEmailTransporter();
+  const from = process.env.SMTP_FROM || `"Clínica Medical" <${process.env.SMTP_USER}>`;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Aviso: Suspensión de Consulta por Ausencia / Vacaciones del Especialista</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b;">
+  <div style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); padding: 28px 24px; text-align: center; color: #ffffff;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px;">CLÍNICA MEDICAL</h1>
+      <p style="margin: 6px 0 0 0; font-size: 13px; color: #fef3c7; font-weight: 500;">
+        Aviso de Reprogramación por Ausencia / Vacaciones Médicas
+      </p>
+    </div>
+
+    <!-- Body -->
+    <div style="padding: 32px 28px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #b45309; margin-top: 0; margin-bottom: 12px;">
+        Estimado(a) ${params.recipientName},
+      </h2>
+      
+      <p style="font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 16px;">
+        Le informamos que debido a un período programado de <strong>${params.absenceType}</strong>, el especialista <strong>${params.doctorName}</strong> (${params.specialtyName}) no brindará atención en la fecha de su cita médica: <strong>${params.date}</strong> a las <strong>${params.timeSlot}</strong> (Ficha <code>${params.apptCode}</code>).
+      </p>
+
+      <!-- Reason Box -->
+      <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 14px 18px; border-radius: 8px; margin: 20px 0;">
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #b45309; display: block; margin-bottom: 4px;">
+          Detalle de la Ausencia
+        </span>
+        <p style="margin: 0; font-size: 13px; color: #78350f; font-style: italic;">
+          "${params.absenceReason}"
+        </p>
+      </div>
+
+      <!-- Reschedule Guarantee Box -->
+      <div style="background-color: #f0fdf4; border: 2px dashed #16a34a; border-radius: 14px; padding: 20px; text-align: center; margin: 24px 0;">
+        <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #15803d; display: block; margin-bottom: 6px;">
+          ✓ SU FICHA MÉDICA SIGUE SIENDO 100% VÁLIDA
+        </span>
+        <p style="font-size: 13px; color: #166534; line-height: 1.5; margin: 0 0 12px 0;">
+          Su pago y reserva están totalmente asegurados. Puede ingresar a la plataforma y <strong>seleccionar cualquier otra fecha disponible sin ningún costo extra</strong>.
+        </p>
+      </div>
+
+      <p style="font-size: 13px; color: #64748b; line-height: 1.5;">
+        Para reprogramar, ingrese a <strong>"Mis Citas Médicas"</strong> y presione el botón <strong>"Elegir Otro Día de Atención"</strong>.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background-color: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 11px; color: #94a3b8;">
+      CLÍNICA MEDICAL • Departamento de Admisión • Consultas: 70011223
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  if (!transporter) {
+    console.log(`[EMAIL SIMULADO] Aviso de ausencia médica enviado a ${params.toEmail} para cita ${params.apptCode}`);
+    return { success: true };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from,
+      to: params.toEmail,
+      subject: `Aviso Importante: Reprogramación de Ficha ${params.apptCode} por Ausencia del Médico - Clínica Medical`,
+      html: htmlContent,
+      text: `Estimado(a) ${params.recipientName}: Por período de ${params.absenceType} del ${params.doctorName}, su cita ${params.apptCode} del ${params.date} (${params.timeSlot}) requiere reprogramación. Su ficha médica es 100% válida. Ingrese a la plataforma para reprogramarla sin costo.`,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error(`[ERROR EMAIL] Error al enviar aviso de ausencia a ${params.toEmail}:`, error.message || error);
+    return { success: false, error: error.message };
+  }
+}

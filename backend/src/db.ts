@@ -21,12 +21,14 @@ import {
   INITIAL_SCHEDULES,
   INITIAL_PATIENTS,
   INITIAL_APPOINTMENTS,
+  INITIAL_ABSENCES,
 } from './data/initialData.ts';
 import type {
   Specialty,
   ClinicalService,
   Doctor,
   DoctorSchedule,
+  DoctorAbsence,
   Patient,
   Appointment,
   AuditLogEntry,
@@ -43,6 +45,7 @@ export class ClinicDatabase {
   services: ClinicalService[] = [];
   doctors: Doctor[] = [];
   schedules: DoctorSchedule[] = [];
+  absences: DoctorAbsence[] = [];
   patients: Patient[] = [];
   appointments: Appointment[] = [];
   auditLogs: AuditLogEntry[] = [];
@@ -60,6 +63,7 @@ export class ClinicDatabase {
         services: this.services,
         doctors: this.doctors,
         schedules: this.schedules,
+        absences: this.absences,
         patients: this.patients,
         appointments: this.appointments,
         auditLogs: this.auditLogs,
@@ -85,6 +89,7 @@ export class ClinicDatabase {
         this.services = data.services || [...INITIAL_SERVICES];
         this.doctors = data.doctors || [...INITIAL_DOCTORS];
         this.schedules = data.schedules || [...INITIAL_SCHEDULES];
+        this.absences = data.absences || [...INITIAL_ABSENCES];
         this.patients = data.patients || [...INITIAL_PATIENTS];
         this.appointments = data.appointments || [...INITIAL_APPOINTMENTS];
         this.auditLogs = data.auditLogs || [];
@@ -157,6 +162,39 @@ export class ClinicDatabase {
           });
           hasNewDoctors = true;
         }
+        
+        // Synchronize all patients from INITIAL_PATIENTS so all 20 have active user logins
+        let hasNewPatients = false;
+        const defaultPacPass = hashPassword('Paciente123!', 'paciente_salt_2026');
+        for (const pac of this.patients) {
+          if (!pac.email) continue;
+          const exists = this.users.some(
+            u => u.patientId === pac.id || u.email.toLowerCase() === pac.email!.toLowerCase()
+          );
+          if (!exists) {
+            this.users.push({
+              id: `usr-${pac.id}`,
+              email: pac.email.toLowerCase(),
+              passwordHash: defaultPacPass.hash,
+              salt: defaultPacPass.salt,
+              fullName: `${pac.firstName} ${pac.lastName}`,
+              role: 'Paciente',
+              status: 'ACTIVE',
+              ci: pac.ci,
+              patientId: pac.id,
+              patientCi: pac.ci,
+              phone: pac.phone,
+              createdAt: '2026-01-20T08:00:00Z',
+              updatedAt: '2026-01-20T08:00:00Z',
+              failedLoginAttempts: 0,
+            });
+            hasNewPatients = true;
+          }
+        }
+        if (hasNewPatients) {
+          this.saveToDisk();
+        }
+
         if (hasNewDoctors) {
           this.saveToDisk();
         }
@@ -176,6 +214,7 @@ export class ClinicDatabase {
     this.services = [...INITIAL_SERVICES];
     this.doctors = [...INITIAL_DOCTORS];
     this.schedules = [...INITIAL_SCHEDULES];
+    this.absences = [...INITIAL_ABSENCES];
     this.patients = [...INITIAL_PATIENTS];
     this.appointments = [...INITIAL_APPOINTMENTS];
 
@@ -373,6 +412,8 @@ export class ClinicDatabase {
     actionDescription: string;
     ipAddress?: string;
   }) {
+    const now = new Date();
+    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     const log: AuditLogEntry = {
       id: `log-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       userName: entry.userName,
@@ -381,9 +422,10 @@ export class ClinicDatabase {
       eventType: entry.eventType,
       actionDescription: entry.actionDescription,
       ipAddress: entry.ipAddress || '127.0.0.1',
-      timestamp: new Date().toISOString(),
+      timestamp: formattedDate,
     };
     this.auditLogs.unshift(log);
+    this.saveToDisk();
     return log;
   }
 }

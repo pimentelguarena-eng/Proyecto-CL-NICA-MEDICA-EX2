@@ -14,9 +14,15 @@ import {
   validateAppointmentSlot,
   generateAppointmentCode,
   canTransitionStatus,
+  getDoctorAbsenceForDate,
 } from './utils/appointmentLogic.ts';
-import type { Appointment } from './types/clinic.ts';
-import { sendPasswordResetEmail } from './emailService.ts';
+import type { Appointment, DoctorAbsence } from './types/clinic.ts';
+import {
+  sendPasswordResetEmail,
+  sendDoctorEmergencyNoticeEmail,
+  sendAppointmentRescheduledEmail,
+  sendDoctorAbsenceNoticeEmail,
+} from './emailService.ts';
 
 export const apiRouter = Router();
 
@@ -641,6 +647,7 @@ apiRouter.get('/public/data', (req: Request, res: Response) => {
     services: clinicDb.services,
     doctors: publicDoctors,
     schedules: clinicDb.schedules,
+    absences: clinicDb.absences,
   });
 
 });
@@ -931,7 +938,7 @@ apiRouter.post('/appointments/book', authenticateToken, (req: AuthenticatedReque
     return res.status(400).json({ error: 'El médico especialista seleccionado no está disponible o está inactivo.' });
   }
 
-  // 2. Validate slot availability and concurrency check
+  // 2. Validate slot availability, absences, and concurrency check
   const slotCheck = validateAppointmentSlot({
     doctorId,
     doctor,
@@ -940,6 +947,7 @@ apiRouter.post('/appointments/book', authenticateToken, (req: AuthenticatedReque
     endTime,
     schedules: clinicDb.schedules,
     existingAppointments: clinicDb.appointments,
+    absences: clinicDb.absences,
   });
 
   if (!slotCheck.isValid) {
@@ -979,10 +987,19 @@ apiRouter.post('/appointments/book', authenticateToken, (req: AuthenticatedReque
 
   clinicDb.logAudit({
     userName: session.fullName,
-    userRole: 'Paciente',
+    userRole: session.role || 'Paciente',
     moduleAffected: 'Reserva de Citas',
     eventType: 'CITA_CREADA',
-    actionDescription: `Cita ${newCode} confirmada para ${patient?.firstName || session.fullName} con ${doctor.fullName} (${specialty?.name || specialtyId}) el ${date} a las ${startTime}-${endTime}.`,
+    actionDescription: `Cita ${newCode} generada exitosamente para ${patient?.firstName ? `${patient.firstName} ${patient.lastName}` : session.fullName} con ${doctor.fullName} (${specialty?.name || specialtyId}) para el ${date} en el horario ${startTime}-${endTime}.`,
+    ipAddress: req.ip,
+  });
+
+  clinicDb.logAudit({
+    userName: session.fullName,
+    userRole: session.role || 'Paciente',
+    moduleAffected: 'Pasarela de Pagos',
+    eventType: 'PAGO_REGISTRADO',
+    actionDescription: `Pago de Bs. ${newAppointment.paymentAmount}.00 procesado satisfactoriamente mediante pasarela ${newAppointment.paymentMethod} (ID Transacción: ${newAppointment.paymentTransactionId}) para la cita médica ${newCode}.`,
     ipAddress: req.ip,
   });
 
@@ -1036,12 +1053,17 @@ apiRouter.patch('/appointments/:id/status', authenticateToken, (req: Authenticat
   if (vitalSigns) appt.vitalSigns = vitalSigns;
   appt.updatedAt = new Date().toISOString();
 
+  let eventType = 'ESTADO_CITA_ACTUALIZADO';
+  if (newStatus === 'Atendida') eventType = 'CITA_ATENDIDA';
+  else if (newStatus === 'Cancelada') eventType = 'CITA_CANCELADA';
+  else if (newStatus === 'Confirmada') eventType = 'CITA_CONFIRMADA';
+
   clinicDb.logAudit({
     userName: session.fullName,
     userRole: session.role,
     moduleAffected: 'Gestión de Citas',
-    eventType: 'ESTADO_CITA_ACTUALIZADO',
-    actionDescription: `Cita ${appt.code} actualizada a ${newStatus} por ${session.fullName} (${session.role}).`,
+    eventType,
+    actionDescription: `Cita ${appt.code} actualizada a "${newStatus}" por ${session.fullName} (${session.role}).${cancellationReason ? ` Motivo: ${cancellationReason}` : ''}`,
     ipAddress: req.ip,
   });
 
@@ -1049,6 +1071,375 @@ apiRouter.patch('/appointments/:id/status', authenticateToken, (req: Authenticat
 
   return res.json({ success: true, appointment: appt });
 });
+
+/**
+ * POST /api/appointments/doctor-emergency-cancel
+ * Cancels all scheduled/confirmed appointments for a doctor on a specific date
+ * due to an emergency or contingency, notifying patients and enabling free rescheduling.
+ */
+apiRouter.post(
+  '/appointments/doctor-emergency-cancel',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const { doctorId, date, reason } = req.body;
+    const session = req.userSession!;
+
+    if (!doctorId || !date) {
+      return res.status(400).json({ error: 'Debe especificar el médico y la fecha de la emergencia.' });
+    }
+
+    // Role check: Only the assigned doctor or an Administrator can declare an emergency
+    if (session.role === 'Médico' && session.doctorId !== doctorId) {
+      return res.status(403).json({ error: 'Únicamente puede suspender sus propias consultas.' });
+    }
+    if (session.role !== 'Médico' && session.role !== 'Administrador') {
+      return res.status(403).json({ error: 'No tiene permisos para suspender consultas médicas.' });
+    }
+
+    const doctor = clinicDb.doctors.find(d => d.id === doctorId);
+    if (!doctor) {
+      return res.status(404).json({ error: 'Médico no encontrado.' });
+    }
+
+    const emergencyReason = reason
+      ? String(reason).trim()
+      : 'Emergencia médica del doctor: No podrá atender en esta fecha. La ficha médica conserva su validez para ser reprogramada sin costo adicional en el portal.';
+
+    // Filter appointments for this doctor on this date that are not yet Attended (RN10)
+    const affectedAppointments = clinicDb.appointments.filter(
+      a => a.doctorId === doctorId && a.date === date && a.status !== 'Atendida' && a.status !== 'Cancelada'
+    );
+
+    if (affectedAppointments.length === 0) {
+      return res.json({
+        success: true,
+        count: 0,
+        message: 'No se encontraron citas activas pendientes para cancelar en la fecha seleccionada.',
+        appointments: [],
+      });
+    }
+
+    const updatedList: Appointment[] = [];
+
+    for (const appt of affectedAppointments) {
+      appt.status = 'Cancelada';
+      appt.cancellationReason = emergencyReason;
+      appt.updatedAt = new Date().toISOString();
+      updatedList.push(appt);
+
+      // Notify patient via email if patient record has email
+      const patient = clinicDb.patients.find(p => p.id === appt.patientId);
+      const specialty = clinicDb.specialties.find(s => s.id === appt.specialtyId);
+      if (patient?.email) {
+        sendDoctorEmergencyNoticeEmail({
+          toEmail: patient.email,
+          recipientName: `${patient.firstName} ${patient.lastName}`,
+          doctorName: doctor.fullName,
+          specialtyName: specialty?.name || 'Consulta Médica',
+          date: appt.date,
+          timeSlot: appt.timeSlot,
+          apptCode: appt.code,
+          reason: emergencyReason,
+        }).catch(err => console.warn(`[SMTP NOTICE ERROR] ${err.message}`));
+      }
+    }
+
+    clinicDb.logAudit({
+      userName: session.fullName,
+      userRole: session.role,
+      moduleAffected: 'Gestión de Citas',
+      eventType: 'EMERGENCIA_MEDICA_CANCELACION_DIARIA',
+      actionDescription: `El ${doctor.fullName} declaró emergencia médica para el ${date}. Se cancelaron ${affectedAppointments.length} citas activas, garantizando la validez de la ficha para reprogramación. Motivo: ${emergencyReason}`,
+      ipAddress: req.ip,
+    });
+
+    clinicDb.saveToDisk();
+
+    return res.json({
+      success: true,
+      count: affectedAppointments.length,
+      message: `Se han suspendido ${affectedAppointments.length} citas médicas por emergencia médica. Se notificó a los pacientes y sus fichas han sido habilitadas para reprogramación inmediata sin costo.`,
+      cancelledAppointments: updatedList,
+    });
+  }
+);
+
+/**
+ * PATCH /api/appointments/:id/reschedule
+ * Reschedules an appointment to a new date and time slot with full collision validation.
+ * Enables patients to select a new date without losing their purchased ficha.
+ */
+apiRouter.patch(
+  '/appointments/:id/reschedule',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const { id } = req.params;
+    const { newDate, newStartTime, newEndTime, newTimeSlot } = req.body;
+    const session = req.userSession!;
+
+    if (!newDate || !newStartTime || !newEndTime) {
+      return res.status(400).json({ error: 'Debe especificar la nueva fecha, hora de inicio y hora de fin.' });
+    }
+
+    const appt = clinicDb.appointments.find(a => a.id === id);
+    if (!appt) {
+      return res.status(404).json({ error: 'Cita médica no encontrada.' });
+    }
+
+    // RN10: Inmutabilidad de citas ya atendidas
+    if (appt.status === 'Atendida') {
+      return res.status(400).json({ error: 'Una cita ya atendida no puede ser reprogramada (RN10).' });
+    }
+
+    // Role checks
+    if (session.role === 'Paciente' && appt.patientId !== session.patientId) {
+      return res.status(403).json({ error: 'No tiene permiso para reprogramar citas de otro paciente.' });
+    }
+    if (session.role === 'Médico' && appt.doctorId !== session.doctorId) {
+      return res.status(403).json({ error: 'No tiene permiso para reprogramar citas de otro médico.' });
+    }
+
+    const doctor = clinicDb.doctors.find(d => d.id === appt.doctorId);
+    if (!doctor || !doctor.isActive) {
+      return res.status(400).json({ error: 'El médico asignado no se encuentra activo.' });
+    }
+
+    const slotLabel = newTimeSlot || `${newStartTime} - ${newEndTime}`;
+
+    // Validate collision, absences, and schedule availability
+    const validation = validateAppointmentSlot({
+      doctorId: doctor.id,
+      doctor,
+      date: newDate,
+      startTime: newStartTime,
+      endTime: newEndTime,
+      schedules: clinicDb.schedules,
+      existingAppointments: clinicDb.appointments,
+      absences: clinicDb.absences,
+      excludeAppointmentId: appt.id,
+    });
+
+    if (!validation.isValid) {
+      return res.status(400).json({ error: validation.errorMessage || 'El horario seleccionado no está disponible.' });
+    }
+
+    const oldDate = appt.date;
+    const oldSlot = appt.timeSlot;
+
+    appt.date = newDate;
+    appt.startTime = newStartTime;
+    appt.endTime = newEndTime;
+    appt.timeSlot = slotLabel;
+    appt.status = 'Programada';
+    appt.cancellationReason = undefined;
+    appt.updatedAt = new Date().toISOString();
+
+    clinicDb.logAudit({
+      userName: session.fullName,
+      userRole: session.role,
+      moduleAffected: 'Gestión de Citas',
+      eventType: 'CITA_REPROGRAMADA',
+      actionDescription: `Cita ${appt.code} reprogramada exitosamente del ${oldDate} (${oldSlot}) al ${newDate} (${slotLabel}) con ${doctor.fullName} por ${session.fullName} (${session.role}).`,
+      ipAddress: req.ip,
+    });
+
+    clinicDb.saveToDisk();
+
+    // Send confirmation email
+    const patient = clinicDb.patients.find(p => p.id === appt.patientId);
+    const specialty = clinicDb.specialties.find(s => s.id === appt.specialtyId);
+    if (patient?.email) {
+      sendAppointmentRescheduledEmail({
+        toEmail: patient.email,
+        recipientName: `${patient.firstName} ${patient.lastName}`,
+        doctorName: doctor.fullName,
+        specialtyName: specialty?.name || 'Consulta Médica',
+        newDate: appt.date,
+        newTimeSlot: appt.timeSlot,
+        apptCode: appt.code,
+      }).catch(err => console.warn(`[SMTP NOTICE ERROR] ${err.message}`));
+    }
+
+    return res.json({
+      success: true,
+      message: `Cita ${appt.code} reprogramada exitosamente para el ${newDate} a las ${slotLabel}.`,
+      appointment: appt,
+    });
+  }
+);
+
+// -------------------------------------------------------------
+// DOCTOR ABSENCES AND VACATIONS MANAGEMENT (CU12b)
+// -------------------------------------------------------------
+
+/**
+ * GET /api/doctor-absences
+ * Lists doctor absences and vacations, optionally filtered by doctorId.
+ */
+apiRouter.get('/doctor-absences', (req: Request, res: Response) => {
+  const { doctorId } = req.query;
+  let list = clinicDb.absences;
+  if (doctorId && typeof doctorId === 'string') {
+    list = list.filter(a => a.doctorId === doctorId);
+  }
+  return res.json({ absences: list });
+});
+
+/**
+ * POST /api/doctor-absences
+ * Allows Doctors or Administrators to schedule periods of non-attendance
+ * (vacations, congress, personal leave). Automatically suspends conflicting appointments
+ * and notifies patients so they can reschedule without additional fees.
+ */
+apiRouter.post(
+  '/doctor-absences',
+  authenticateToken,
+  requireRoles('Médico', 'Administrador'),
+  async (req: AuthenticatedRequest, res: Response) => {
+    const session = req.userSession!;
+    const { doctorId, startDate, endDate, type, reason } = req.body;
+
+    if (!doctorId || !startDate || !endDate || !type || !reason) {
+      return res.status(400).json({ error: 'Todos los campos son obligatorios: médico, fecha de inicio, fecha de fin, tipo y motivo.' });
+    }
+
+    // Role check: If doctor, can only register for own account
+    if (session.role === 'Médico' && session.doctorId !== doctorId) {
+      return res.status(403).json({ error: 'No tiene autorización para registrar ausencias de otro profesional médico.' });
+    }
+
+    const doctor = clinicDb.doctors.find(d => d.id === doctorId);
+    if (!doctor) {
+      return res.status(404).json({ error: 'Médico especialista no encontrado.' });
+    }
+
+    if (startDate > endDate) {
+      return res.status(400).json({ error: 'La fecha de inicio no puede ser posterior a la fecha de finalización.' });
+    }
+
+    const validTypes: DoctorAbsence['type'][] = ['VACACIONES', 'PERMISO', 'CONGRESO', 'LICENCIA', 'OTRO'];
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({ error: `Tipo de ausencia no válido. Debe ser uno de: ${validTypes.join(', ')}.` });
+    }
+
+    const typeLabels: Record<string, string> = {
+      VACACIONES: 'Vacaciones',
+      PERMISO: 'Permiso institucional',
+      CONGRESO: 'Congreso médico',
+      LICENCIA: 'Licencia médica',
+      OTRO: 'Ausencia autorizada',
+    };
+    const friendlyType = typeLabels[type] || type;
+
+    // Check conflicting active appointments within this date range
+    const affectedAppointments = clinicDb.appointments.filter(
+      a => a.doctorId === doctorId &&
+           a.date >= startDate &&
+           a.date <= endDate &&
+           a.status !== 'Cancelada' &&
+           a.status !== 'Atendida'
+    );
+
+    for (const appt of affectedAppointments) {
+      appt.status = 'Cancelada';
+      appt.cancellationReason = `Cancelada por ${friendlyType.toLowerCase()} del médico (${reason}). Se garantiza la validez de la ficha médica para reprogramación gratuita.`;
+      appt.updatedAt = new Date().toISOString();
+
+      const patient = clinicDb.patients.find(p => p.id === appt.patientId);
+      const specialty = clinicDb.specialties.find(s => s.id === appt.specialtyId);
+      if (patient?.email) {
+        sendDoctorAbsenceNoticeEmail({
+          toEmail: patient.email,
+          recipientName: `${patient.firstName} ${patient.lastName}`,
+          doctorName: doctor.fullName,
+          specialtyName: specialty?.name || 'Consulta Médica',
+          date: appt.date,
+          timeSlot: appt.timeSlot,
+          apptCode: appt.code,
+          absenceType: friendlyType,
+          absenceReason: reason,
+        }).catch(err => console.warn(`[SMTP NOTICE ERROR] ${err.message}`));
+      }
+    }
+
+    const newAbsence: DoctorAbsence = {
+      id: `abs-${Date.now()}`,
+      doctorId,
+      startDate,
+      endDate,
+      type,
+      reason: String(reason).trim(),
+      createdAt: new Date().toISOString(),
+      createdBy: session.fullName,
+    };
+
+    clinicDb.absences.push(newAbsence);
+
+    clinicDb.logAudit({
+      userName: session.fullName,
+      userRole: session.role,
+      moduleAffected: 'Gestión de Ausencias',
+      eventType: 'AUSENCIA_MEDICA_REGISTRADA',
+      actionDescription: `${friendlyType} programada para el ${doctor.fullName} del ${startDate} al ${endDate}. Motivo: ${reason}. Citas suspendidas para reprogramación gratuita: ${affectedAppointments.length}.`,
+      ipAddress: req.ip,
+    });
+
+    clinicDb.saveToDisk();
+
+    return res.json({
+      success: true,
+      message: `Período de ${friendlyType.toLowerCase()} registrado correctamente del ${startDate} al ${endDate}. ${affectedAppointments.length > 0 ? `Se suspendieron ${affectedAppointments.length} citas activas notificando a los pacientes para su reprogramación.` : 'No habían citas previas en ese período.'}`,
+      absence: newAbsence,
+      affectedAppointmentsCount: affectedAppointments.length,
+    });
+  }
+);
+
+/**
+ * DELETE /api/doctor-absences/:id
+ * Removes an absence / vacation record
+ */
+apiRouter.delete(
+  '/doctor-absences/:id',
+  authenticateToken,
+  requireRoles('Médico', 'Administrador'),
+  (req: AuthenticatedRequest, res: Response) => {
+    const { id } = req.params;
+    const session = req.userSession!;
+
+    const index = clinicDb.absences.findIndex(a => a.id === id);
+    if (index === -1) {
+      return res.status(404).json({ error: 'Registro de ausencia no encontrado.' });
+    }
+
+    const absence = clinicDb.absences[index];
+
+    // If role is Médico, must match session.doctorId
+    if (session.role === 'Médico' && session.doctorId !== absence.doctorId) {
+      return res.status(403).json({ error: 'No tiene permiso para eliminar ausencias de otro profesional.' });
+    }
+
+    const doctor = clinicDb.doctors.find(d => d.id === absence.doctorId);
+
+    clinicDb.absences.splice(index, 1);
+
+    clinicDb.logAudit({
+      userName: session.fullName,
+      userRole: session.role,
+      moduleAffected: 'Gestión de Ausencias',
+      eventType: 'AUSENCIA_MEDICA_ELIMINADA',
+      actionDescription: `Se eliminó el registro de ausencia (${absence.type}) para el ${doctor?.fullName || absence.doctorId} del ${absence.startDate} al ${absence.endDate}.`,
+      ipAddress: req.ip,
+    });
+
+    clinicDb.saveToDisk();
+
+    return res.json({
+      success: true,
+      message: 'Registro de ausencia eliminado con éxito.',
+    });
+  }
+);
 
 /**
  * GET /api/audit-logs

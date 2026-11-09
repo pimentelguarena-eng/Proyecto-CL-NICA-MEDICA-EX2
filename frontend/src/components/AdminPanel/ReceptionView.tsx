@@ -16,13 +16,14 @@ import {
   Users,
   ChevronDown
 } from 'lucide-react';
-import type { Appointment, Patient, Doctor, Specialty, DoctorSchedule } from '../../types/clinic.ts';
+import type { Appointment, Patient, Doctor, Specialty, DoctorSchedule, DoctorAbsence } from '../../types/clinic.ts';
 import { 
   canTransitionStatus, 
   isDuplicateCI, 
   getAvailableSlotsForDoctorAndDate,
   validateAppointmentSlot,
-  getSpanishDayOfWeek 
+  getSpanishDayOfWeek,
+  getDoctorAbsenceForDate
 } from '../../utils/appointmentLogic.ts';
 import PatientHistoryModal from './PatientHistoryModal.tsx';
 
@@ -32,6 +33,7 @@ interface ReceptionViewProps {
   doctors: Doctor[];
   specialties: Specialty[];
   schedules: DoctorSchedule[];
+  absences?: DoctorAbsence[];
   onUpdateAppointmentStatus: (
     appointmentId: string, 
     newStatus: Appointment['status'], 
@@ -53,6 +55,7 @@ export default function ReceptionView({
   doctors,
   specialties,
   schedules,
+  absences = [],
   onUpdateAppointmentStatus,
   onRescheduleAppointment,
   onRegisterPatient,
@@ -191,12 +194,17 @@ export default function ReceptionView({
     ? doctors.find(d => d.id === rescheduleModalAppt.doctorId)
     : null;
 
+  const currentRescheduleDoctorAbsence = currentRescheduleDoctor && rescheduleDate
+    ? getDoctorAbsenceForDate(currentRescheduleDoctor.id, rescheduleDate, absences)
+    : undefined;
+
   const rescheduleAvailableSlots = currentRescheduleDoctor && rescheduleDate
     ? getAvailableSlotsForDoctorAndDate(
         currentRescheduleDoctor,
         rescheduleDate,
         schedules,
-        appointments.filter(a => a.id !== rescheduleModalAppt?.id) // exclude current appt
+        appointments.filter(a => a.id !== rescheduleModalAppt?.id), // exclude current appt
+        absences
       )
     : [];
 
