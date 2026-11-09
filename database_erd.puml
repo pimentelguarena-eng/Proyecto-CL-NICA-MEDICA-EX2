@@ -98,7 +98,7 @@ entity "antecedentes_medicos" as antecedentes_medicos {
     * id : SERIAL <<PK>>
     --
     * paciente_id : INTEGER <<FK, UK>>
-    * grupo_sanguineo : VARCHAR(20)
+    * grupo_sanguineo : VARCHAR(30)
     * alergias : TEXT
     patologias_cronicas : TEXT
     cirugias_previas : TEXT

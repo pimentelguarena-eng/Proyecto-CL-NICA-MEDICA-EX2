@@ -1,0 +1,27 @@
+# Configuración de Supabase para CI/CD con GitHub
+project_id = ""
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+
+[db.pooler]
+enabled = true
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["https://*.pages.dev"]
+jwt_expiry = 3600
+enable_signup = true

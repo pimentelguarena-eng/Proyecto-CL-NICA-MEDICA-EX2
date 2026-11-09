@@ -1,0 +1,9 @@
+# ==============================================================================
+# Cloudflare Pages Routing & API Reverse Proxy Configuration
+# ==============================================================================
+# 1. Reverse Proxy hacia el Backend de Render (Opcional pero muy recomendado para evitar CORS):
+# Reemplaza 'https://clinica-medical-backend.onrender.com' por la URL real asignada por Render:
+# /api/*  https://clinica-medical-backend.onrender.com/api/:splat  200
+
+# 2. SPA Fallback (Imprescindible para React Router y aplicaciones de una sola página en Cloudflare Pages):
+/*    /index.html   200
