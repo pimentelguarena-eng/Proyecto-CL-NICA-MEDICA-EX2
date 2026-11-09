@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS pacientes (
 CREATE TABLE IF NOT EXISTS antecedentes_medicos (
     id SERIAL PRIMARY KEY,
     paciente_id INTEGER NOT NULL UNIQUE REFERENCES pacientes(id) ON DELETE CASCADE,
-    grupo_sanguineo VARCHAR(10) DEFAULT 'No especificado',
+    grupo_sanguineo VARCHAR(30) DEFAULT 'No especificado',
     alergias TEXT DEFAULT 'Ninguna conocida',
     patologias_cronicas TEXT DEFAULT 'Ninguna',
     cirugias_previas TEXT DEFAULT 'Ninguna',
@@ -624,3 +624,20 @@ INSERT INTO ausencias_medicos (codigo_ausencia, medico_id, fecha_inicio, fecha_f
 ('AUS-001', 2, '2026-11-20', '2026-11-27', 'VACACIONES', 'Período vacacional anual programado por jefatura médica', 'Admin'),
 ('AUS-002', 6, '2026-11-18', '2026-11-19', 'CONGRESO', 'Participación en el Congreso Nacional de Traumatología y Ortopedia', 'Dr. Roberto Siles')
 ON CONFLICT (codigo_ausencia) DO NOTHING;
+
+-- -------------------------------------------------------------
+-- SINCRONIZACIÓN DE SECUENCIAS (SERIAL) TRAS INSERCIÓN DE IDS
+-- -------------------------------------------------------------
+SELECT setval(COALESCE(pg_get_serial_sequence('usuarios', 'id'), 'usuarios_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM usuarios), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('pacientes', 'id'), 'pacientes_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM pacientes), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('medicos', 'id'), 'medicos_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM medicos), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('citas_medicas', 'id'), 'citas_medicas_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM citas_medicas), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('antecedentes_medicos', 'id'), 'antecedentes_medicos_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM antecedentes_medicos), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('historial_clinico', 'id'), 'historial_clinico_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM historial_clinico), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('roles', 'id'), 'roles_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM roles), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('consultorios', 'id'), 'consultorios_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM consultorios), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('especialidades', 'id'), 'especialidades_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM especialidades), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('pagos_citas', 'id'), 'pagos_citas_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM pagos_citas), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('bitacora', 'id'), 'bitacora_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM bitacora), 1), 1));
+SELECT setval(COALESCE(pg_get_serial_sequence('ausencias_medicos', 'id'), 'ausencias_medicos_id_seq'), GREATEST(COALESCE((SELECT MAX(id) FROM ausencias_medicos), 1), 1));
+
