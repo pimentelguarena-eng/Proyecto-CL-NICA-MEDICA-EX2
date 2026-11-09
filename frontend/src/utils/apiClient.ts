@@ -82,17 +82,30 @@ export const apiClient = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+    let baseUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '');
+    // Si el usuario incluyó /api al final de VITE_API_URL, removerlo para no duplicar /api/api/...
+    if (baseUrl.endsWith('/api') && endpoint.startsWith('/api')) {
+      baseUrl = baseUrl.slice(0, -4);
+    }
+
     const targetUrl = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
 
-    const response = await fetch(targetUrl, {
-      ...options,
-      headers,
-    });
+    let response: Response;
+    try {
+      response = await fetch(targetUrl, {
+        ...options,
+        headers,
+      });
+    } catch (networkErr: any) {
+      throw new Error(`No se pudo conectar con el servidor backend (${targetUrl}). Verifique que el servicio en Render esté activo.`);
+    }
 
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
+      if (response.status === 405 && !baseUrl && typeof window !== 'undefined' && window.location.hostname.includes('pages.dev')) {
+        throw new Error('La variable VITE_API_URL no está configurada en Cloudflare Pages. Agrega VITE_API_URL en Settings > Variables de Cloudflare y haz un nuevo despliegue.');
+      }
       const errorMsg = data.error || data.message || `Error en la solicitud (${response.status})`;
       const err = new Error(errorMsg);
       (err as any).status = response.status;
