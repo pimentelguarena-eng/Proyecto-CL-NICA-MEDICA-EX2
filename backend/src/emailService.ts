@@ -164,6 +164,35 @@ Este código expira en 30 minutos y es de un solo uso.
 Si no realizó esta solicitud, ignore este correo.
   `;
 
+  // 1. Si existe RESEND_API_KEY, enviar a través de HTTPS (Puerto 443, no bloqueado por Render Free)
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const resendRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY.trim()}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: process.env.RESEND_FROM || 'Clínica Medical <onboarding@resend.dev>',
+          to: [toEmail],
+          subject: 'Restablecimiento de Contraseña - Clínica Medical',
+          html: htmlContent,
+          text: textContent,
+        }),
+      });
+      const resendData = await resendRes.json() as any;
+      if (resendRes.ok) {
+        console.log(`[EMAIL ENVIADO - RESEND HTTPS 443] Correo enviado con éxito a: ${toEmail} (ID: ${resendData.id})`);
+        return { success: true, messageId: resendData.id };
+      } else {
+        console.warn(`[RESEND WARN] Error devuelto por Resend API:`, resendData);
+      }
+    } catch (resendErr: any) {
+      console.warn(`[RESEND ERROR] Excepción al llamar a Resend API:`, resendErr.message || resendErr);
+    }
+  }
+
   try {
     const info = await transporter.sendMail({
       from,
@@ -176,7 +205,12 @@ Si no realizó esta solicitud, ignore este correo.
     console.log(`[EMAIL ENVIADO] Correo de recuperación enviado con éxito a: ${toEmail} (ID: ${info.messageId})`);
     return { success: true, messageId: info.messageId };
   } catch (error: any) {
-    console.error(`[ERROR EMAIL] Error al despachar correo SMTP a ${toEmail}:`, error.message || error);
+    console.error(`[ERROR EMAIL] Error al despachar correo SMTP a ${toEmail}: ${error.message || error}`);
+    console.log('\n================== [CÓDIGO DE RECUPERACIÓN GENERADO] ==================');
+    console.log(`Para: ${toEmail} (${recipientName})`);
+    console.log(`CÓDIGO PIN: ${resetToken}`);
+    console.log(`Aviso: Render Free bloquea puertos SMTP salientes (587/465). Use este PIN para continuar.`);
+    console.log('========================================================================\n');
     return { success: false, error: error.message || 'Error en servidor de correo' };
   }
 }

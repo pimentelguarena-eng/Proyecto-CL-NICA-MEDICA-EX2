@@ -565,6 +565,7 @@ apiRouter.post('/auth/forgot-password', async (req: Request, res: Response) => {
   return res.json({
     success: true,
     message: genericMessage,
+    demoPin: token, // Proporciona el PIN en caso de que el firewall de Render Free bloquee puertos SMTP salientes
   });
 });
 
