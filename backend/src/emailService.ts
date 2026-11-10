@@ -6,21 +6,25 @@ export function createEmailTransporter() {
   const port = parseInt(process.env.SMTP_PORT || '587', 10);
   const secure = process.env.SMTP_SECURE === 'true' || port === 465;
   const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  const rawPass = process.env.SMTP_PASS;
 
-  if (!user || !pass) {
+  if (!user || !rawPass) {
     console.warn('[EMAIL SERVICE] Advertencia: Credenciales SMTP no configuradas. Los correos se simularán en consola.');
     return null;
   }
 
+  const pass = rawPass.replace(/\s+/g, ''); // Limpiar posibles espacios en blanco de Google App Password
+  const isGmail = host.includes('gmail.com');
+
   return nodemailer.createTransport({
-    host,
-    port,
-    secure,
+    ...(isGmail ? { service: 'gmail' } : { host, port, secure }),
     auth: {
-      user,
+      user: user.trim(),
       pass,
     },
+    connectionTimeout: 8000,
+    greetingTimeout: 8000,
+    socketTimeout: 8000,
     tls: {
       rejectUnauthorized: false,
     },

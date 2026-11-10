@@ -546,14 +546,21 @@ apiRouter.post('/auth/forgot-password', async (req: Request, res: Response) => {
   });
 
   // Despacho del correo real vía SMTP de Gmail
-  try {
-    const emailResult = await sendPasswordResetEmail(user.email, user.fullName, token);
-    if (!emailResult.success) {
-      console.warn(`[SMTP WARN] No se pudo enviar el correo a ${user.email}: ${emailResult.error}`);
-    }
-  } catch (err: any) {
-    console.error(`[SMTP ERROR] Excepción al enviar correo a ${user.email}:`, err.message || err);
-  }
+  // Se utiliza Promise.race con un límite de 2.5s para no bloquear la pantalla del usuario si la red SMTP externa tarda
+  const emailPromise = sendPasswordResetEmail(user.email, user.fullName, token)
+    .then((emailResult) => {
+      if (!emailResult.success) {
+        console.warn(`[SMTP WARN] No se pudo enviar el correo a ${user.email}: ${emailResult.error}`);
+      }
+    })
+    .catch((err: any) => {
+      console.error(`[SMTP ERROR] Excepción al enviar correo a ${user.email}:`, err.message || err);
+    });
+
+  await Promise.race([
+    emailPromise,
+    new Promise((resolve) => setTimeout(resolve, 2500)),
+  ]);
 
   return res.json({
     success: true,
