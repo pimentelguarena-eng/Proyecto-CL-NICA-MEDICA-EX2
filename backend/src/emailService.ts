@@ -187,6 +187,35 @@ Si no realizó esta solicitud, ignore este correo.
         return { success: true, messageId: resendData.id };
       } else {
         console.warn(`[RESEND WARN] Error devuelto por Resend API:`, resendData);
+        // Si Resend está en modo sandbox gratuito, solo permite enviar a la cuenta registrada del usuario (ej: pimentelguarena@gmail.com)
+        if (resendData.statusCode === 403 && resendData.message?.includes('only send testing emails')) {
+          const match = resendData.message.match(/\(([^)]+)\)/);
+          const ownerEmail = match ? match[1] : null;
+          if (ownerEmail && ownerEmail.toLowerCase() !== toEmail.toLowerCase()) {
+            console.log(`[RESEND MODO PRUEBA] Entregando a la cuenta propietaria de Resend: ${ownerEmail} (destinatario: ${toEmail})`);
+            const retryRes = await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${process.env.RESEND_API_KEY.trim()}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                from: process.env.RESEND_FROM || 'Clínica Medical <onboarding@resend.dev>',
+                to: [ownerEmail],
+                subject: `Código de Recuperación [Para: ${toEmail}] - Clínica Medical`,
+                html: `<div style="background:#fef3c7;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;color:#92400e;">
+                  ⚠️ <strong>Aviso de Cuenta Gratuita de Resend:</strong> Este correo fue solicitado para <code>${toEmail}</code> y entregado a su cuenta registrada <code>${ownerEmail}</code>.
+                </div>` + htmlContent,
+                text: `[Solicitado para: ${toEmail}]\n` + textContent,
+              }),
+            });
+            const retryData = await retryRes.json() as any;
+            if (retryRes.ok) {
+              console.log(`[EMAIL ENVIADO - RESEND OWNER] Correo entregado exitosamente a: ${ownerEmail} (ID: ${retryData.id})`);
+              return { success: true, messageId: retryData.id };
+            }
+          }
+        }
       }
     } catch (resendErr: any) {
       console.warn(`[RESEND ERROR] Excepción al llamar a Resend API:`, resendErr.message || resendErr);

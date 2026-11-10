@@ -703,6 +703,22 @@
       "createdAt": "2026-01-20T08:00:00Z",
       "updatedAt": "2026-01-20T08:00:00Z",
       "failedLoginAttempts": 0
+    },
+    {
+      "id": "usr-andres-pimentel",
+      "email": "pimentelguarena@gmail.com",
+      "passwordHash": "b12b5c3a97490951cdaad9144cdff29ac9883d3af180d2a9d80537290c939093276d57f2858897d65307d688170da39d97355e6f18a18a00c3713ec89666e778",
+      "salt": "ff8c65dd1322896546292b78409a05d7",
+      "fullName": "Andrés Pimentel",
+      "role": "Paciente",
+      "status": "ACTIVE",
+      "ci": "6190433",
+      "patientId": "pac-002",
+      "patientCi": "6190433",
+      "phone": "70281930",
+      "createdAt": "2026-01-20T08:00:00Z",
+      "updatedAt": "2026-01-20T08:00:00Z",
+      "failedLoginAttempts": 0
     }
   ],
   "staffRequests": [

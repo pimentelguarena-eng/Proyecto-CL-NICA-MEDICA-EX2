@@ -353,6 +353,24 @@ export class ClinicDatabase {
       failedLoginAttempts: 0,
     });
 
+    // 6. Andrés Pimentel Guaquira (Linked to pimentelguarena@gmail.com)
+    this.users.push({
+      id: 'usr-andres-pimentel',
+      email: 'pimentelguarena@gmail.com',
+      passwordHash: pimentelPass.hash,
+      salt: pimentelPass.salt,
+      fullName: 'Andrés Pimentel',
+      role: 'Paciente',
+      status: 'ACTIVE',
+      ci: '6190433',
+      patientId: 'pac-002',
+      patientCi: '6190433',
+      phone: '70281930',
+      createdAt: '2026-01-20T08:00:00Z',
+      updatedAt: '2026-01-20T08:00:00Z',
+      failedLoginAttempts: 0,
+    });
+
     // Seed sample Staff Registration Requests for testing the approval workflow
     const sampleDocPass = hashPassword('Doctor2026!');
     this.staffRequests.push({
