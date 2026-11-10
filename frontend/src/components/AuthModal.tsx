@@ -237,12 +237,7 @@ export default function AuthModal({
     try {
       const res = await apiClient.forgotPassword(recoveryEmail);
       setSuccessMessage(res.message);
-      if (res.demoPin) {
-        setRecoveryToken(res.demoPin);
-        setSuccessMessage(`${res.message} (PIN generado para prueba/evaluación: ${res.demoPin})`);
-      } else {
-        setRecoveryToken('');
-      }
+      setRecoveryToken('');
       setRecoveryStep('RESET');
     } catch (err: any) {
       setError(err.message || 'Error al procesar recuperación');

@@ -187,7 +187,7 @@ export const apiClient = {
   },
 
   async forgotPassword(email: string) {
-    return this.request<{ success: boolean; message: string; demoPin?: string }>(
+    return this.request<{ success: boolean; message: string }>(
       '/api/auth/forgot-password',
       {
         method: 'POST',
