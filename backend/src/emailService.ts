@@ -2,14 +2,51 @@ import nodemailer from 'nodemailer';
 
 // Configure the nodemailer transporter using environment variables
 export function createEmailTransporter() {
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const port = parseInt(process.env.SMTP_PORT || '587', 10);
+  const host = process.env.SMTP_HOST 
+    || process.env['HOST SMTP'] 
+    || process.env.HOST_SMTP 
+    || 'smtp.gmail.com';
+
+  const port = parseInt(
+    process.env.SMTP_PORT 
+    || process.env['PUERTO SMTP'] 
+    || process.env.PUERTO_SMTP 
+    || '587', 
+    10
+  );
+
   const secure = process.env.SMTP_SECURE === 'true' || port === 465;
-  const user = process.env.SMTP_USER;
-  const rawPass = process.env.SMTP_PASS;
+
+  // Buscar usuario tanto en inglés como si fue guardado por la traducción de Chrome
+  const user = (
+    process.env.SMTP_USER 
+    || process.env['USUARIO SMTP'] 
+    || process.env.USUARIO_SMTP 
+    || process.env.SMTP_USUARIO 
+    || ''
+  ).trim();
+
+  // Buscar contraseña tanto en inglés como si fue guardada por la traducción de Chrome
+  const rawPass = (
+    process.env.SMTP_PASS 
+    || process.env['CONTRASEÑA SMTP'] 
+    || process.env.CONTRASEÑA_SMTP 
+    || process.env['CONTRASENA SMTP'] 
+    || process.env.CONTRASENA_SMTP 
+    || process.env.SMTP_PASSWORD 
+    || ''
+  ).trim();
 
   if (!user || !rawPass) {
-    console.warn('[EMAIL SERVICE] Advertencia: Credenciales SMTP no configuradas. Los correos se simularán en consola.');
+    console.warn('[EMAIL SERVICE] Advertencia: Credenciales SMTP no configuradas o nombres traducidos. Claves detectadas:', {
+      hasUser: Boolean(user),
+      hasPass: Boolean(rawPass),
+      availableEnvKeys: Object.keys(process.env).filter(k => 
+        k.toUpperCase().includes('SMTP') || 
+        k.toUpperCase().includes('USUARIO') || 
+        k.toUpperCase().includes('CONTRASE')
+      ),
+    });
     return null;
   }
 
@@ -19,7 +56,7 @@ export function createEmailTransporter() {
   return nodemailer.createTransport({
     ...(isGmail ? { service: 'gmail' } : { host, port, secure }),
     auth: {
-      user: user.trim(),
+      user,
       pass,
     },
     connectionTimeout: 8000,
