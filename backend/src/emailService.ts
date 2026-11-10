@@ -164,7 +164,47 @@ Este código expira en 30 minutos y es de un solo uso.
 Si no realizó esta solicitud, ignore este correo.
   `;
 
-  // 1. Si existe RESEND_API_KEY, enviar a través de HTTPS (Puerto 443, no bloqueado por Render Free)
+  // 1. Si existe BREVO_API_KEY, enviar vía Brevo REST API (HTTPS Puerto 443) a CUALQUIER destinatario sin necesidad de dominio propio
+  if (process.env.BREVO_API_KEY) {
+    try {
+      const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.SMTP_USER || 'pimentelcarlos147@gmail.com';
+      const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': process.env.BREVO_API_KEY.trim(),
+          'Content-Type': 'application/json',
+          'accept': 'application/json',
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Clínica Medical',
+            email: senderEmail.trim(),
+          },
+          to: [
+            {
+              email: toEmail,
+              name: recipientName || 'Usuario',
+            },
+          ],
+          subject: 'Restablecimiento de Contraseña - Clínica Medical',
+          htmlContent: htmlContent,
+          textContent: textContent,
+        }),
+      });
+
+      const brevoData = await brevoRes.json() as any;
+      if (brevoRes.ok) {
+        console.log(`[EMAIL ENVIADO - BREVO HTTPS 443] Correo entregado con éxito a: ${toEmail} (MessageId: ${brevoData.messageId})`);
+        return { success: true, messageId: brevoData.messageId };
+      } else {
+        console.warn(`[BREVO WARN] Error devuelto por Brevo:`, brevoData);
+      }
+    } catch (brevoErr: any) {
+      console.error(`[BREVO ERROR] Excepción al llamar a Brevo API:`, brevoErr.message || brevoErr);
+    }
+  }
+
+  // 2. Si existe RESEND_API_KEY, enviar a través de HTTPS (Puerto 443, no bloqueado por Render Free)
   if (process.env.RESEND_API_KEY) {
     try {
       const resendRes = await fetch('https://api.resend.com/emails', {
