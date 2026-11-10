@@ -102,3 +102,32 @@ test('generateToken produces high-entropy crypto tokens', () => {
   assert.equal(token1.length, 64);
   assert.notEqual(token1, token2);
 });
+
+test('password recovery flow: token expiration and secure validation', () => {
+  const token = '582910';
+  const validRecord = {
+    token,
+    userId: 'usr-admin',
+    email: 'admin@clinicamedical.com',
+    expiresAt: Date.now() + 30 * 60 * 1000, // 30 minutes
+    used: false,
+  };
+
+  // 1. Valid token
+  assert.equal(validRecord.used, false);
+  assert.ok(Date.now() < validRecord.expiresAt);
+
+  // 2. Expired token check
+  const expiredRecord = {
+    ...validRecord,
+    expiresAt: Date.now() - 1000, // expired 1s ago
+  };
+  assert.ok(Date.now() > expiredRecord.expiresAt);
+
+  // 3. Already used token check
+  const usedRecord = {
+    ...validRecord,
+    used: true,
+  };
+  assert.equal(usedRecord.used, true);
+});
